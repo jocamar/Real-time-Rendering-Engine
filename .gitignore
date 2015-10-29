@@ -212,4 +212,5 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 *.vcxproj
+RTR_Proj/*.vcxproj
 *.tlog
