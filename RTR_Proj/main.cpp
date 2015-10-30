@@ -11,6 +11,8 @@
 // GL includes
 #include "Shader.h"
 #include "Camera.h"
+#include "Nodes.h"
+#include "Cube.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -37,6 +39,8 @@ bool firstMouse = true;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
+
+vector<Nodes*> nodes;
 
 // The MAIN function, from here we start our application and run our Game loop
 int main()
@@ -183,6 +187,12 @@ int main()
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	Entity* entity = new Entity("entidade", new Cube("cubinho"));
+	glm::mat4 newMatrix;
+	newMatrix = glm::translate(newMatrix, glm::vec3(0.0f, 0.0f, 1.0f));
+	Nodes* n1 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix, entity, false);
+
+
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -236,12 +246,25 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
+		n1->display(modelLoc);
+
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
 	// Properly de-allocate all resources once they've outlived their purpose
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	const char *idNode;
+	const char *displayList;
+	vector<const char*> nodeChildsRef;
+	vector<Primitivas*> prims;
+
+	glm::mat4 matrizTransf;
+
+	idNode = "rootid";
+	//Nodes *n1 = new Nodes(idNode, "", "", nodeChildsRef, prims, matrizTransf, false);
+	nodes.push_back(n1);
 	glfwTerminate();
 	return 0;
 }
