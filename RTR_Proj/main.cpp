@@ -13,6 +13,9 @@
 #include "Camera.h"
 #include "Nodes.h"
 #include "Cube.h"
+#include "Triangle.h"
+#include "Cylinder.h"
+#include "Sphere.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -192,6 +195,17 @@ int main()
 	newMatrix = glm::translate(newMatrix, glm::vec3(0.0f, 0.0f, 1.0f));
 	Nodes* n1 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix, entity, false);
 
+	Entity* entity2 = new Entity("entidade2", new Triangle("triangulo"));
+	glm::mat4 newMatrix2;
+	newMatrix2 = glm::translate(newMatrix2, glm::vec3(0.0f, 2.0f, 2.0f));
+	Nodes* n2 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix2, entity2, false);
+
+	Entity* entity3 = new Entity("entidade3", new Sphere("esferinha"));
+	glm::mat4 newMatrix3;
+	newMatrix3 = glm::translate(newMatrix3, glm::vec3(0.0f, -2.0f, 2.0f));
+	Nodes* n3 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix3, entity3, false);
+
+
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -247,6 +261,8 @@ int main()
 		}
 		glBindVertexArray(0);
 		n1->display(modelLoc);
+		n2->display(modelLoc);
+		n3->display(modelLoc);
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
