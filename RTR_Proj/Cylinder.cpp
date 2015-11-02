@@ -10,56 +10,60 @@ using namespace std;
 
 Cylinder::Cylinder(string id) {
 
-	this->nverts = 0;
 	this->idMesh = id;
 
 
 	enum { Vertices, Textures, Colors, Indexes, numVBO };
 
-	float radius = 1.0f, halfLength = 1.0f;
-	int slices = 5;
-	
-	vector<GLfloat> verts;
+	float radius = 2.0f, stacks = 100;
+	int slices = 100;
 
 
-	for (int i = 0; i<slices; i++) {
-		float theta = ((float)i)*2.0*M_PI;
-		float nextTheta = ((float)i + 1)*2.0*M_PI;
+	long float pi = acos(-1.0);
+	long float angulo = 360.0 / slices;
+	float ki, kf;
+
+/*	for (int i = 0; i < slices; i++) {
+		vertices.push_back(cos(angulo*(i)*pi / 180));
+		vertices.push_back(sin(angulo*(i)*pi / 180));
+		vertices.push_back(0);
+	} */
+
+	for (int i = 0; i < slices; i++) {
+		ki = 0.0;
+		kf = 1.0 / (float)stacks;
+		for (int j = 0; j < stacks; j++){
+
+			vertices.push_back(cos(angulo*(i)*pi / 180));
+			vertices.push_back(sin(angulo*(i)*pi / 180));
+			vertices.push_back(ki);
+
+			vertices.push_back(cos(angulo*(i + 1)*pi / 180));
+			vertices.push_back(sin(angulo*(i + 1)*pi / 180));
+			vertices.push_back(ki);
+
+			vertices.push_back(cos(angulo*(i + 1)*pi / 180));
+			vertices.push_back(sin(angulo*(i + 1)*pi / 180));
+			vertices.push_back(kf);
+
+			vertices.push_back(cos(angulo*(i)*pi / 180));
+			vertices.push_back(sin(angulo*(i)*pi / 180));
+			vertices.push_back(kf);
+
+
+			ki = kf;
+			kf += 1.0 / (float)stacks;
+
+		}
+	}
+
+	/*for (int i = 0; i < slices; ++i) {
 		
+		vertices.push_back(cos(angulo*(i)*pi / 180));
+		vertices.push_back(sin(angulo*(i)*pi / 180));
+		vertices.push_back(0);
 
-		verts.push_back(0.0f);
-		verts.push_back(halfLength);
-		verts.push_back(0.0f);
-
-		verts.push_back(radius*cos(theta));
-		verts.push_back(halfLength);
-		verts.push_back(radius*sin(theta));
-
-		verts.push_back(radius*cos(nextTheta));
-		verts.push_back(halfLength);
-		verts.push_back(radius*sin(nextTheta));
-
-		verts.push_back(radius*cos(nextTheta));
-		verts.push_back(-halfLength);
-		verts.push_back(radius*sin(nextTheta));
-
-		verts.push_back(radius*cos(theta));
-		verts.push_back(-halfLength);
-		verts.push_back(radius*sin(theta));
-
-		verts.push_back(0.0f);
-		verts.push_back(-halfLength);
-		verts.push_back(0.0f);
-	}
-
-	GLfloat vertices[256];
-	this->nverts = verts.size();
-
-	for (int x = 0; x < verts.size(); x++)
-	{
-		vertices[x] = verts.at(x);
-	}
-
+	} */
 
 
 
@@ -75,9 +79,16 @@ Cylinder::Cylinder(string id) {
 		0.0f, 0.1f, 0.0f,
 	};
 
-	GLubyte cylinderIndexes[] = {
-		0, 1, 2
-	};
+
+	indices.resize(slices * stacks * 4);
+	std:vector<GLushort>::iterator i = indices.begin();
+	for (int r = 0; r < slices; r++) for (int s = 0; s < stacks; s++) {
+		*i++ = r * slices + s;
+		*i++ = r * slices + (s + 1);
+		*i++ = (r + 1) * slices + (s + 1);
+		*i++ = (r + 1) * slices + s;
+	}
+
 
 	GLuint buffers[numVBO];
 	glGenVertexArrays(1, &VAO);
@@ -87,7 +98,7 @@ Cylinder::Cylinder(string id) {
 
 	//BIND VERTICES
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[Vertices]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
 	/*glVertexPointer(3, GL_FLOAT, 0, (GLvoid*) 0);
 	glEnableClientState(GL_VERTEX_ARRAY);*/
 
@@ -105,7 +116,7 @@ Cylinder::Cylinder(string id) {
 
 	//BIND INDEXES
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[Indexes]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cylinderIndexes), cylinderIndexes, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), &indices[0], GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 	glEnableVertexAttribArray(0);
@@ -118,6 +129,6 @@ Cylinder::Cylinder(string id) {
 
 void Cylinder::display() {
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLE_STRIP, nverts, GL_UNSIGNED_BYTE, 0);
+	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_SHORT, 0);
 	glBindVertexArray(0);
 }

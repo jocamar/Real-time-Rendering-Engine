@@ -8,10 +8,11 @@
 using namespace std;
 class Sphere : public Mesh
 {
-private:
-	int nverts;
-	GLuint vao;
-	vector<GLushort> indices;
+protected:
+	std::vector<GLfloat> vertices;
+	std::vector<GLfloat> normals;
+	std::vector<GLfloat> texcoords;
+	std::vector<GLushort> indices;
 public:
 	void display();
 	Sphere(string id);

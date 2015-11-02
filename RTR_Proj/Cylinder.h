@@ -8,8 +8,11 @@
 using namespace std;
 class Cylinder : public Mesh
 {
-private:
-	int nverts;
+protected:
+	std::vector<GLfloat> vertices;
+	std::vector<GLfloat> normals;
+	std::vector<GLfloat> texcoords;
+	std::vector<GLushort> indices;
 public:
 	void display();
 	Cylinder(string id);

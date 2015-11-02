@@ -205,7 +205,15 @@ int main()
 	newMatrix3 = glm::translate(newMatrix3, glm::vec3(0.0f, -2.0f, 2.0f));
 	Nodes* n3 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix3, entity3, false);
 
+	Entity* entity4 = new Entity("entidade4", new Cylinder("cilindro"));
+	glm::mat4 newMatrix4;
+	newMatrix4 = glm::translate(newMatrix4, glm::vec3(-2.0f, -2.0f, 2.0f));
+	Nodes* n4 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix4, entity4, false);
 
+	Entity* entity5 = new Entity("entidade5", new Sphere("cilindro"));
+	glm::mat4 newMatrix5;
+	newMatrix5 = glm::translate(newMatrix5, glm::vec3(-4.0f, -2.0f, 2.0f));
+	Nodes* n5 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix5, entity5, false);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -263,7 +271,8 @@ int main()
 		n1->display(modelLoc);
 		n2->display(modelLoc);
 		n3->display(modelLoc);
-
+		n4->display(modelLoc);
+		n5->display(modelLoc);
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
