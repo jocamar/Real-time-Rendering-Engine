@@ -11,6 +11,11 @@
 // GL includes
 #include "Shader.h"
 #include "Camera.h"
+#include "Nodes.h"
+#include "Cube.h"
+#include "Triangle.h"
+#include "Cylinder.h"
+#include "Sphere.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -37,6 +42,8 @@ bool firstMouse = true;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
+
+vector<Nodes*> nodes;
 
 // The MAIN function, from here we start our application and run our Game loop
 int main()
@@ -183,6 +190,31 @@ int main()
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	Entity* entity = new Entity("entidade", new Cube("cubinho"));
+	glm::mat4 newMatrix;
+	newMatrix = glm::translate(newMatrix, glm::vec3(0.0f, 0.0f, 1.0f));
+	Nodes* n1 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix, entity, false);
+
+	Entity* entity2 = new Entity("entidade2", new Triangle("triangulo"));
+	glm::mat4 newMatrix2;
+	newMatrix2 = glm::translate(newMatrix2, glm::vec3(0.0f, 2.0f, 2.0f));
+	Nodes* n2 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix2, entity2, false);
+
+	Entity* entity3 = new Entity("entidade3", new Sphere("esferinha"));
+	glm::mat4 newMatrix3;
+	newMatrix3 = glm::translate(newMatrix3, glm::vec3(0.0f, -2.0f, 2.0f));
+	Nodes* n3 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix3, entity3, false);
+
+	Entity* entity4 = new Entity("entidade4", new Cylinder("cilindro"));
+	glm::mat4 newMatrix4;
+	newMatrix4 = glm::translate(newMatrix4, glm::vec3(-2.0f, -2.0f, 2.0f));
+	Nodes* n4 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix4, entity4, false);
+
+	Entity* entity5 = new Entity("entidade5", new Sphere("cilindro"));
+	glm::mat4 newMatrix5;
+	newMatrix5 = glm::translate(newMatrix5, glm::vec3(-4.0f, -2.0f, 2.0f));
+	Nodes* n5 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix5, entity5, false);
+
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -236,12 +268,28 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
+		n1->display(modelLoc);
+		n2->display(modelLoc);
+		n3->display(modelLoc);
+		n4->display(modelLoc);
+		n5->display(modelLoc);
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
 	// Properly de-allocate all resources once they've outlived their purpose
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	const char *idNode;
+	const char *displayList;
+	vector<const char*> nodeChildsRef;
+	vector<Primitivas*> prims;
+
+	glm::mat4 matrizTransf;
+
+	idNode = "rootid";
+	//Nodes *n1 = new Nodes(idNode, "", "", nodeChildsRef, prims, matrizTransf, false);
+	nodes.push_back(n1);
 	glfwTerminate();
 	return 0;
 }
