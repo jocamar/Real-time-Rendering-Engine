@@ -13,6 +13,10 @@ class Shader
 {
 public:
 	GLuint Program;
+	GLint ModelLoc;
+	GLint ViewLoc;
+	GLint ProjLoc;
+
 	// Constructor generates the shader on the fly
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 	{
@@ -87,6 +91,10 @@ public:
 		// Delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
+
+		ModelLoc = glGetUniformLocation(this->Program, "model");
+		ViewLoc = glGetUniformLocation(this->Program, "view");
+		ProjLoc = glGetUniformLocation(this->Program, "projection");
 
 	}
 	// Uses the current shader

@@ -1,7 +1,9 @@
 #pragma once
 #include "Primitivas.h"
 #include <iostream>
+
 using namespace std;
+
 class Rectangulo:public Primitivas
 {
 public:

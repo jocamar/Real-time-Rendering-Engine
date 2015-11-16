@@ -1,4 +1,7 @@
 #include "Triangle.h"
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.inl>
+#include <glm/gtc/type_ptr.hpp>
 
 Triangle::Triangle(string id) {
 
@@ -68,6 +71,17 @@ Triangle::Triangle(string id) {
 
 void Triangle::display() {
 	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, 0);
+	glBindVertexArray(0);
+}
+
+
+void Triangle::display(GLint modelLoc)
+{
+	glBindVertexArray(VAO);
+	glm::mat4 mat;
+	mat = glm::translate(mat, glm::vec3(0, 0, 1));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mat));
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, 0);
 	glBindVertexArray(0);
 }

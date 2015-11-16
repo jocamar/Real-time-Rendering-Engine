@@ -11,7 +11,7 @@
 // GL includes
 #include "Shader.h"
 #include "Camera.h"
-#include "Nodes.h"
+#include "SceneManager.h"
 #include "Cube.h"
 #include "Triangle.h"
 #include "Cylinder.h"
@@ -43,7 +43,7 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-vector<Nodes*> nodes;
+vector<SceneNode*> nodes;
 
 // The MAIN function, from here we start our application and run our Game loop
 int main()
@@ -190,30 +190,40 @@ int main()
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	Entity* entity = new Entity("entidade", new Cube("cubinho"));
-	glm::mat4 newMatrix;
-	newMatrix = glm::translate(newMatrix, glm::vec3(0.0f, 0.0f, 1.0f));
-	Nodes* n1 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix, entity, false);
+	SceneManager sceneManager;
+	sceneManager.addShader("default_shader", "VertShader.vs", "FragShader.frag");
+	sceneManager.setDefaultShader("default_shader");
 
-	Entity* entity2 = new Entity("entidade2", new Triangle("triangulo"));
-	glm::mat4 newMatrix2;
-	newMatrix2 = glm::translate(newMatrix2, glm::vec3(0.0f, 2.0f, 2.0f));
-	Nodes* n2 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix2, entity2, false);
+	auto cubeEntity = sceneManager.createEntity("entidade", new Cube("cubinho"));
+	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", glm::vec3(0.0f, 0.0f, 1.0f));
+	cubeNode->attach(shared_ptr<AttacheableObject>(cubeEntity));
 
-	Entity* entity3 = new Entity("entidade3", new Sphere("esferinha"));
-	glm::mat4 newMatrix3;
-	newMatrix3 = glm::translate(newMatrix3, glm::vec3(0.0f, -2.0f, 2.0f));
-	Nodes* n3 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix3, entity3, false);
+	auto cubeEntity2 = sceneManager.createEntity("entidade2", new Cube("cubinho2"));
+	auto cubeNode2 = cubeNode->createNewChildNode("cubeNode2", glm::vec3(0.0, 1.0, 1.0));
+	cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity2));
 
-	Entity* entity4 = new Entity("entidade4", new Cylinder("cilindro"));
-	glm::mat4 newMatrix4;
-	newMatrix4 = glm::translate(newMatrix4, glm::vec3(-2.0f, -2.0f, 2.0f));
-	Nodes* n4 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix4, entity4, false);
+	cubeNode->translate(glm::vec3(0, 5, 0));
+	cubeNode->changeScale(glm::vec3(1.0, 2.0, 1.0));
+	cubeNode->setScaleOrig(glm::vec3(0, -0.5, 0.0));
+	cubeNode->setRotOrig(glm::vec3(0, -0.5, 0.0));
+	cubeNode->pitch(90);
+	cubeNode->roll(45);
 
-	Entity* entity5 = new Entity("entidade5", new Sphere("cilindro"));
-	glm::mat4 newMatrix5;
-	newMatrix5 = glm::translate(newMatrix5, glm::vec3(-4.0f, -2.0f, 2.0f));
-	Nodes* n5 = new Nodes("rootid", "", "", vector<const char*>(), vector<Primitivas*>(), newMatrix5, entity5, false);
+	/*auto triangleEntity = sceneManager.createEntity("entidade2", new Triangle("triangulo"));
+	auto triangleNode = sceneManager.getRoot()->createNewChildNode("triangleNode", glm::vec3(0.0f, 2.0f, 2.0f));
+	triangleNode->attach(shared_ptr<AttacheableObject>(triangleEntity));
+
+	auto sphereEntity = sceneManager.createEntity("entidade3", new Sphere("esfera"));
+	auto sphereNode = sceneManager.getRoot()->createNewChildNode("sphereNode", glm::vec3(0.0f, -2.0f, 2.0f));
+	sphereNode->attach(shared_ptr<AttacheableObject>(sphereEntity));
+
+	auto cylinderEntity = sceneManager.createEntity("entidade4", new Sphere("esfera"));
+	auto cylinderNode = sceneManager.getRoot()->createNewChildNode("cylinderNode", glm::vec3(-2.0f, -2.0f, 2.0f));
+	cylinderNode->attach(shared_ptr<AttacheableObject>(cylinderEntity));
+
+	auto sphereEntity2 = sceneManager.createEntity("entidade5", new Sphere("esfera"));
+	auto sphereNode2 = sceneManager.getRoot()->createNewChildNode("sphereNode2", glm::vec3(-4.0f, -2.0f, 2.0f));
+	sphereNode2->attach(shared_ptr<AttacheableObject>(sphereEntity2));*/
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -268,11 +278,10 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
-		n1->display(modelLoc);
-		n2->display(modelLoc);
-		n3->display(modelLoc);
-		n4->display(modelLoc);
-		n5->display(modelLoc);
+
+		//cubeEntity->display(modelLoc);
+		sceneManager.render(&camera);
+
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
@@ -280,16 +289,6 @@ int main()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 
-	const char *idNode;
-	const char *displayList;
-	vector<const char*> nodeChildsRef;
-	vector<Primitivas*> prims;
-
-	glm::mat4 matrizTransf;
-
-	idNode = "rootid";
-	//Nodes *n1 = new Nodes(idNode, "", "", nodeChildsRef, prims, matrizTransf, false);
-	nodes.push_back(n1);
 	glfwTerminate();
 	return 0;
 }
