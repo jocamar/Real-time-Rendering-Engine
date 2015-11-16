@@ -1,0 +1,11 @@
+Nodes:
+	Cube:
+		Position: {0.0f, 0.0f, 0.0f}
+		Rotation: {0.0f, 0.0f, 0.0f}
+		Scale: {2.0f, 2.0f, 2.0f}
+		Animation:
+
+	Sphere:
+		Radius:
+		Sectors:
+		

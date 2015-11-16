@@ -90,6 +90,8 @@ Cylinder::Cylinder(string id) {
 	}
 
 
+
+
 	GLuint buffers[numVBO];
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(numVBO, buffers);
