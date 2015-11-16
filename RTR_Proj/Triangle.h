@@ -12,6 +12,7 @@ private:
 
 public:
 	void display();
+	void display(GLint modelLoc);
 	Triangle(string id);
 	~Triangle();
 };

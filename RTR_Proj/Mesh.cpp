@@ -1,4 +1,7 @@
 #include "Mesh.h"
+#include <glm/detail/type_vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 GLuint Mesh::getVAO() {
 	return VAO;
