@@ -3,14 +3,14 @@
 SceneManager::SceneManager()
 {
 	this->root = std::make_unique<SceneNode>("_root", this);
-	this->shaders = map<const char*, Shader>();
+	this->shaders = map<const string, Shader*>();
 }
 
 
 
 void SceneManager::addShader(char *id, char *vert, char *frag)
 {
-	this->shaders.insert(pair<const char*, Shader>(id, Shader(vert, frag)));
+	this->shaders.insert(pair<const string, Shader*>(id, new Shader(vert, frag)));
 }
 
 
@@ -30,7 +30,7 @@ const char* SceneManager::getDefaultShaderId()
 
 Shader* SceneManager::getShader(const char *shader)
 {
-	return &this->shaders.find(shader)->second;
+	return this->shaders.find(shader)->second;
 }
 
 

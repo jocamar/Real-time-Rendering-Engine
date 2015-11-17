@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <GL/glew.h>
 #include <iostream>
@@ -17,5 +17,5 @@ public:
 	void display();
 	Sphere(string id);
 	~Sphere();
-};
+};*/
 

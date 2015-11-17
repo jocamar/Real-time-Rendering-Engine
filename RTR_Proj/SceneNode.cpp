@@ -1,5 +1,4 @@
 #include "SceneManager.h"
-#include <glm/gtc/matrix_transform.hpp>
 
 SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent)
 {
@@ -113,7 +112,7 @@ glm::vec3 SceneNode::getRotOrig()
 
 glm::mat4 SceneNode::getTransfMatrix()
 {
-	return this->
+	return this->transfMatrix;
 }
 
 

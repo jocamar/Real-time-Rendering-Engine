@@ -1,9 +1,9 @@
 #include "Entity.h"
 #include "SceneManager.h"
-#include <glm/gtc/matrix_transform.hpp>
 #include "Camera.h"
+#include "Mesh.h"
 
-Entity::Entity(string idEntity, Mesh *MeshEntity, SceneManager *manager) : AttacheableObject(manager) 
+Entity::Entity(string idEntity, Mesh *MeshEntity, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent) 
 {
 	this->idEntity = idEntity;
 	this->EntityMesh = MeshEntity;
@@ -28,14 +28,11 @@ void Entity::display(glm::mat4 transf, char *shader, Camera *camera) {
 	view = camera->GetViewMatrix();
 	glm::mat4 projection;
 	projection = glm::perspective(camera->Zoom, (float)800 / (float)600, 0.1f, 1000.0f);
-	// Get the uniform locations
-	GLint modelLoc = glGetUniformLocation(s->Program, "model");
-	GLint viewLoc = glGetUniformLocation(s->Program, "view");
-	GLint projLoc = glGetUniformLocation(s->Program, "projection");
+
 	// Pass the matrices to the shader
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(transf));
+	glUniformMatrix4fv(s->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(s->ProjLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(s->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
 	EntityMesh->display();
 }
 

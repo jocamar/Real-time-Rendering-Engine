@@ -1,5 +1,18 @@
 #pragma once
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+// GLFW
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <SOIL.h>
+
 #include <vector>
 using std::vector;
 

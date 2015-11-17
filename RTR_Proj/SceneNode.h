@@ -1,10 +1,6 @@
 #pragma once
 
-// GLM Mathemtics
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <GL/glew.h>
+#include "Globals.h"
 
 #include <vector>
 #include <memory>

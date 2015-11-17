@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <GL/glew.h>
 #include <iostream>
@@ -16,4 +16,4 @@ public:
 	Triangle(string id);
 	~Triangle();
 };
-
+*/

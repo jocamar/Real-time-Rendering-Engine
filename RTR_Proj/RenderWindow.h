@@ -1,6 +1,6 @@
 #pragma once
+#include "Globals.h"
 #include "Viewport.h"
-#include <GLFW/glfw3.h>
 
 class RenderWindow
 {
@@ -10,6 +10,9 @@ protected:
 
 public:
 	RenderWindow(GLint width, GLint height, const char *name, bool resizeable, bool windowed);
+	void addViewPort(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r = 0.0f, GLfloat g = 0.0f, GLfloat b = 0.0f);
+	void setInputHandlers(GLFWkeyfun key, GLFWcursorposfun cursor, GLFWscrollfun scroll);
+	int close();
 	~RenderWindow();
 	void Render(SceneManager& scene);
 };

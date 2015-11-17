@@ -1,4 +1,5 @@
 #include "RenderWindow.h"
+#include <algorithm>
 
 RenderWindow::RenderWindow(GLint width, GLint height, const char *name, bool resizeable, bool windowed)
 {
@@ -33,6 +34,30 @@ RenderWindow::RenderWindow(GLint width, GLint height, const char *name, bool res
 
 
 
+void RenderWindow::addViewPort(Camera* cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b)
+{
+	this->viewports.push_back(Viewport(cam, left, top, width, height, zOrder, r, g, b, this));
+	std::sort(viewports.begin(), viewports.end());
+}
+
+
+
+void RenderWindow::setInputHandlers(GLFWkeyfun key, GLFWcursorposfun cursor, GLFWscrollfun scroll)
+{
+	glfwSetKeyCallback(window, key);
+	glfwSetCursorPosCallback(window, cursor);
+	glfwSetScrollCallback(window, scroll);
+}
+
+
+
+int RenderWindow::close()
+{
+	return glfwWindowShouldClose(window);
+}
+
+
+
 RenderWindow::~RenderWindow()
 {
 	glfwTerminate();
@@ -46,6 +71,8 @@ void RenderWindow::Render(SceneManager& scene)
 	{
 		viewport.Render(scene);
 	}
+
+	glfwSwapBuffers(window);
 }
 
 

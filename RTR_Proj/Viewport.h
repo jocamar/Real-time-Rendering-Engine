@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 
 #include "Camera.h"
 #include "SceneManager.h"
@@ -9,7 +8,7 @@ class RenderWindow;
 class Viewport
 {
 protected:
-	Camera camera;
+	Camera *camera;
 
 	GLfloat left;
 	GLfloat top;
@@ -23,8 +22,13 @@ protected:
 
 	GLfloat zOrder;
 
-	std::shared_ptr<RenderWindow> window;
+	RenderWindow *window;
+
+	GLfloat r;
+	GLfloat g;
+	GLfloat b;
 public:
-	Viewport(Camera cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, std::shared_ptr<RenderWindow> window);
+	Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b, RenderWindow *window);
 	void Render(SceneManager& scene);
+	bool operator < (const Viewport& v) const;
 };

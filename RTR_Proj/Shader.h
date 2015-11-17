@@ -1,13 +1,11 @@
-
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include <GL/glew.h>
+#include "Globals.h"
 
 class Shader
 {
@@ -103,5 +101,3 @@ public:
 		glUseProgram(this->Program);
 	}
 };
-
-#endif
