@@ -8,7 +8,7 @@ class SceneManager
 {
 protected:
 	unique_ptr<SceneNode> root;
-	map<const char*, Shader> shaders;
+	map<const string, Shader*> shaders;
 	char* defaultShader;
 
 public:

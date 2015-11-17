@@ -113,7 +113,7 @@ glm::vec3 SceneNode::getRotOrig()
 
 glm::mat4 SceneNode::getTransfMatrix()
 {
-	return this->
+	return this->transfMatrix;
 }
 
 
