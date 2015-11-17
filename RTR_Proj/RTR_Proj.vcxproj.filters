@@ -54,17 +54,17 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Scene Graph</Filter>
     </ClCompile>
-    <ClCompile Include="SceneNode.cpp">
-      <Filter>Source Files\Scene Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AttacheableObject.cpp">
       <Filter>Source Files\Scene Graph</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Source Files\Scene Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneNode.cpp">
+      <Filter>Source Files\Scene Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderWindow.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Viewport.cpp">
       <Filter>Source Files</Filter>
@@ -75,9 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
@@ -104,13 +101,13 @@
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="SceneNode.h">
-      <Filter>Header Files\Scene Graph</Filter>
-    </ClInclude>
     <ClInclude Include="AttacheableObject.h">
       <Filter>Header Files\Scene Graph</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
+      <Filter>Header Files\Scene Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneNode.h">
       <Filter>Header Files\Scene Graph</Filter>
     </ClInclude>
     <ClInclude Include="RenderWindow.h">
