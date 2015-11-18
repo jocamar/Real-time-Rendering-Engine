@@ -25,9 +25,6 @@ bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
 
-// Light attributes
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
@@ -42,23 +39,40 @@ int main()
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
 
 	SceneManager sceneManager;
-	sceneManager.addShader("default_shader", "VertShader.vs", "FragShader.frag");
-	sceneManager.setDefaultShader("default_shader");
+	sceneManager.addMaterial("box_material", "container2.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag",Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("box_material2", "container.jpg", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag",Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("light_material", nullptr, nullptr, "lightVertShader.vs", "lightFragShader.frag",Material::EMITTER);
+	sceneManager.setDefaultMaterial("box_material");
+
+	GLfloat amb_dir[3] = { 0.05f, 0.05f, 0.05f };
+	GLfloat dif_dir[3] = { 0.4f, 0.4f, 0.4f };
+	GLfloat spec_dir[3] = { 0.5f, 0.5f, 0.5f };
+	GLfloat dir[3] = { -0.2f, -1.0f, -0.3f };
+
+	//sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
 	auto cubeEntity = sceneManager.createEntity("entidade", new Cube("cubinho"));
-	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", glm::vec3(0.0f, 0.0f, 1.0f));
+	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(0.0f, 0.0f, 1.0f));
 	cubeNode->attach(shared_ptr<AttacheableObject>(cubeEntity));
 
 	auto cubeEntity2 = sceneManager.createEntity("entidade2", new Cube("cubinho2"));
-	auto cubeNode2 = cubeNode->createNewChildNode("cubeNode2", glm::vec3(0.0, 1.0, 1.0));
+	auto cubeNode2 = cubeNode->createNewChildNode("cubeNode2", "box_material2", glm::vec3(0.0, 1.0, 1.0));
 	cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity2));
 
-	cubeNode->translate(glm::vec3(0, 0, 0));
+	GLfloat amb[3] = { 0.5f,0.5f,0.5f };
+	GLfloat dif[3] = { 0.8f, 0.8f, 0.8f };
+	GLfloat spec[3] = { 1.0f, 1.0f, 1.0f };
+
+	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 1.0f, 0.09f, 0.032f, new Cube("cubinho3"));
+	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(3.0f, 2.0f, 0.0f));
+	lightNode->attach(shared_ptr<AttacheableObject>(light1));
+
+	/*cubeNode->translate(glm::vec3(0, 0, 0));
 	cubeNode->changeScale(glm::vec3(1.0, 2.0, 1.0));
 	cubeNode->setScaleOrig(glm::vec3(0, -0.5, 0.0));
 	cubeNode->setRotOrig(glm::vec3(0, -0.5, 0.0));
 	cubeNode->pitch(90);
-	cubeNode->roll(45);
+	cubeNode->roll(45);*/
 
 	// Game loop
 	while (!window_.close())
@@ -75,7 +89,6 @@ int main()
 		window_.Render(sceneManager);
 	}
 
-	glfwTerminate();
 	return 0;
 }
 

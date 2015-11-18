@@ -3,25 +3,25 @@
 #include "Camera.h"
 #include "Mesh.h"
 
-Entity::Entity(string idEntity, Mesh *MeshEntity, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent) 
+Entity::Entity(string idEntity, Mesh *EntityMesh, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent) 
 {
 	this->idEntity = idEntity;
-	this->EntityMesh = MeshEntity;
+	this->EntityMesh = EntityMesh;
 }
 
 
 
-void Entity::display(glm::mat4 transf, char *shader, Camera *camera) {
+void Entity::display(glm::mat4 transf, char *material, Camera *camera) {
 	
-	char* shaderToUse;
-	if (this->shader)
-		shaderToUse = this->shader;
+	char* materialToUse;
+	if (this->material)
+		materialToUse = this->material;
 	else
-		shaderToUse = shader;
+		materialToUse = material;
 
-	auto s = this->manager->getShader(shader);
+	auto s = this->manager->getMaterial(material);
 
-	s->Use();
+	s->use(camera);
 
 	// Create camera transformation
 	glm::mat4 view;
@@ -30,9 +30,9 @@ void Entity::display(glm::mat4 transf, char *shader, Camera *camera) {
 	projection = glm::perspective(camera->Zoom, (float)800 / (float)600, 0.1f, 1000.0f);
 
 	// Pass the matrices to the shader
-	glUniformMatrix4fv(s->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(s->ProjLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(s->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
+	glUniformMatrix4fv(s->getShader()->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(s->getShader()->ProjLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(s->getShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
 	EntityMesh->display();
 }
 

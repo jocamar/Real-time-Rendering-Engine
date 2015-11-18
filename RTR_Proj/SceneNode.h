@@ -4,8 +4,7 @@
 
 #include <vector>
 #include <memory>
-
-#include "Entity.h"
+#include "AttacheableObject.h"
 
 class SceneManager;
 
@@ -34,10 +33,9 @@ protected:
 
 public:
 	SceneNode(const char *id, SceneManager *manager, SceneNode *parent = nullptr);
-	SceneNode(const char *id, shared_ptr<Entity> entity, char *animRef, SceneManager *manager, SceneNode *parent = nullptr);
 	~SceneNode();
 
-	void display(glm::mat4 transf, char *shader, Camera *camera = nullptr) override;
+	void display(glm::mat4 transf, char *material, Camera *camera = nullptr) override;
 	void attach(shared_ptr<AttacheableObject> object);
 	bool isLeaf() override;
 
@@ -61,6 +59,6 @@ public:
 
 
 	shared_ptr<SceneNode> createNewChildNode(char *id);
-	shared_ptr<SceneNode> createNewChildNode(char *id, glm::vec3 position, glm::quat orientation = glm::quat(), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
+	shared_ptr<SceneNode> createNewChildNode(char *id, char *material, glm::vec3 position, glm::quat orientation = glm::quat(), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 };
 

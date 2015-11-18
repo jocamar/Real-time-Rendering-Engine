@@ -20,24 +20,7 @@ SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent) :
 
 
 
-SceneNode::SceneNode(const char *id, shared_ptr<Entity> entity, char *animRef, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent)
-{
-	this->id = id;
-	this->animation = animRef;
-	this->children = vector<shared_ptr<AttacheableObject>>();
-	this->children.push_back(entity);
-
-	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	this->orientation = glm::quat();
-
-	this->scaleOrig = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotOrig = glm::vec3(0.0f, 0.0f, 0.0f);
-}
-
-
-
-void SceneNode::display(glm::mat4 transf, char *shader, Camera *camera) {
+void SceneNode::display(glm::mat4 transf, char *material, Camera *camera) {
 	
 	auto m_pos = glm::translate(glm::mat4(), position);
 	auto m_scale = glm::scale(glm::mat4(), scale);
@@ -50,10 +33,16 @@ void SceneNode::display(glm::mat4 transf, char *shader, Camera *camera) {
 
 	auto modelMatrix = m_pos * (m_rot_orig_inv * m_rot * m_rot_orig) * (m_scale_orig_inv * m_scale * m_scale_orig);
 	modelMatrix = transf * modelMatrix;
-	
+	this->transfMatrix = modelMatrix;
+
+	char *mat;
+	if (this->material)
+		mat = this->material;
+	else mat = material;
+
 	for(auto child : children)
 	{
-		child->display(modelMatrix, shader, camera);
+		child->display(modelMatrix, mat, camera);
 	}
 	
 }
@@ -192,14 +181,15 @@ void SceneNode::setRotOrig(glm::vec3 orig)
 
 shared_ptr<SceneNode> SceneNode::createNewChildNode(char* id)
 {
-	return this->createNewChildNode(id, glm::vec3(0.0f, 0.0f, 0.0f));
+	return this->createNewChildNode(id, nullptr, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 
 
-shared_ptr<SceneNode> SceneNode::createNewChildNode(char* id, glm::vec3 position, glm::quat orientation, glm::vec3 scale)
+shared_ptr<SceneNode> SceneNode::createNewChildNode(char* id, char *material, glm::vec3 position, glm::quat orientation, glm::vec3 scale)
 {
 	auto nodePtr = new SceneNode(id, this->manager);
+	nodePtr->setMaterial(material);
 	nodePtr->translate(position);
 	nodePtr->changeOrientation(orientation);
 	nodePtr->changeScale(scale);

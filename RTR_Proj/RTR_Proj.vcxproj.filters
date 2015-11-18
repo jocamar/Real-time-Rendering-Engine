@@ -72,6 +72,9 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Scene Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -119,12 +122,24 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Scene Graph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FragShader.frag">
+    <None Include="lightFragShader.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="VertShader.vs">
+    <None Include="boxFragShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="boxVertShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lightVertShader.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -136,6 +151,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="crying.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="container2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="container2_specular.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

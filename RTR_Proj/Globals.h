@@ -16,6 +16,8 @@
 #include <vector>
 using std::vector;
 
+#define MAX_LIGHTS 10
+
 class Globals
 {
 public:

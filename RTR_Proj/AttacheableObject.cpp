@@ -2,16 +2,16 @@
 
 AttacheableObject::AttacheableObject(SceneManager *manager, SceneNode *parent)
 {
-	this->shader = nullptr;
+	this->material = nullptr;
 	this->manager = manager;
 	this->parent = parent;
 }
 
 
 
-AttacheableObject::AttacheableObject(SceneManager *manager, char *shader, SceneNode *parent)
+AttacheableObject::AttacheableObject(SceneManager *manager, char *material, SceneNode *parent)
 {
-	this->shader = shader;
+	this->material = material;
 	this->manager = manager;
 	this->parent = parent;
 }
@@ -25,4 +25,11 @@ SceneNode* AttacheableObject::getParent()
 void AttacheableObject::setParent(SceneNode* parent)
 {
 	this->parent = parent;
+}
+
+
+
+void AttacheableObject::setMaterial(char* material)
+{
+	this->material = material;
 }

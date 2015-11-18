@@ -3,34 +3,44 @@
 SceneManager::SceneManager()
 {
 	this->root = std::make_unique<SceneNode>("_root", this);
-	this->shaders = map<const string, Shader*>();
+	this->materials = map<const string, Material*>();
 }
 
 
 
-void SceneManager::addShader(char *id, char *vert, char *frag)
+void SceneManager::addMaterial(char *id, char *diffuse, char *specular, char *vert, char *frag, Material::shaderTypes shaderType)
 {
-	this->shaders.insert(pair<const string, Shader*>(id, new Shader(vert, frag)));
+	auto s = new Shader(vert, frag);
+	auto m = new Material(id, diffuse, specular, s, shaderType, this);
+	this->materials.insert(pair<const string, Material*>(id, m));
 }
 
 
 
-void SceneManager::setDefaultShader(char *id)
+void SceneManager::addMaterial(char* id, char *diffuse, char *specular, Shader* shader, Material::shaderTypes shaderType)
 {
-	this->defaultShader = id;
+	auto m = new Material(id, diffuse, specular, shader, shaderType, this);
+	this->materials.insert(pair<const string, Material*>(id, m));
 }
 
 
 
-const char* SceneManager::getDefaultShaderId()
+void SceneManager::setDefaultMaterial(char *id)
 {
-	return defaultShader;
+	this->defaultMaterial = id;
 }
 
 
-Shader* SceneManager::getShader(const char *shader)
+
+const char* SceneManager::getDefaultMaterialId()
 {
-	return this->shaders.find(shader)->second;
+	return defaultMaterial;
+}
+
+
+Material* SceneManager::getMaterial(const char *material)
+{
+	return this->materials.find(material)->second;
 }
 
 
@@ -49,18 +59,64 @@ shared_ptr<Entity> SceneManager::createEntity(char *id, Mesh *mesh)
 
 
 
+shared_ptr<Light> SceneManager::createLight(char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, char* mesh)
+{
+	return nullptr;
+}
+
+
+
+shared_ptr<Light> SceneManager::createLight(char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, Mesh* mesh)
+{
+	auto l = std::make_shared<Light>(id, ambient, diffuse, specular, constant, linear, quadratic, mesh, this);
+	lights.push_back(l);
+	return l;
+}
+
+
+
+void SceneManager::createDirectionalLight(char* id, GLfloat* ambient, GLfloat* diffuse, GLfloat* specular, GLfloat* direction)
+{
+	delete directionalLight;
+	this->directionalLight = new Light("directional", ambient, diffuse, specular, direction, this);
+}
+
+
+
+vector<shared_ptr<Light>> SceneManager::getActiveLights()
+{
+	auto a_l = vector<shared_ptr<Light>>();
+	for (auto i = 0; i < lights.size(); i++)
+	{
+		if(lights[i]->getParent())
+		{
+			a_l.push_back(lights[i]);
+		}
+	}
+
+	return a_l;
+}
+
+Light* SceneManager::getDirectionalLight()
+{
+	return directionalLight;
+}
+
+
 SceneNode* SceneManager::getRoot()
 {
 	return root.get();
 }
 
+
+
 void SceneManager::render(Camera *camera)
 {
-	auto defShader = this->getShader(defaultShader);
+	auto defMaterial = this->getMaterial(defaultMaterial);
 
-	if (!defShader)
+	if (!defMaterial)
 		return;
 
 	auto mat = glm::mat4();
-	root->display(mat, defaultShader, camera);
+	root->display(mat, defaultMaterial, camera);
 }
