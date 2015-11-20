@@ -14,5 +14,6 @@ public:
 	GLuint getVAO();
 	virtual void display();
 	virtual ~Mesh();
+
 };
 

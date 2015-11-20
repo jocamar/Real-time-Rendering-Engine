@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include "AttacheableObject.h"
+#include "Animation.h"
 
 class SceneManager;
 
@@ -13,7 +14,8 @@ class SceneNode : public AttacheableObject
 {
 protected:
 	const char *id;
-	char *animation;
+	Animation *animation;
+	int caminho;
 	char *shader;
 	vector<shared_ptr<AttacheableObject>> children;
 
@@ -32,12 +34,13 @@ protected:
 	bool calculateMatrix;
 
 public:
-	SceneNode(const char *id, SceneManager *manager, SceneNode *parent = nullptr);
+	SceneNode(const char *id, SceneManager *manager, SceneNode *parent = nullptr, Animation *anim = NULL);
 	~SceneNode();
 
 	void display(glm::mat4 transf, char *material, Camera *camera = nullptr) override;
 	void attach(shared_ptr<AttacheableObject> object);
 	bool isLeaf() override;
+	void Update(float seconds) override;
 
 	glm::vec3 getPosition();
 	glm::vec3 getScale();
@@ -56,6 +59,10 @@ public:
 	void roll(GLfloat degrees);
 	void setScaleOrig(glm::vec3 orig);
 	void setRotOrig(glm::vec3 orig);
+	void setTransfMatrix(glm::mat4 transf);
+	void setAnimation(Animation *anim);
+	void applyAnimationTranslation();
+	void applyAnimationRotation();
 
 
 	shared_ptr<SceneNode> createNewChildNode(char *id);

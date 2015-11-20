@@ -65,6 +65,12 @@ RenderWindow::~RenderWindow()
 
 
 
+void RenderWindow::Update(SceneManager& scene, float seconds)
+{
+	scene.Update(seconds);
+}
+
+
 void RenderWindow::Render(SceneManager& scene)
 {
 	for(auto viewport : viewports)

@@ -109,6 +109,10 @@ SceneNode* SceneManager::getRoot()
 }
 
 
+void SceneManager::Update(float seconds)
+{
+	root->Update(seconds);
+}
 
 void SceneManager::render(Camera *camera)
 {

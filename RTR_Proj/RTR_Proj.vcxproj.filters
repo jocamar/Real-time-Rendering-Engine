@@ -69,11 +69,20 @@
     <ClCompile Include="Viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
+    <ClCompile Include="Primitivas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Scene Graph</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,44 +128,31 @@
     <ClInclude Include="Viewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Primitivas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Header Files\Scene Graph</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lightFragShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="boxFragShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="boxVertShader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="lightVertShader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include="FragShader.frag" />
+    <None Include="VertShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="crying.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="container2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="container2_specular.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -57,6 +57,13 @@ int main()
 
 	auto cubeEntity2 = sceneManager.createEntity("entidade2", new Cube("cubinho2"));
 	auto cubeNode2 = cubeNode->createNewChildNode("cubeNode2", "box_material2", glm::vec3(0.0, 1.0, 1.0));
+	vector<glm::vec3> points;
+	points.push_back(glm::vec3(0, 1, 1));
+	points.push_back(glm::vec3(1, 1, 0));
+	points.push_back(glm::vec3(1, 2, 0));
+
+	Animation *anim = new LinearAnimation(points, 10000, false);
+	cubeNode2->setAnimation(anim);
 	cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity2));
 
 	GLfloat amb[3] = { 0.5f,0.5f,0.5f };
@@ -85,6 +92,8 @@ int main()
 		// Check and call events
 		glfwPollEvents();
 		Do_Movement();
+
+		window_.Update(sceneManager, deltaTime);
 
 		window_.Render(sceneManager);
 	}

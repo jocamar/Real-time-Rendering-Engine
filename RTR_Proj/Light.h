@@ -26,6 +26,7 @@ public:
 	Light(string idEntity, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction, SceneManager *manager);
 	void display(glm::mat4 transf, char *material, Camera *camera = nullptr) override;
 	bool isLeaf() override;
+	void Update(float seconds) override {};
 	bool isDirectional();
 
 	GLfloat* getAmbient();

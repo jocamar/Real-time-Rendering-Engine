@@ -16,6 +16,7 @@ public:
 	AttacheableObject(SceneManager *manager, char *material, SceneNode *parent = nullptr);
 	virtual void display(glm::mat4 transf, char *material, Camera *camera = nullptr) = 0;
 	virtual bool isLeaf() = 0;
+	virtual void Update(float seconds) = 0;
 	virtual ~AttacheableObject() {};
 	SceneNode* getParent();
 	void setParent(SceneNode *parent);

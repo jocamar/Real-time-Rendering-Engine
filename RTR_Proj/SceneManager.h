@@ -36,6 +36,7 @@ public:
 	Light* getDirectionalLight();
 
 	SceneNode* getRoot();
-
+	
+	void Update(float seconds);
 	void render(Camera *camera);
 };

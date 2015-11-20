@@ -14,5 +14,6 @@ public:
 	void setInputHandlers(GLFWkeyfun key, GLFWcursorposfun cursor, GLFWscrollfun scroll);
 	int close();
 	~RenderWindow();
+	void Update(SceneManager& scene, float seconds);
 	void Render(SceneManager& scene);
 };

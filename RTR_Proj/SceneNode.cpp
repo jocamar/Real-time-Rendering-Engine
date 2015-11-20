@@ -1,10 +1,11 @@
 #include "SceneManager.h"
 
-SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent)
+SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, Animation *anim) : AttacheableObject(manager, parent)
 {
 	this->id = id;
-	this->animation = nullptr;
+	this->animation = anim;
 	this->children = vector<shared_ptr<AttacheableObject>>();
+	this->caminho = 0;
 
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -31,7 +32,7 @@ void SceneNode::display(glm::mat4 transf, char *material, Camera *camera) {
 	auto m_scale_orig_inv = glm::translate(glm::mat4(), scaleOrig);
 	auto m_rot_orig_inv = glm::translate(glm::mat4(), rotOrig);
 
-	auto modelMatrix = m_pos * (m_rot_orig_inv * m_rot * m_rot_orig) * (m_scale_orig_inv * m_scale * m_scale_orig);
+	auto modelMatrix = m_pos *(m_rot_orig_inv * m_rot * m_rot_orig) * (m_scale_orig_inv * m_scale * m_scale_orig);
 	modelMatrix = transf * modelMatrix;
 	this->transfMatrix = modelMatrix;
 
@@ -62,6 +63,17 @@ bool SceneNode::isLeaf()
 	return false;
 }
 
+void SceneNode::applyAnimationTranslation()
+{
+	if (animation != NULL)
+		animation->applyTranslations(this);
+}
+
+void SceneNode::applyAnimationRotation()
+{
+	if (animation != NULL)
+		animation->applyRotations(this);
+}
 
 
 glm::vec3 SceneNode::getPosition()
@@ -175,6 +187,32 @@ void SceneNode::setScaleOrig(glm::vec3 orig)
 void SceneNode::setRotOrig(glm::vec3 orig)
 {
 	this->rotOrig = orig;
+}
+
+void SceneNode::setTransfMatrix(glm::mat4 transf)
+{
+	this->transfMatrix = transf;
+}
+
+
+void SceneNode::setAnimation(Animation *anim)
+{
+	this->animation = anim;
+}
+
+
+void SceneNode::Update(float seconds) {
+	if (animation!=NULL)
+	{ 
+		animation->update(seconds, false);
+		animation->applyTranslations(this);
+		animation->applyRotations(this);
+	}
+	
+	for (int x = 0; x < children.size(); x++)
+	{
+		children.at(x)->Update(seconds);
+	}
 }
 
 
