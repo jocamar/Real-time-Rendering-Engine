@@ -8,6 +8,7 @@
 #include "SceneManager.h"
 #include "Cube.h"
 #include "RenderWindow.h"
+#include "Animation.h"
 
 // Properties
 GLuint screenWidth = 800, screenHeight = 600;
@@ -62,7 +63,7 @@ int main()
 	points.push_back(glm::vec3(1, 1, 0));
 	points.push_back(glm::vec3(1, 2, 0));
 
-	Animation *anim = new LinearAnimation(points, 10000, false);
+	Animation *anim = new LinearAnimation(points, 1, true);
 	cubeNode2->setAnimation(anim);
 	cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity2));
 
@@ -93,7 +94,7 @@ int main()
 		glfwPollEvents();
 		Do_Movement();
 
-		window_.Update(sceneManager, deltaTime);
+		window_.Update(sceneManager, deltaTime*1000);
 
 		window_.Render(sceneManager);
 	}
