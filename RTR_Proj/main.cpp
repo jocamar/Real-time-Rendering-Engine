@@ -9,6 +9,7 @@
 #include "Cube.h"
 #include "RenderWindow.h"
 #include "Animation.h"
+#include "Model.h"
 
 // Properties
 GLuint screenWidth = 800, screenHeight = 600;
@@ -43,6 +44,7 @@ int main()
 	sceneManager.addMaterial("box_material", "container2.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag",Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "container.jpg", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag",Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("light_material", nullptr, nullptr, "lightVertShader.vs", "lightFragShader.frag",Material::EMITTER);
+	sceneManager.addMaterial("model", "body_dif.png", "container2_specular.png", "model.vs", "model.frag", Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial("box_material");
 
 	GLfloat amb_dir[3] = { 0.05f, 0.05f, 0.05f };
@@ -66,6 +68,10 @@ int main()
 	Animation *anim = new LinearAnimation(points, 1, true);
 	cubeNode2->setAnimation(anim);
 	cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity2));
+
+	auto cubeEntity3 = sceneManager.createEntity("entidade3", new Model("nanosuit/nanosuit.obj"));
+	auto cubeNode3 = cubeNode->createNewChildNode("cubeNode3", "model", glm::vec3(0.0, 0.0, 0.0));
+	cubeNode3->attach(shared_ptr<AttacheableObject>(cubeEntity3));
 
 	GLfloat amb[3] = { 0.5f,0.5f,0.5f };
 	GLfloat dif[3] = { 0.8f, 0.8f, 0.8f };
@@ -97,6 +103,7 @@ int main()
 		window_.Update(sceneManager, deltaTime*1000);
 
 		window_.Render(sceneManager);
+
 	}
 
 	return 0;

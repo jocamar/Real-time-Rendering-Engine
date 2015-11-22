@@ -66,9 +66,6 @@
     <ClCompile Include="RenderWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Viewport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -76,6 +73,15 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitivas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,33 +134,25 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Primitivas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="boxFragShader.frag" />
-    <None Include="lightFragShader.frag" />
-    <None Include="boxVertShader.vs" />
-    <None Include="lightVertShader.vs" />
+    <None Include="FragShader.frag" />
+    <None Include="VertShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="container2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="container2_specular.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="crying.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
