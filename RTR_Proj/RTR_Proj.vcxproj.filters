@@ -72,10 +72,13 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleMesh.cpp">
+      <Filter>Source Files\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,6 +137,9 @@
     <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RectangleMesh.h">
+      <Filter>Header Files\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="boxFragShader.frag" />
@@ -155,6 +161,30 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="crying.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="box_behind.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="box_ceiling.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="box_floor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="box_front.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="box_left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="box_right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="road.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bricks.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
