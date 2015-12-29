@@ -14,6 +14,8 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 	this->b = b;
 }
 
+
+
 void Viewport::Render(SceneManager& scene)
 {
 	glViewport(left, top, width, height);
@@ -25,6 +27,8 @@ void Viewport::Render(SceneManager& scene)
 
 	scene.render(camera);
 }
+
+
 
 bool Viewport::operator<(const Viewport& v) const
 {

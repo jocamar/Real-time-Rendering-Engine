@@ -1,16 +1,13 @@
 #pragma once
 
 #include "AttacheableObject.h"
+#include "Entity.h"
 
 class Mesh;
 
 using namespace std;
-class Light : public AttacheableObject
+class Light : public Entity
 {
-private:
-	string idEntity;
-	Mesh *EntityMesh;
-
 	GLfloat *ambient;
 	GLfloat *diffuse;
 	GLfloat *specular;
@@ -22,11 +19,11 @@ private:
 	bool directional;
 
 public:
-	Light(string idEntity, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, Mesh *EntityMesh, SceneManager *manager, SceneNode *parent = nullptr);
-	Light(string idEntity, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction, SceneManager *manager);
-	void display(glm::mat4 transf, char *material, Camera *camera = nullptr) override;
+	Light(const char *idEntity, SceneManager *manager, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, const char *modelId, SceneNode *parent = nullptr);
+	Light(const char *idEntity, SceneManager *manager, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction);
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr) override;
 	bool isLeaf() override;
-	void Update(float seconds) override {};
+	void update(float seconds) override {};
 	bool isDirectional();
 
 	GLfloat* getAmbient();

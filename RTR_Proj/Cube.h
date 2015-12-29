@@ -6,11 +6,9 @@
 using namespace std;
 class Cube : public Mesh
 {
-private:
-
 public:
-	void display() override;
-	Cube(string id);
+	Cube(const char *id, SceneManager *manager);
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr) override;
 	~Cube();
 };
 

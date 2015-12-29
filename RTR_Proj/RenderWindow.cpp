@@ -67,8 +67,9 @@ RenderWindow::~RenderWindow()
 
 void RenderWindow::Update(SceneManager& scene, float seconds)
 {
-	scene.Update(seconds);
+	scene.update(seconds);
 }
+
 
 
 void RenderWindow::Render(SceneManager& scene)

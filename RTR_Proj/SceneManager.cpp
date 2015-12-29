@@ -2,90 +2,458 @@
 
 SceneManager::SceneManager()
 {
-	this->root = std::make_unique<SceneNode>("_root", this);
-	this->materials = map<const string, Material*>();
+	this->root = new SceneNode("_root", this);
+	this->materials = vector<Material*>();
 }
 
 
 
-void SceneManager::addMaterial(char *id, char *diffuse, char *specular, char *vert, char *frag, Material::shaderTypes shaderType)
+void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, GLfloat *ambientI, GLfloat *diffuseI, char *diffuse, char *specular, Material::shaderTypes shaderType, GLint interpMethod)
 {
-	auto s = new Shader(vert, frag);
-	auto m = new Material(id, diffuse, specular, s, shaderType, this);
-	this->materials.insert(pair<const string, Material*>(id, m));
+	Material *m = this->getMaterial(id);
+
+	if (m) return;
+
+	GLfloat* tmpAmbient = new GLfloat[3];
+	GLfloat* tmpDiffuse = new GLfloat[3];
+
+	string shaderId = vert;
+	shaderId += frag;
+
+	Shader *shader = nullptr;
+	for(auto s : shaders)
+	{
+		if(strcmp(s->id,shaderId.c_str()) == 0)
+		{
+			shader = s;
+			break;
+		}
+	}
+
+	if(!shader)
+	{
+		shader = new Shader(vert, frag);
+		shaders.push_back(shader);
+	}
+
+	Texture *texture = nullptr;
+	int width, height;
+	unsigned char* image;
+
+	if(diffuse)
+	{
+		for (auto t : textures)
+		{
+			if (strcmp(t->id, diffuse) == 0)
+			{
+				texture = t;
+				break;
+			}
+		}
+
+		if (!texture)
+		{
+			texture = new Texture();
+			texture->id = diffuse;
+			glGenTextures(1, &texture->texture);
+			texture->type = "diffuse_texture";
+			// Diffuse map
+			image = SOIL_load_image(diffuse, &width, &height, 0, SOIL_LOAD_RGBA);
+			
+			glBindTexture(GL_TEXTURE_2D, texture->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			SOIL_free_image_data(image);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, interpMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, interpMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			textures.push_back(texture);
+		}
+		texture = nullptr;
+	}
+
+	if (specular)
+	{
+		for (auto t : textures)
+		{
+			if (strcmp(t->id, specular) == 0)
+			{
+				texture = t;
+				break;
+			}
+		}
+
+		if (!texture)
+		{
+			texture = new Texture();
+			texture->id = specular;
+			glGenTextures(1, &texture->texture);
+			texture->type = "specular_texture";
+			// Specular map
+			image = SOIL_load_image(specular, &width, &height, 0, SOIL_LOAD_RGBA);
+			glBindTexture(GL_TEXTURE_2D, texture->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			SOIL_free_image_data(image);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, interpMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, interpMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			textures.push_back(texture);
+		}
+		texture = nullptr;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+		 
+	if (!ambientI)
+	{
+		tmpAmbient[0] = 1.0f;
+		tmpAmbient[1] = 1.0f;
+		tmpAmbient[2] = 1.0f;
+	}
+	else
+	{
+		tmpAmbient[0] = ambientI[0];
+		tmpAmbient[1] = ambientI[1];
+		tmpAmbient[2] = ambientI[2];
+	}
+
+	if (!diffuseI)
+	{
+		tmpDiffuse[0] = 1.0f;
+		tmpDiffuse[1] = 1.0f;
+		tmpDiffuse[2] = 1.0f;
+	}
+	else
+	{
+		tmpDiffuse[0] = diffuseI[0];
+		tmpDiffuse[1] = diffuseI[1];
+		tmpDiffuse[2] = diffuseI[2];
+	}
+
+	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, diffuse, specular);
+	this->materials.push_back(m);
 }
 
 
 
-void SceneManager::addMaterial(char* id, char *diffuse, char *specular, Shader* shader, Material::shaderTypes shaderType)
+void SceneManager::addMaterial(const char* id, const char* vert, const char* frag, GLfloat* ambientI, GLfloat* diffuseI, vector<Texture*> textures, Material::shaderTypes shaderType)
 {
-	auto m = new Material(id, diffuse, specular, shader, shaderType, this);
-	this->materials.insert(pair<const string, Material*>(id, m));
+	Material *m = this->getMaterial(id);
+
+	if (m) return;
+
+	GLfloat* tmpAmbient = new GLfloat[3];
+	GLfloat* tmpDiffuse = new GLfloat[3];
+
+	string shaderId = vert;
+	shaderId += frag;
+
+	Shader *shader = nullptr;
+	for (auto s : shaders)
+	{
+		if (strcmp(s->id, shaderId.c_str()) == 0)
+		{
+			shader = s;
+			break;
+		}
+	}
+
+	if (!shader)
+	{
+		shader = new Shader(vert, frag);
+		shaders.push_back(shader);
+	}
+
+
+	if (!ambientI)
+	{
+		tmpAmbient[0] = 1.0f;
+		tmpAmbient[1] = 1.0f;
+		tmpAmbient[2] = 1.0f;
+	}
+	else
+	{
+		tmpAmbient[0] = ambientI[0];
+		tmpAmbient[1] = ambientI[1];
+		tmpAmbient[2] = ambientI[2];
+	}
+
+	if (!diffuseI)
+	{
+		tmpDiffuse[0] = 1.0f;
+		tmpDiffuse[1] = 1.0f;
+		tmpDiffuse[2] = 1.0f;
+	}
+	else
+	{
+		tmpDiffuse[0] = diffuseI[0];
+		tmpDiffuse[1] = diffuseI[1];
+		tmpDiffuse[2] = diffuseI[2];
+	}
+
+	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, textures);
+	this->materials.push_back(m);
 }
 
 
 
-void SceneManager::setDefaultMaterial(char *id)
+void SceneManager::setDefaultMaterial(int num)
 {
-	this->defaultMaterial = id;
+	this->defaultMaterial = num;
 }
 
 
 
-const char* SceneManager::getDefaultMaterialId()
+Material* SceneManager::getDefaultMaterial()
 {
-	return defaultMaterial;
-}
-
-
-Material* SceneManager::getMaterial(const char *material)
-{
-	return this->materials.find(material)->second;
+	return this->materials[defaultMaterial];
 }
 
 
 
-shared_ptr<Entity> SceneManager::createEntity(char *id, char *mesh)
+Material* SceneManager::getMaterial(int material)
 {
+	return this->materials[material];
+}
+
+
+
+Material* SceneManager::getMaterial(const char* id)
+{
+	for (int i = 0; i < materials.size(); i++)
+	{
+		if (strcmp(materials[i]->getId(), id) == 0)
+			return materials[i];
+	}
+
 	return nullptr;
 }
 
 
 
-shared_ptr<Entity> SceneManager::createEntity(char *id, Mesh *mesh)
+int SceneManager::getMaterialNum(const char* id)
 {
-	return std::make_shared<Entity>(id, mesh, this);
+	for (int i = 0; i < materials.size(); i++)
+	{
+		if (strcmp(materials[i]->getId(), id) == 0)
+			return i;
+	}
+
+	return -1;
 }
 
 
 
-shared_ptr<Light> SceneManager::createLight(char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, char* mesh)
+int SceneManager::getMaterialNum(Material* material)
 {
+	for (int i = 0; i < materials.size(); i++)
+	{
+		if (materials[i] == material)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+Shader* SceneManager::getShader(int shader)
+{
+	return shaders[shader];
+}
+
+
+
+Shader* SceneManager::getShader(const char* id)
+{
+	for (int i = 0; i < shaders.size(); i++)
+	{
+		if (strcmp(shaders[i]->id, id) == 0)
+			return shaders[i];
+	}
+
 	return nullptr;
 }
 
 
 
-shared_ptr<Light> SceneManager::createLight(char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, Mesh* mesh)
+int SceneManager::getShaderNum(const char* id)
 {
-	auto l = std::make_shared<Light>(id, ambient, diffuse, specular, constant, linear, quadratic, mesh, this);
+	for (int i = 0; i < shaders.size(); i++)
+	{
+		if (strcmp(shaders[i]->id, id) == 0)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+int SceneManager::getShaderNum(Shader* shader)
+{
+	for (int i = 0; i < shaders.size(); i++)
+	{
+		if (shaders[i] == shader)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+void SceneManager::addTexture(Texture* texture)
+{
+	this->textures.push_back(texture);
+}
+
+
+
+Texture* SceneManager::getTexture(int texture)
+{
+	return textures[texture];
+}
+
+
+
+Texture* SceneManager::getTexture(const char* id)
+{
+	for (int i = 0; i < textures.size(); i++)
+	{
+		if (strcmp(textures[i]->id, id) == 0)
+			return textures[i];
+	}
+
+	return nullptr;
+}
+
+
+
+int SceneManager::getTextureNum(const char* id)
+{
+	for (int i = 0; i < textures.size(); i++)
+	{
+		if (strcmp(textures[i]->id, id) == 0)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+int SceneManager::getTextureNum(Texture* texture)
+{
+	for (int i = 0; i < textures.size(); i++)
+	{
+		if (textures[i] == texture)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+void SceneManager::addModel(const char* id, const char* model)
+{
+	if(id)
+	{
+		Model *mod = nullptr;
+		for(auto m : models)
+		{
+			if (strcmp(m->getId(), id) == 0)
+				mod = m;
+		}
+
+		if(!mod)
+		{
+			mod = new Model(id, this, model);
+			models.push_back(mod);
+		}
+	}
+}
+
+
+
+Model* SceneManager::getModel(int model)
+{
+	return models[model];
+}
+
+
+
+Model* SceneManager::getModel(const char* id)
+{
+	for (int i = 0; i < models.size(); i++)
+	{
+		if (strcmp(models[i]->getId(), id) == 0)
+			return models[i];
+	}
+
+	return nullptr;
+}
+
+
+
+int SceneManager::getModelNum(const char* id)
+{
+	for (int i = 0; i < models.size(); i++)
+	{
+		if (strcmp(models[i]->getId(), id) == 0)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+int SceneManager::getModelNum(Model* model)
+{
+	for (int i = 0; i < models.size(); i++)
+	{
+		if (models[i] == model)
+			return i;
+	}
+
+	return -1;
+}
+
+
+
+Entity* SceneManager::createEntity(const char *id, const char *modelId)
+{
+	return new Entity(id, this, modelId);
+}
+
+
+
+Light* SceneManager::createLight(const char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, const char* modelId)
+{
+	auto l = new Light(id, this, ambient, diffuse, specular, constant, linear, quadratic, modelId);
 	lights.push_back(l);
 	return l;
 }
 
 
 
-void SceneManager::createDirectionalLight(char* id, GLfloat* ambient, GLfloat* diffuse, GLfloat* specular, GLfloat* direction)
+void SceneManager::createDirectionalLight(const char* id, GLfloat* ambient, GLfloat* diffuse, GLfloat* specular, GLfloat* direction)
 {
 	delete directionalLight;
-	this->directionalLight = new Light("directional", ambient, diffuse, specular, direction, this);
+	this->directionalLight = new Light("directional", this, ambient, diffuse, specular, direction);
 }
 
 
 
-vector<shared_ptr<Light>> SceneManager::getActiveLights()
+vector<Light*> SceneManager::getActiveLights()
 {
-	auto a_l = vector<shared_ptr<Light>>();
+	auto a_l = vector<Light*>();
 	for (auto i = 0; i < lights.size(); i++)
 	{
 		if(lights[i]->getParent())
@@ -97,22 +465,28 @@ vector<shared_ptr<Light>> SceneManager::getActiveLights()
 	return a_l;
 }
 
+
+
 Light* SceneManager::getDirectionalLight()
 {
 	return directionalLight;
 }
 
 
+
 SceneNode* SceneManager::getRoot()
 {
-	return root.get();
+	return root;
 }
 
 
-void SceneManager::Update(float seconds)
+
+void SceneManager::update(float seconds)
 {
-	root->Update(seconds);
+	root->update(seconds);
 }
+
+
 
 void SceneManager::render(Camera *camera)
 {
@@ -123,4 +497,10 @@ void SceneManager::render(Camera *camera)
 
 	auto mat = glm::mat4();
 	root->display(mat, defaultMaterial, camera);
+}
+
+
+
+void SceneManager::getRenderNodes()
+{
 }

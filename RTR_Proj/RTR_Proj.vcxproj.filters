@@ -140,6 +140,12 @@
     <ClInclude Include="RectangleMesh.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="SceneRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="boxFragShader.frag" />
@@ -185,6 +191,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="bricks.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="black.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

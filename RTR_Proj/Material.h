@@ -6,26 +6,37 @@ class SceneManager;
 
 class Camera;
 
+struct Texture {
+	const char *id;
+	GLuint texture;
+	char *type;
+};
+
 class Material
 {
 protected:
 	const char *id;
 	Shader *shader;
-	GLuint diffuseMap;
-	GLuint specularMap;
+
+	vector<Texture*> textures;
 	GLuint emissionMap;
+	GLfloat* ambientIntensity;
+	GLfloat* diffuseIntensity;
 
 	int shaderType;
 
-	SceneManager *sceneManager;
+	SceneManager *manager;
 public:
 	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER};
 
-	Material(const char *id, const char* diffuse, const char* specular, Shader *shader, shaderTypes shaderType, SceneManager *manager);
+	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI, const char *diffuseId = nullptr, const char *specularId = nullptr);
+	Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI, vector<Texture*> textures);
 	~Material();
+
+	const char* getId();
 	Shader* getShader();
-	GLuint getDiffuseMap();
-	GLuint getSpecMap();
+	vector<Texture*> getDiffuseMaps();
+	vector<Texture*> getSpecMaps();
 	GLuint getEmissionMap();
 
 	void use(Camera *camera);

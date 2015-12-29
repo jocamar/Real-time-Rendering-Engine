@@ -1,11 +1,9 @@
 #include "SceneManager.h"
 
-SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, Animation *anim) : AttacheableObject(manager, parent)
+SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, Animation *anim) : AttacheableObject(id, manager, parent)
 {
-	this->id = id;
 	this->animation = anim;
-	this->children = vector<shared_ptr<AttacheableObject>>();
-	this->caminho = 0;
+	this->children = vector<AttacheableObject*>();
 
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -21,7 +19,7 @@ SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, A
 
 
 
-void SceneNode::display(glm::mat4 transf, char *material, Camera *camera) {
+void SceneNode::display(glm::mat4 transf, int material, Camera *camera) {
 	
 	auto m_pos = glm::translate(glm::mat4(), position);
 	auto m_scale = glm::scale(glm::mat4(), scale);
@@ -36,8 +34,8 @@ void SceneNode::display(glm::mat4 transf, char *material, Camera *camera) {
 	modelMatrix = transf * modelMatrix;
 	this->transfMatrix = modelMatrix;
 
-	char *mat;
-	if (this->material)
+	int mat;
+	if (this->material >= 0)
 		mat = this->material;
 	else mat = material;
 
@@ -48,7 +46,9 @@ void SceneNode::display(glm::mat4 transf, char *material, Camera *camera) {
 	
 }
 
-void SceneNode::attach(shared_ptr<AttacheableObject> object)
+
+
+void SceneNode::attach(AttacheableObject *object)
 {
 	object->setParent(this);
 	this->children.push_back(object);
@@ -63,17 +63,22 @@ bool SceneNode::isLeaf()
 	return false;
 }
 
+
+
 void SceneNode::applyAnimationTranslation()
 {
-	if (animation != NULL)
+	if (animation != nullptr)
 		animation->applyTranslations(this);
 }
 
+
+
 void SceneNode::applyAnimationRotation()
 {
-	if (animation != NULL)
+	if (animation != nullptr)
 		animation->applyRotations(this);
 }
+
 
 
 glm::vec3 SceneNode::getPosition()
@@ -201,8 +206,8 @@ void SceneNode::setAnimation(Animation *anim)
 }
 
 
-void SceneNode::Update(float seconds) {
-	if (animation!=NULL)
+void SceneNode::update(float seconds) {
+	if (animation!=nullptr)
 	{ 
 		animation->update(seconds, false);
 		animation->applyTranslations(this);
@@ -211,20 +216,20 @@ void SceneNode::Update(float seconds) {
 	
 	for (int x = 0; x < children.size(); x++)
 	{
-		children.at(x)->Update(seconds);
+		children.at(x)->update(seconds);
 	}
 }
 
 
 
-shared_ptr<SceneNode> SceneNode::createNewChildNode(char* id)
+SceneNode* SceneNode::createNewChildNode(char* id)
 {
 	return this->createNewChildNode(id, nullptr, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 
 
-shared_ptr<SceneNode> SceneNode::createNewChildNode(char* id, char *material, glm::vec3 position, glm::quat orientation, glm::vec3 scale)
+SceneNode* SceneNode::createNewChildNode(char* id, char *material, glm::vec3 position, glm::quat orientation, glm::vec3 scale)
 {
 	auto nodePtr = new SceneNode(id, this->manager);
 	nodePtr->setMaterial(material);
@@ -232,10 +237,8 @@ shared_ptr<SceneNode> SceneNode::createNewChildNode(char* id, char *material, gl
 	nodePtr->changeOrientation(orientation);
 	nodePtr->changeScale(scale);
 
-	shared_ptr<SceneNode> node(nodePtr);
-
-	this->attach(shared_ptr<AttacheableObject>(node));
-	return node;
+	this->attach(nodePtr);
+	return nodePtr;
 }
 
 

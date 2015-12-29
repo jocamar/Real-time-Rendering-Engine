@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -9,7 +8,9 @@
 
 class Shader
 {
+	std::string shaderId;
 public:
+	const char *id;
 	GLuint Program;
 	GLint ModelLoc;
 	GLint ViewLoc;
@@ -18,6 +19,10 @@ public:
 	// Constructor generates the shader on the fly
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 	{
+		shaderId = vertexPath;
+		shaderId += fragmentPath;
+		id = shaderId.c_str();
+
 		// 1. Retrieve the vertex/fragment source code from filePath
 		std::string vertexCode;
 		std::string fragmentCode;
