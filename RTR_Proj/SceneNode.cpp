@@ -206,17 +206,17 @@ void SceneNode::setAnimation(Animation *anim)
 }
 
 
-void SceneNode::update(float seconds) {
+void SceneNode::update(float millis) {
 	if (animation!=nullptr)
 	{ 
-		animation->update(seconds, false);
+		animation->update(millis, false);
 		animation->applyTranslations(this);
 		animation->applyRotations(this);
 	}
 	
 	for (int x = 0; x < children.size(); x++)
 	{
-		children.at(x)->update(seconds);
+		children.at(x)->update(millis);
 	}
 }
 

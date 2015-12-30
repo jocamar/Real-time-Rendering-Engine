@@ -2,7 +2,8 @@
 #include "Camera.h"
 #include "SceneManager.h"
 
-Material::Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI, const char *diffuseId, const char *specularId)
+Material::Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI,
+						GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel, const char *diffuseId, const char *specularId)
 {
 	this->id = id;
 	this->shader = manager->getShader(shaderId);
@@ -11,6 +12,10 @@ Material::Material(const char *id, SceneManager *manager, const char *shaderId, 
 	
 	this->ambientIntensity = ambientI;
 	this->diffuseIntensity = diffuseI;
+	this->specularIntensity = specularI;
+	this->shininess = shininess;
+	this->opacity = opacity;
+	this->shadingModel = shadingModel;
 	
 	if(diffuseId)
 		textures.push_back(manager->getTexture(diffuseId));
@@ -23,7 +28,8 @@ Material::Material(const char *id, SceneManager *manager, const char *shaderId, 
 
 
 
-Material::Material(const char* id, SceneManager* manager, const char* shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI, vector<Texture*> textures)
+Material::Material(const char* id, SceneManager* manager, const char* shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI,
+						GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel, vector<Texture*> textures)
 {
 	this->id = id;
 	this->shader = manager->getShader(shaderId);
@@ -32,6 +38,10 @@ Material::Material(const char* id, SceneManager* manager, const char* shaderId, 
 
 	this->ambientIntensity = ambientI;
 	this->diffuseIntensity = diffuseI;
+	this->specularIntensity = specularI;
+	this->shininess = shininess;
+	this->opacity = opacity;
+	this->shadingModel = shadingModel;
 
 	this->textures = textures;
 
@@ -107,12 +117,11 @@ void Material::use(Camera *camera)
 		GLint viewPosLoc = glGetUniformLocation(shader->Program, "viewPos");
 		glUniform3f(viewPosLoc, camera->Position.x, camera->Position.y, camera->Position.z);
 
-		glUniform1f(glGetUniformLocation(shader->Program, "material.shininess"), 32.0f); //parameterize this
-		glUniform1i(glGetUniformLocation(shader->Program, "material.diffuse"), 0);
-		glUniform1i(glGetUniformLocation(shader->Program, "material.specular"), 1);
+		glUniform1f(glGetUniformLocation(shader->Program, "material.shininess"), this->shininess); 
+		glUniform1f(glGetUniformLocation(shader->Program, "material.opacity"), this->opacity);
+
 		GLuint diffuseNr = 1;
 		GLuint specularNr = 1;
-		bool spec_active = false;
 		for (GLuint i = 0; i < this->textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
@@ -125,23 +134,15 @@ void Material::use(Camera *camera)
 			else if (name == "specular_texture")
 			{
 				ss << specularNr++; // Transfer GLuint to stream
-				spec_active = true;
 			}
 			number = ss.str();
 
-			glUniform1f(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
+			glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i]->texture);
 		}
 		glActiveTexture(GL_TEXTURE0);
 
-		if(spec_active)
-		{
-			glUniform1i(glGetUniformLocation(shader->Program, "material.spec_active"), 1);
-		}
-		else
-		{
-			glUniform1i(glGetUniformLocation(shader->Program, "material.spec_active"), 0);
-		}
+		glUniform1i(glGetUniformLocation(shader->Program, "material.shading_model"), this->shadingModel);
 
 		if (ambientIntensity)
 		{
@@ -151,6 +152,11 @@ void Material::use(Camera *camera)
 		if (diffuseIntensity)
 		{
 			glUniform3f(glGetUniformLocation(shader->Program, "material.diffuseI"), diffuseIntensity[0], diffuseIntensity[1], diffuseIntensity[2]);
+		}
+
+		if (specularIntensity)
+		{
+			glUniform3f(glGetUniformLocation(shader->Program, "material.specularI"), specularIntensity[0], specularIntensity[1], specularIntensity[2]);
 		}
 
 		auto directionalLight = this->manager->getDirectionalLight();

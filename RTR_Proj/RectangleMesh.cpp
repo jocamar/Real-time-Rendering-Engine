@@ -77,7 +77,7 @@ void RectangleMesh::display(glm::mat4 transf, int material, Camera *camera) {
 	glm::mat4 view;
 	view = camera->GetViewMatrix();
 	glm::mat4 projection;
-	projection = glm::perspective(camera->Zoom, (float)800 / (float)600, 0.1f, 1000.0f);
+	projection = glm::perspective(camera->Zoom, (float)1280 / (float)720, 0.1f, 1000.0f);
 
 	// Pass the matrices to the shader
 	glUniformMatrix4fv(s->getShader()->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));

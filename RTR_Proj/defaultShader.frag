@@ -8,9 +8,10 @@ struct Material {
 	sampler2D specular_texture2;
 	vec3 ambientI;
 	vec3 diffuseI;
+	vec3 specularI;
     float shininess;
-	int spec_active;
-
+	float opacity;
+	int shading_model;
 }; 
 
 struct DirLight {
@@ -39,7 +40,8 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
 
-out vec4 color;
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 brightColor;
 
 uniform vec3 viewPos;
 uniform int activeLights;
@@ -72,9 +74,28 @@ void main()
     // result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     
 	vec4 textureColor = mix(texture(material.diffuse_texture1, TexCoords), texture(material.diffuse_texture2, TexCoords), 1);
-	if (textureColor.a < 0.1)
+	
+	float opacity = textureColor.a*material.opacity;
+	if (opacity < 0.1)
 		discard;
-	color = vec4(result, textureColor.a);
+
+	if(material.shading_model == 0)
+	{
+		vec3 Kd = (1 - textureColor.a)* material.diffuseI + textureColor.a*vec3(textureColor);
+		color = vec4(Kd, opacity);
+
+		float brightness = dot(Kd, vec3(0.2126, 0.7152, 0.0722));
+		if (brightness > 1.0)
+			brightColor = vec4(Kd, 1);
+		else brightColor = vec4(0, 0, 0, 1);
+	}
+	else {
+		color = vec4(result, opacity);
+		float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
+		if (brightness > 1.0)
+			brightColor = vec4(result, opacity);
+		else brightColor = vec4(0, 0, 0, 1);
+	}
 }
 
 // Calculates the color when using a directional light.
@@ -86,16 +107,24 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     // Specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    // Combine results
-	vec4 color = mix(texture(material.diffuse_texture1, TexCoords), texture(material.diffuse_texture2, TexCoords), 1);
-	vec4 spec_color = mix(texture(material.specular_texture1, TexCoords), texture(material.specular_texture2, TexCoords), 1);
-    vec3 ambient = light.ambient * material.ambientI * vec3(color);
-    vec3 diffuse = light.diffuse * material.diffuseI * diff * vec3(color);
-    vec3 specular = light.specular * spec * vec3(spec_color);
 
-	if(material.spec_active == 1)
+    // Combine results
+	//(1-texture alpha) * material ambient + texture alpha * texture value
+	vec4 color = mix(texture(material.diffuse_texture1, TexCoords), texture(material.diffuse_texture2, TexCoords), 1);
+	vec4 spec_color = mix(texture(material.specular_texture1, TexCoords), texture(material.specular_texture1, TexCoords), 1);
+
+	vec3 Kd = (1 - color.a)* material.diffuseI + color.a*vec3(color);
+	vec3 Ka = (1 - color.a)* material.ambientI + color.a*vec3(color);
+	vec3 Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+
+    vec3 ambient = light.ambient * Ka;
+    vec3 diffuse = light.diffuse * diff * Kd;
+    vec3 specular = light.specular * spec * Ks;
+
+	if(material.shading_model == 2)
 		return ambient + diffuse + specular;
-	else return ambient + diffuse;
+	else 
+		return ambient + diffuse;
 }
 
 // Calculates the color when using a point light.
@@ -112,16 +141,22 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     // Combine results
 	vec4 color = mix(texture(material.diffuse_texture1, TexCoords), texture(material.diffuse_texture2, TexCoords), 1);
-	vec4 spec_color = mix(texture(material.specular_texture1, TexCoords), texture(material.specular_texture2, TexCoords), 1);
+	vec4 spec_color = mix(texture(material.specular_texture1, TexCoords), texture(material.specular_texture1, TexCoords),1);
 
-    vec3 ambient = light.ambient * material.ambientI * vec3(color);
-    vec3 diffuse = light.diffuse * material.diffuseI * diff * vec3(color);
-    vec3 specular = light.specular * spec * vec3(spec_color);
+	vec3 Kd = (1 - color.a)* material.diffuseI + color.a*vec3(color);
+	vec3 Ka = (1 - color.a)* material.ambientI + color.a*vec3(color);
+	vec3 Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+
+	vec3 ambient = light.ambient * Ka;
+	vec3 diffuse = light.diffuse * diff * Kd;
+	vec3 specular = light.specular * spec * Ks;
+
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
 
-	if(material.spec_active == 1)
+	if (material.shading_model == 2)
 		return ambient + diffuse + specular;
-	else return ambient + diffuse;
+	else
+		return ambient + diffuse;
 }

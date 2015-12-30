@@ -22,6 +22,11 @@ protected:
 	GLuint emissionMap;
 	GLfloat* ambientIntensity;
 	GLfloat* diffuseIntensity;
+	GLfloat* specularIntensity;
+	GLfloat shininess;
+	GLfloat opacity;
+	int shadingModel;
+
 
 	int shaderType;
 
@@ -29,8 +34,10 @@ protected:
 public:
 	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER};
 
-	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI, const char *diffuseId = nullptr, const char *specularId = nullptr);
-	Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI, vector<Texture*> textures);
+	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, 
+					GLfloat opacity, int shadingModel, const char *diffuseId = nullptr, const char *specularId = nullptr);
+	Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess,
+					GLfloat opacity, int shadingModel, vector<Texture*> textures);
 	~Material();
 
 	const char* getId();

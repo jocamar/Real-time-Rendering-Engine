@@ -24,8 +24,13 @@ public:
 
 	SceneManager();
 
-	void addMaterial(const char *id, const char *vert, const char *frag, GLfloat *ambientI, GLfloat *diffuseI, char *diffuse = nullptr, char *specular = nullptr, Material::shaderTypes shaderType = Material::LIGHTING, GLint interpMethod = GL_REPEAT);
-	void addMaterial(const char *id, const char *vert, const char *frag, GLfloat *ambientI, GLfloat *diffuseI, vector<Texture*> textures, Material::shaderTypes shaderType = Material::LIGHTING);
+	void addMaterial(const char *id, const char *vert, const char *frag, char *diffuse = nullptr, char *specular = nullptr, GLfloat *ambientI = nullptr, 
+												GLfloat *diffuseI = nullptr, GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, 
+												int shadingModel = 1, Material::shaderTypes shaderType = Material::LIGHTING, GLint interpMethod = GL_REPEAT);
+
+	void addMaterial(const char *id, const char *vert, const char *frag, vector<Texture*> textures, GLfloat *ambientI = nullptr, GLfloat *diffuseI = nullptr,
+												GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, int shadingModel = 1,
+												Material::shaderTypes shaderType = Material::LIGHTING);
 	void setDefaultMaterial(int num);
 	Material* getDefaultMaterial();
 	Material* getMaterial(int material);
@@ -60,7 +65,7 @@ public:
 
 	SceneNode* getRoot();
 	
-	void update(float seconds);
+	void update(float millis);
 	void render(Camera *camera);
 
 	void getRenderNodes();

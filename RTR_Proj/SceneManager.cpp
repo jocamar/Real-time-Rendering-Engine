@@ -8,7 +8,9 @@ SceneManager::SceneManager()
 
 
 
-void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, GLfloat *ambientI, GLfloat *diffuseI, char *diffuse, char *specular, Material::shaderTypes shaderType, GLint interpMethod)
+void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, char *diffuse, char *specular, GLfloat *ambientI, 
+										GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel,
+										Material::shaderTypes shaderType, GLint interpMethod)
 {
 	Material *m = this->getMaterial(id);
 
@@ -16,6 +18,7 @@ void SceneManager::addMaterial(const char *id, const char *vert, const char *fra
 
 	GLfloat* tmpAmbient = new GLfloat[3];
 	GLfloat* tmpDiffuse = new GLfloat[3];
+	GLfloat* tmpSpecular = new GLfloat[3];
 
 	string shaderId = vert;
 	shaderId += frag;
@@ -134,13 +137,27 @@ void SceneManager::addMaterial(const char *id, const char *vert, const char *fra
 		tmpDiffuse[2] = diffuseI[2];
 	}
 
-	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, diffuse, specular);
+	if (!specularI)
+	{
+		tmpSpecular[0] = 1.0f;
+		tmpSpecular[1] = 1.0f;
+		tmpSpecular[2] = 1.0f;
+	}
+	else
+	{
+		tmpSpecular[0] = specularI[0];
+		tmpSpecular[1] = specularI[1];
+		tmpSpecular[2] = specularI[2];
+	}
+
+	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, tmpSpecular, shininess, opacity, shadingModel, diffuse, specular);
 	this->materials.push_back(m);
 }
 
 
 
-void SceneManager::addMaterial(const char* id, const char* vert, const char* frag, GLfloat* ambientI, GLfloat* diffuseI, vector<Texture*> textures, Material::shaderTypes shaderType)
+void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, vector<Texture*> textures, GLfloat *ambientI, GLfloat *diffuseI, 
+									GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel, Material::shaderTypes shaderType)
 {
 	Material *m = this->getMaterial(id);
 
@@ -148,6 +165,7 @@ void SceneManager::addMaterial(const char* id, const char* vert, const char* fra
 
 	GLfloat* tmpAmbient = new GLfloat[3];
 	GLfloat* tmpDiffuse = new GLfloat[3];
+	GLfloat* tmpSpecular = new GLfloat[3];
 
 	string shaderId = vert;
 	shaderId += frag;
@@ -195,7 +213,20 @@ void SceneManager::addMaterial(const char* id, const char* vert, const char* fra
 		tmpDiffuse[2] = diffuseI[2];
 	}
 
-	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, textures);
+	if (!specularI)
+	{
+		tmpSpecular[0] = 1.0f;
+		tmpSpecular[1] = 1.0f;
+		tmpSpecular[2] = 1.0f;
+	}
+	else
+	{
+		tmpSpecular[0] = specularI[0];
+		tmpSpecular[1] = specularI[1];
+		tmpSpecular[2] = specularI[2];
+	}
+
+	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, tmpSpecular, shininess, opacity, shadingModel, textures);
 	this->materials.push_back(m);
 }
 
@@ -481,9 +512,9 @@ SceneNode* SceneManager::getRoot()
 
 
 
-void SceneManager::update(float seconds)
+void SceneManager::update(float millis)
 {
-	root->update(seconds);
+	root->update(millis);
 }
 
 

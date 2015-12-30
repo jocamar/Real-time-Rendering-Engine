@@ -128,9 +128,6 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -146,12 +143,19 @@
     <ClInclude Include="WorldManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="boxFragShader.frag" />
     <None Include="lightFragShader.frag" />
-    <None Include="boxVertShader.vs" />
     <None Include="lightVertShader.vs" />
+    <None Include="defaultShader.frag" />
+    <None Include="defaultShader.vs" />
+    <None Include="screen.vs" />
+    <None Include="screen.frag" />
+    <None Include="blur.vs" />
+    <None Include="blur.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">

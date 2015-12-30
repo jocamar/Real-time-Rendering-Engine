@@ -45,7 +45,7 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera) {
 	glm::mat4 view;
 	view = camera->GetViewMatrix();
 	glm::mat4 projection;
-	projection = glm::perspective(camera->Zoom, (float)800 / (float)600, 0.1f, 1000.0f);
+	projection = glm::perspective(camera->Zoom, (float)1280 / (float)720, 0.1f, 1000.0f);
 
 	// Pass the matrices to the shader
 	glUniformMatrix4fv(s->getShader()->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -243,14 +243,33 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		tmp_c[tmp.size()] = '\0';
 		materialId = tmp_c;
 
-		GLfloat amb[3] = { 0.2f, 0.2f, 0.2f };
+		aiColor3D amb_color(0.f, 0.f, 0.f);
+		material->Get(AI_MATKEY_COLOR_AMBIENT, amb_color);
+		GLfloat amb[3] = { amb_color.r, amb_color.g, amb_color.b };
 
-		manager->addMaterial(tmp_c, "boxVertShader.vs", "boxFragShader.frag", amb, nullptr, textures, Material::LIGHTING_TEXTURED);
+		aiColor3D dif_color(0.f, 0.f, 0.f);
+		material->Get(AI_MATKEY_COLOR_AMBIENT, dif_color);
+		GLfloat dif[3] = { dif_color.r, dif_color.g, dif_color.b };
+
+		aiColor3D spec_color(0.f, 0.f, 0.f);
+		material->Get(AI_MATKEY_COLOR_AMBIENT, spec_color);
+		GLfloat spec[3] = { spec_color.r, spec_color.g, spec_color.b };
+
+		float shininess = 0.0;
+		material->Get(AI_MATKEY_SHININESS, shininess);
+		float opacity = 0.0;
+		material->Get(AI_MATKEY_OPACITY, opacity);
+		int model;
+		material->Get(AI_MATKEY_SHADING_MODEL, model);
+
+		manager->addMaterial(tmp_c, "defaultShader.vs", "defaultShader.frag", textures, amb, dif, spec, shininess, opacity, model, Material::LIGHTING_TEXTURED);
 	}
 
 	// Return a mesh object created from the extracted mesh data
 	return new Mesh(this->id, this->manager, vertices, indices, materialId);
 }
+
+
 
 vector<Texture*> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, char *typeName)
 {
