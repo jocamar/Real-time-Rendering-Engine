@@ -36,7 +36,7 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
+	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", true, true);
 	auto vp = window_.addViewPort(&camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
 	//window_.addViewPort(&camera2, 450, 0, 450, 300, 1, 1);
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
@@ -44,31 +44,32 @@ int main()
 	GLfloat ambient[] = { 0.1, 0.1, 0.1 };
 	GLfloat diffuse[] = { 0.0, 0.0, 0.0 };
 	GLfloat specular[] = { 0.0, 0.0, 0.0 };
+	GLfloat specular_brick[] = { 0.5, 0.5, 0.5 };
 	SceneManager sceneManager;
-	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, nullptr, 0, 1, 1, Material::EMITTER);
-	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "box_front.png", "black.png", nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "box_behind.png", "black.png", nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "box_left.png", "black.png", nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_right", "defaultShader.vs", "defaultShader.frag", "box_right.png", "black.png", nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "box_ceiling.png", "black.png", nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "box_floor.png", "black.png", nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", "black.png", ambient, nullptr, specular, 0, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "bricks.jpg", "black.png", ambient, nullptr, specular, 0, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0, 1, 1, Material::EMITTER);
+	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "box_front.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "box_behind.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "box_left.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_right", "defaultShader.vs", "defaultShader.frag", "box_right.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "box_ceiling.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "box_floor.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", nullptr, nullptr, ambient, nullptr, specular, 1, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);
 	auto plane = sceneManager.getModel("plane");
-	plane->addMesh(new RectangleMesh("top", &sceneManager, 10));
+	plane->addMesh(new RectangleMesh("top", &sceneManager, 1));
 
 	sceneManager.addModel("planeGround", nullptr);
 	auto planeG = sceneManager.getModel("planeGround");
-	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 100));
+	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 10));
 
 	sceneManager.addModel("planeWall", nullptr);
 	auto planeW = sceneManager.getModel("planeWall");
-	planeW->addMesh(new RectangleMesh("wall", &sceneManager, 100, 2.5, 5));
+	planeW->addMesh(new RectangleMesh("wall", &sceneManager, 10, 4, 3));
 
 	sceneManager.addModel("cube", nullptr);
 	auto cube = sceneManager.getModel("cube");
@@ -79,13 +80,13 @@ int main()
 	//sceneManager.addModel("nanosuit", "CODMapShipment/Files/CODMapShipment.obj");
 	//sceneManager.addModel("nanosuit", "castle/castle.obj");
 	//sceneManager.addModel("nanosuit", "Small Tropical Island/Small Tropical Island.obj");
-	//sceneManager.addModel("nanosuit", "nanosuit/nanosuit.obj");
+	sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
 	//sceneManager.addModel("nanosuit", "city/Center City Sci-Fi.obj");
 	//sceneManager.addModel("nanosuit", "Damaged Downtown/Downtown_Damage_0.obj");
 
 	GLfloat amb_dir[3] = { 0.1f, 0.1f, 0.1f };
-	GLfloat dif_dir[3] = { 0.3f, 0.3f, 0.3f };
-	GLfloat spec_dir[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat dif_dir[3] = { 0.2f, 0.2f, 0.2f };
+	GLfloat spec_dir[3] = { 0.1f, 0.1f, 0.1f };
 	GLfloat dir[3] = { 0.5f, -0.2f, -1.0f };
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
@@ -161,10 +162,10 @@ int main()
 	cubeNode2->yaw(30);
 	cubeNode2->attach(cubeEntity);
 
-	auto nanosuitEntity = sceneManager.createEntity("entidade2", "cube");
+	auto nanosuitEntity = sceneManager.createEntity("entidade2", "nanosuit");
 	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(0.5f, 1.0f, 1.0f));
-	cubeNode3->yaw(15);
-	//cubeNode3->changeScale(glm::vec3(0.1, 0.1, 0.1));
+	cubeNode3->yaw(90);
+	cubeNode3->changeScale(glm::vec3(0.5, 0.5, 0.5));
 	cubeNode3->attach(nanosuitEntity);
 
 	vector<glm::vec3> points;
@@ -173,10 +174,10 @@ int main()
 	points.push_back(glm::vec3(-2, 0, 0));
 	points.push_back(glm::vec3(0, 0, 0));
 
-	Animation *anim = new LinearAnimation(points, 5, true);
+	Animation *anim = new LinearAnimation(points, 15, true);
 
-	GLfloat amb[3] = { 0.1f,0.1f,0.1f };
-	GLfloat dif[3] = { 1.0f, 1.0f, 1.0f };
+	GLfloat amb[3] = { 0.1f, 0.1f, 0.1f };
+	GLfloat dif[3] = { 0.5f, 0.5f, 0.5f };
 	GLfloat spec[3] = { 1.0f, 1.0f, 1.0f };
 
 	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.2f, 0.001f, "cube");
@@ -185,9 +186,12 @@ int main()
 	lightNode->attach(light1);
 	lightNode->setAnimation(anim);
 
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	double lastTime = glfwGetTime();
+
+	int nbFrames = 0;
 
 	// Game loop
 	while (!window_.close())
@@ -196,6 +200,17 @@ int main()
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		nbFrames++;
+
+		if (currentFrame - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
+
+											 // printf and reset timer
+			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
+			nbFrames = 0;
+			lastTime += 1.0;
+
+		}
 
 		// Check and call events
 		glfwPollEvents();

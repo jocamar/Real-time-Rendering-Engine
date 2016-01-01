@@ -140,7 +140,7 @@ void Viewport::Render(SceneManager& scene)
 
 	// 2. Blur bright fragments w/ two-pass Gaussian Blur 
 	GLboolean horizontal = true, first_iteration = true;
-	GLuint amount = 20;
+	GLuint amount = 10;
 	blurShader->Use();
 	for (GLuint i = 0; i < amount; i++)
 	{

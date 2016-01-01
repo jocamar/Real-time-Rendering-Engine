@@ -28,6 +28,7 @@ protected:
 	GLuint DepthRbo;
 	GLuint textureColorbuffers[2];
 	GLuint pingpongFbo[2];
+
 	GLuint pingpongColorbuffers[2];
 
 	Shader *screenShader;

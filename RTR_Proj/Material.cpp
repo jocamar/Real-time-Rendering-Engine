@@ -3,7 +3,7 @@
 #include "SceneManager.h"
 
 Material::Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat* ambientI, GLfloat* diffuseI,
-						GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel, const char *diffuseId, const char *specularId)
+						GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel, const char *diffuseId, const char *specularId, const char *normalId)
 {
 	this->id = id;
 	this->shader = manager->getShader(shaderId);
@@ -22,6 +22,9 @@ Material::Material(const char *id, SceneManager *manager, const char *shaderId, 
 
 	if(specularId)
 		textures.push_back(manager->getTexture(specularId));
+
+	if (normalId)
+		textures.push_back(manager->getTexture(normalId));
 
 	glGenTextures(1, &emissionMap);
 }
@@ -122,6 +125,7 @@ void Material::use(Camera *camera)
 
 		GLuint diffuseNr = 1;
 		GLuint specularNr = 1;
+		GLuint normalNr = 1;
 		for (GLuint i = 0; i < this->textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
@@ -135,8 +139,13 @@ void Material::use(Camera *camera)
 			{
 				ss << specularNr++; // Transfer GLuint to stream
 			}
+			else if (name == "normal_texture")
+			{
+				ss << normalNr++;
+			}
 			number = ss.str();
 
+			glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number + "_active").c_str()), 1);
 			glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i]->texture);
 		}
@@ -201,5 +210,46 @@ void Material::use(Camera *camera)
 			glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].linear").c_str()), linear);
 			glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].quadratic").c_str()), quadratic);
 		}
+	} 
+	else if(shaderType == EMITTER)
+	{
+		if (diffuseIntensity)
+		{
+			glUniform3f(glGetUniformLocation(shader->Program, "diffuse"), diffuseIntensity[0], diffuseIntensity[1], diffuseIntensity[2]);
+		}
+		else
+		{
+			glUniform3f(glGetUniformLocation(shader->Program, "diffuse"), 1.0, 1.0, 1.0);
+		}
 	}
+}
+
+void Material::unUse(Camera* camera)
+{
+	GLuint diffuseNr = 1;
+	GLuint specularNr = 1;
+	GLuint normalNr  = 1;
+	for (GLuint i = 0; i < this->textures.size(); i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
+										  // Retrieve texture number (the N in diffuse_textureN)
+		stringstream ss;
+		string number;
+		string name = this->textures[i]->type;
+		if (name == "diffuse_texture")
+			ss << diffuseNr++; // Transfer GLuint to stream
+		else if (name == "specular_texture")
+		{
+			ss << specularNr++; // Transfer GLuint to stream
+		}
+		else if (name == "normal_texture")
+		{
+			ss << normalNr++;
+		}
+		number = ss.str();
+
+		glBindTexture(GL_TEXTURE_2D, NULL);
+		glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number + "_active").c_str()), 0);
+	}
+	glActiveTexture(GL_TEXTURE0);
 }

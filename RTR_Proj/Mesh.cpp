@@ -55,6 +55,8 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera) {
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
+	s->unUse(camera);
 }
 
 
@@ -97,6 +99,14 @@ void Mesh::setupMesh()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
 		(GLvoid*)offsetof(Vertex, TexCoords));
 
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		(GLvoid*)offsetof(Vertex, Tangent));
+
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		(GLvoid*)offsetof(Vertex, Bitangent));
+
 	glBindVertexArray(0);
 }
 
@@ -110,7 +120,7 @@ Model::Model(const char *id, SceneManager *manager, const char *path)
 	if(path)
 	{
 		Assimp::Importer import;
-		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
 
 		if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -193,6 +203,30 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		{
 			vertex.Normal = glm::vec3(0, 1, 0);
 		}
+
+		if (mesh->mTangents)
+		{
+			vector.x = mesh->mTangents[i].x;
+			vector.y = mesh->mTangents[i].y;
+			vector.z = mesh->mTangents[i].z;
+			vertex.Tangent = vector;
+		}
+		else
+		{
+			vertex.Tangent = glm::vec3(1, 0, 0);
+		}
+
+		if (mesh->mBitangents)
+		{
+			vector.x = mesh->mBitangents[i].x;
+			vector.y = mesh->mBitangents[i].y;
+			vector.z = mesh->mBitangents[i].z;
+			vertex.Bitangent = vector;
+		}
+		else
+		{
+			vertex.Bitangent = glm::vec3(0, 0, 1);
+		}
 		
 		// Texture Coordinates
 		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
@@ -235,6 +269,9 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		// 2. Specular maps
 		vector<Texture*> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "specular_texture");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+		vector<Texture*> bumpMaps = this->loadMaterialTextures(material, aiTextureType_HEIGHT, "normal_texture");
+		textures.insert(textures.end(), bumpMaps.begin(), bumpMaps.end());
 
 		std::string tmp = this->id;
 		tmp += std::to_string(mesh->mMaterialIndex);

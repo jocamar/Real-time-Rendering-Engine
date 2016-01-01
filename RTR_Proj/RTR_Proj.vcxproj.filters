@@ -200,5 +200,11 @@
     <Image Include="black.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="154_norm.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="154.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

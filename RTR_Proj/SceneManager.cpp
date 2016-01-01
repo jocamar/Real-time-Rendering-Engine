@@ -8,7 +8,7 @@ SceneManager::SceneManager()
 
 
 
-void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, char *diffuse, char *specular, GLfloat *ambientI, 
+void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, char *diffuse, char *specular, char *normal, GLfloat *ambientI,
 										GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel,
 										Material::shaderTypes shaderType, GLint interpMethod)
 {
@@ -108,6 +108,38 @@ void SceneManager::addMaterial(const char *id, const char *vert, const char *fra
 		texture = nullptr;
 	}
 
+	if (normal)
+	{
+		for (auto t : textures)
+		{
+			if (strcmp(t->id, normal) == 0)
+			{
+				texture = t;
+				break;
+			}
+		}
+
+		if (!texture)
+		{
+			texture = new Texture();
+			texture->id = normal;
+			glGenTextures(1, &texture->texture);
+			texture->type = "normal_texture";
+			// Specular map
+			image = SOIL_load_image(normal, &width, &height, 0, SOIL_LOAD_RGBA);
+			glBindTexture(GL_TEXTURE_2D, texture->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			SOIL_free_image_data(image);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, interpMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, interpMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			textures.push_back(texture);
+		}
+		texture = nullptr;
+	}
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 		 
@@ -150,7 +182,7 @@ void SceneManager::addMaterial(const char *id, const char *vert, const char *fra
 		tmpSpecular[2] = specularI[2];
 	}
 
-	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, tmpSpecular, shininess, opacity, shadingModel, diffuse, specular);
+	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, tmpSpecular, shininess, opacity, shadingModel, diffuse, specular, normal);
 	this->materials.push_back(m);
 }
 

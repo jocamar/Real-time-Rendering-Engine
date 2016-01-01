@@ -35,7 +35,7 @@ public:
 	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER};
 
 	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, 
-					GLfloat opacity, int shadingModel, const char *diffuseId = nullptr, const char *specularId = nullptr);
+					GLfloat opacity, int shadingModel, const char *diffuseId = nullptr, const char *specularId = nullptr, const char *normalId = nullptr);
 	Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess,
 					GLfloat opacity, int shadingModel, vector<Texture*> textures);
 	~Material();
@@ -47,4 +47,5 @@ public:
 	GLuint getEmissionMap();
 
 	void use(Camera *camera);
+	void unUse(Camera *camera);
 };
