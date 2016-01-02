@@ -21,9 +21,10 @@ class Entity : public AttacheableObject
 protected:
 	int model;
 	vector<SubEntity> subEntities;
+	bool shadowCaster;
 public:
-	Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent = nullptr);
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr) override;
+	Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent = nullptr, bool shadowCaster = true);
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false) override;
 	bool isLeaf() override;
 	void update(float seconds) override {};
 };

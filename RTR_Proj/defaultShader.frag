@@ -26,6 +26,9 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+	mat4 lightSpaceMatrix;
+	sampler2D shadowMap;
 };
 
 struct PointLight {
@@ -47,6 +50,8 @@ in vec3 Normal;
 in vec2 TexCoords;
 in vec3 Tangent;
 in vec3 Bitangent;
+in vec4 FragPosDirectionalLightSpace;
+in vec4 FragPosPointLightSpace[NR_POINT_LIGHTS];
 
 layout(location = 0) out vec4 color;
 layout(location = 1) out vec4 brightColor;
@@ -61,6 +66,7 @@ uniform Material material;
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec4 color, vec4 spec_color);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec4 color, vec4 spec_color);
 vec3 CalcBumpedNormal();
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, sampler2D shadowMap);
 
 void main()
 {    
@@ -126,6 +132,7 @@ void main()
 	}
 	else {
 		color = vec4(result, opacity);
+		//color = texture(dirLight.shadowMap, TexCoords);
 
 		float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
 		if (brightness > 1.0)
@@ -143,23 +150,40 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec4 color, vec4 sp
     float diff = max(dot(normal, lightDir), 0.0);
     // Specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-
+	float spec = 0.0;
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // Combine results
-	//(1-texture alpha) * material ambient + texture alpha * texture value
+	float shadow = ShadowCalculation(FragPosDirectionalLightSpace, lightDir, dirLight.shadowMap);
 
-	vec3 Kd = (1 - color.a)* material.diffuseI + color.a*vec3(color);
-	vec3 Ka = (1 - color.a)* material.ambientI + color.a*vec3(color);
-	vec3 Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+	vec3 Kd;
+	vec3 Ka;
+	if (material.diffuse_texture1_active == 1)
+	{
+		Kd = (1 - color.a)* material.diffuseI + color.a*vec3(color);
+		Ka = (1 - color.a)* material.ambientI + color.a*vec3(color);
+	}
+	else
+	{
+		Kd = material.diffuseI;
+		Ka = material.ambientI;
+	}
+
+	vec3 Ks;
+	if (material.specular_texture1_active == 1)
+		Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+	else
+		Ks = material.specularI;
 
     vec3 ambient = light.ambient * Ka;
     vec3 diffuse = light.diffuse * diff * Kd;
     vec3 specular = light.specular * spec * Ks;
 
 	if(material.shading_model == 2)
-		return ambient + diffuse + specular;
+		return ambient + (1.0 - shadow) * (diffuse + specular);
 	else 
-		return ambient + diffuse;
+		return ambient + (1.0 - shadow) * diffuse;
 }
 
 // Calculates the color when using a point light.
@@ -170,15 +194,33 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     float diff = max(dot(normal, lightDir), 0.0);
     // Specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	float spec = 0.0;
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // Attenuation
     float distance = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     // Combine results
 
-	vec3 Kd = (1 - color.a)* material.diffuseI + color.a*vec3(color);
-	vec3 Ka = (1 - color.a)* material.ambientI + color.a*vec3(color);
-	vec3 Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+	vec3 Kd;
+	vec3 Ka;
+	if (material.diffuse_texture1_active == 1)
+	{
+		Kd = (1 - color.a)* material.diffuseI + color.a*vec3(color);
+		Ka = (1 - color.a)* material.ambientI + color.a*vec3(color);
+	}
+	else
+	{
+		Kd = material.diffuseI;
+		Ka = material.ambientI;
+	}
+
+	vec3 Ks;
+	if (material.specular_texture1_active == 1)
+		Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+	else
+		Ks = material.specularI;
 
 	vec3 ambient = light.ambient * Ka;
 	vec3 diffuse = light.diffuse * diff * Kd;
@@ -204,4 +246,32 @@ vec3 CalcBumpedNormal()
 	NewNormal = TBN * BumpMapNormal;
 	NewNormal = normalize(NewNormal);
 	return NewNormal;
+}
+
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, sampler2D shadowMap)
+{
+	// perform perspective divide
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// Transform to [0,1] range
+	projCoords = projCoords * 0.5 + 0.5;
+	// Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	// Get depth of current fragment from light's perspective
+	float currentDepth = projCoords.z;
+	// Check whether current frag pos is in shadow
+	float bias = max(0.001 * (1.0 - dot(Normal, lightDir)), 0.0005);
+	//float bias = 0.0;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	for (int x = -1; x <= 1; ++x)
+	{
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth + bias > pcfDepth ? 1.0 : 0.0;
+		}
+	}
+	shadow /= 9.0;
+
+	return shadow;
 }

@@ -34,7 +34,7 @@ public:
 	SceneNode(const char *id, SceneManager *manager, SceneNode *parent = nullptr, Animation *anim = nullptr);
 	~SceneNode();
 
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr) override;
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false) override;
 	void attach(AttacheableObject *object);
 	bool isLeaf() override;
 	void update(float seconds) override;

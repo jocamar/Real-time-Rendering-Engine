@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Camera.h"
 
-Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent) : AttacheableObject(idEntity, manager, parent) 
+Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent, bool shadowCaster) : AttacheableObject(idEntity, manager, parent) 
 {
 	if(modelId)
 	{
@@ -23,15 +23,20 @@ Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId,
 	else {
 		this->model = -1;
 	}
+
+	this->shadowCaster = shadowCaster;
 }
 
 
 
-void Entity::display(glm::mat4 transf, int material, Camera *camera) {
+void Entity::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap) {
+
+	if (shadowMap && !this->shadowCaster)
+		return;
 
 	for(auto se : subEntities)
 	{
-		se.mesh->display(transf, material, camera);
+		se.mesh->display(transf, material, camera, shadowMap);
 	}
 }
 

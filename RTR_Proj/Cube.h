@@ -8,7 +8,7 @@ class Cube : public Mesh
 {
 public:
 	Cube(const char *id, SceneManager *manager);
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr) override;
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false) override;
 	~Cube();
 };
 

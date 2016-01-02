@@ -19,6 +19,7 @@ protected:
 
 	vector<Light*> lights;
 	Light *directionalLight;
+	Shader *shadowShader;
 
 public:
 
@@ -66,7 +67,9 @@ public:
 	SceneNode* getRoot();
 	
 	void update(float millis);
-	void render(Camera *camera);
+	void render(Camera *camera, bool shadowMap = false);
+	void generateShadowMaps();
 
 	void getRenderNodes();
+	Shader* getShadowShader();
 };

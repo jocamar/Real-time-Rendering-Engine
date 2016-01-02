@@ -4,6 +4,8 @@ SceneManager::SceneManager()
 {
 	this->root = new SceneNode("_root", this);
 	this->materials = vector<Material*>();
+
+	this->shadowShader = new Shader("shadowShader.vs", "shadowShader.frag");
 }
 
 
@@ -551,7 +553,7 @@ void SceneManager::update(float millis)
 
 
 
-void SceneManager::render(Camera *camera)
+void SceneManager::render(Camera *camera, bool shadowMap)
 {
 	auto defMaterial = this->getMaterial(defaultMaterial);
 
@@ -559,11 +561,25 @@ void SceneManager::render(Camera *camera)
 		return;
 
 	auto mat = glm::mat4();
-	root->display(mat, defaultMaterial, camera);
+	root->display(mat, defaultMaterial, camera, shadowMap);
+}
+
+
+
+void SceneManager::generateShadowMaps()
+{
+	this->directionalLight->generateShadowMap();
 }
 
 
 
 void SceneManager::getRenderNodes()
 {
+}
+
+
+
+Shader* SceneManager::getShadowShader()
+{
+	return shadowShader;
 }

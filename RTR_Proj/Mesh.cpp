@@ -30,7 +30,7 @@ GLuint Mesh::getVAO() {
 
 
 
-void Mesh::display(glm::mat4 transf, int material, Camera *camera) {
+void Mesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap) {
 	int materialToUse;
 	if (this->material >= 0)
 		materialToUse = this->material;
@@ -39,18 +39,35 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera) {
 
 	auto s = this->manager->getMaterial(materialToUse);
 
-	s->use(camera);
+	s->use(camera, shadowMap);
 
 	// Create camera transformation
-	glm::mat4 view;
-	view = camera->GetViewMatrix();
-	glm::mat4 projection;
-	projection = glm::perspective(camera->Zoom, (float)1280 / (float)720, 0.1f, 1000.0f);
 
+	glm::mat4 mvm;
+	if (!shadowMap)
+	{
+		glm::mat4 view;
+		view = camera->GetViewMatrix();
+		glm::mat4 projection;
+		projection = glm::perspective(camera->Zoom, (float)1280 / (float)720, 0.1f, 1000.0f);
+		mvm = projection * view * transf;
+	}
+	else
+	{
+		mvm = camera->ViewProjMatrix * transf;
+	}
+
+	
 	// Pass the matrices to the shader
-	glUniformMatrix4fv(s->getShader()->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(s->getShader()->ProjLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(s->getShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
+	if (!shadowMap)
+	{
+		glUniformMatrix4fv(s->getShader()->ModelViewLoc, 1, GL_FALSE, glm::value_ptr(mvm));
+		glUniformMatrix4fv(s->getShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
+	}
+	else
+	{
+		glUniformMatrix4fv(manager->getShadowShader()->ModelViewLoc, 1, GL_FALSE, glm::value_ptr(mvm));
+	}
 
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);

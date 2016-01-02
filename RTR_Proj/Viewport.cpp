@@ -161,12 +161,14 @@ void Viewport::Render(SceneManager& scene)
 
 	// Clear all relevant buffers
 
+	glCullFace(GL_BACK);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
 	//glEnable(GL_FRAMEBUFFER_SRGB);
 	screenShader->Use();
 	glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, scene.getDirectionalLight()->getShadowMap());
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffers[0]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);

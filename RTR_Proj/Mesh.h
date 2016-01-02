@@ -32,7 +32,7 @@ public:
 	explicit Mesh(const char *id);
 	Mesh(const char *id, SceneManager* manager, vector<Vertex> vertices, vector<GLuint> indices, const char *materialId = nullptr);
 	GLuint getVAO();
-	virtual void display(glm::mat4 transf, int material, Camera *camera = nullptr);
+	virtual void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false);
 	virtual ~Mesh();
 	void setupMesh();
 };

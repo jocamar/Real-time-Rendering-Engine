@@ -156,6 +156,8 @@
     <None Include="screen.frag" />
     <None Include="blur.vs" />
     <None Include="blur.frag" />
+    <None Include="shadowShader.vs" />
+    <None Include="shadowShader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">

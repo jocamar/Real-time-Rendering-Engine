@@ -19,7 +19,7 @@ SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, A
 
 
 
-void SceneNode::display(glm::mat4 transf, int material, Camera *camera) {
+void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap) {
 	
 	auto m_pos = glm::translate(glm::mat4(), position);
 	auto m_scale = glm::scale(glm::mat4(), scale);
@@ -41,7 +41,7 @@ void SceneNode::display(glm::mat4 transf, int material, Camera *camera) {
 
 	for(auto child : children)
 	{
-		child->display(modelMatrix, mat, camera);
+		child->display(modelMatrix, mat, camera, shadowMap);
 	}
 	
 }

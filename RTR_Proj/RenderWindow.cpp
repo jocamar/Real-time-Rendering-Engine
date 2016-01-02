@@ -76,6 +76,7 @@ void RenderWindow::update(SceneManager& scene, float millis)
 
 void RenderWindow::render(SceneManager& scene)
 {
+	scene.generateShadowMaps();
 	for(auto viewport : viewports)
 	{
 		viewport.Render(scene);

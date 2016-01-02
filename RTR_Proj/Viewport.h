@@ -8,8 +8,6 @@ class RenderWindow;
 class Viewport
 {
 protected:
-	Camera *camera;
-
 	GLfloat left;
 	GLfloat top;
 	GLfloat width;
@@ -37,6 +35,7 @@ protected:
 	GLboolean bloom;
 	GLfloat exposure;
 public:
+	Camera *camera;
 	Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b, RenderWindow *window);
 	void Render(SceneManager& scene);
 	bool operator < (const Viewport& v) const;
