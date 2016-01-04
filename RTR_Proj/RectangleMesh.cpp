@@ -135,16 +135,16 @@ RectangleMesh::~RectangleMesh()
 
 
 
-void RectangleMesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap) {
+void RectangleMesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
 	int materialToUse;
 	if (this->material >= 0)
 		materialToUse = this->material;
 	else
 		materialToUse = material;
 
-	auto s = this->manager->getMaterial(material);
+	auto s = this->manager->getMaterial(materialToUse);
 
-	s->use(camera, shadowMap);
+	s->use(camera, shadowMap, shadowType);
 
 	// Create camera transformation
 	glm::mat4 mvm;
@@ -153,7 +153,7 @@ void RectangleMesh::display(glm::mat4 transf, int material, Camera *camera, bool
 		glm::mat4 view;
 		view = camera->GetViewMatrix();
 		glm::mat4 projection;
-		projection = glm::perspective(camera->Zoom, (float)1280 / (float)720, 0.1f, 1000.0f);
+		projection = glm::perspective(glm::radians(camera->Zoom), (float)1280 / (float)720, 0.1f, 1000.0f);
 		mvm = projection * view * transf;
 	}
 	else
@@ -168,12 +168,22 @@ void RectangleMesh::display(glm::mat4 transf, int material, Camera *camera, bool
 	}
 	else
 	{
-		glUniformMatrix4fv(manager->getShadowShader()->ModelViewLoc, 1, GL_FALSE, glm::value_ptr(mvm));
+		if (shadowType == Globals::DIRECTIONAL) {
+			glUniformMatrix4fv(manager->getShadowShader()->ModelViewLoc, 1, GL_FALSE, glm::value_ptr(mvm));
+		}
+		else if (shadowType == Globals::POINT)
+		{
+			for (GLuint i = 0; i < 6; ++i)
+				glUniformMatrix4fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, ("shadowMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, glm::value_ptr(camera->cubeViewProjectionMatrixes[i]));
+			glUniform1f(glGetUniformLocation(manager->getOmniShadowShader()->Program, "far_plane"), 10.0f);
+			glUniform3fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, "lightPos"), 1, &(camera->Position[0]));
+			glUniformMatrix4fv(manager->getOmniShadowShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
+		}
 	}
 
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, parts*parts*6);//, GL_UNSIGNED_BYTE, 0);
 	glBindVertexArray(0);
 
-	s->unUse(camera);
+	s->unUse(camera, shadowMap, shadowType);
 }

@@ -24,7 +24,7 @@ protected:
 	bool shadowCaster;
 public:
 	Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent = nullptr, bool shadowCaster = true);
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false) override;
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	bool isLeaf() override;
 	void update(float seconds) override {};
 };

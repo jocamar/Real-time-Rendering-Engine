@@ -16,11 +16,12 @@
 #include <vector>
 using std::vector;
 
-#define MAX_LIGHTS 10
+#define MAX_LIGHTS 9
 
 class Globals
 {
 public:
+	enum LIGHT_TYPE { DIRECTIONAL, POINT, SPOT };
 	vector<float> background;
 	const char *drawmode;
 	const char *shading;

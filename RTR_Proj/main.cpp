@@ -36,8 +36,8 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 0, 1));
-	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", true, true);
+	camera = new Camera(glm::vec3(8.0f, 3.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(-1, 0, 0));
+	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
 	//window_.addViewPort(&camera2, 450, 0, 450, 300, 1, 1);
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
@@ -46,10 +46,14 @@ int main()
 	GLfloat diffuse[] = { 0.0, 0.0, 0.0 };
 	GLfloat specular[] = { 0.0, 0.0, 0.0 };
 	GLfloat specular_brick[] = { 0.3, 0.3, 0.3 };
+
+	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
+	GLfloat diffuseL2[] = { 1.0, 0.0, 0.0 };
 	SceneManager sceneManager;
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0, 1, 1, Material::EMITTER);
+	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL1, nullptr, 0, 1, 1, Material::EMITTER);
+	sceneManager.addMaterial("light_material2", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL2, nullptr, 0, 1, 1, Material::EMITTER);
 	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "box_front.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "box_behind.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "box_left.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
@@ -138,33 +142,33 @@ int main()
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
 	ground->attach(groundEnt);
 	ground->changeScale(glm::vec3(10, 10, 1));
-	ground->translate(glm::vec3(0, -0.5, 0));
+	//ground->translate(glm::vec3(0, -0.5, 0));
 	ground->pitch(90);
 
 	auto wallEnt = sceneManager.createEntity("wallEnt", "planeWall");
-	auto wall = sceneManager.getRoot()->createNewChildNode("wallNode", "bricks", glm::vec3(1.0f, 2.5f, 0.0f));
+	auto wall = sceneManager.getRoot()->createNewChildNode("wallNode", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
 	wall->attach(wallEnt);
-	wall->changeScale(glm::vec3(8, 5, 1));
-	wall->translate(glm::vec3(0, -0.5, -1));
+	wall->changeScale(glm::vec3(10, 5, 1));
+	//wall->translate(glm::vec3(0, -0.5, -1));
     wall->yaw(180);
 
-	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 1.0f));
+	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
 	wall2->attach(wallEnt);
-	wall2->changeScale(glm::vec3(8, 5, 1));
-	wall2->translate(glm::vec3(-1, -0.5, 0));
+	wall2->changeScale(glm::vec3(10, 5, 1));
+	//wall2->translate(glm::vec3(-1, -0.5, 0));
 	wall2->yaw(-90);
 
 	auto cubeEntity = sceneManager.createEntity("entidade", "cube");
-	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(0.0f, 0.0f, 1.0f));
+	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode->attach(cubeEntity);
 
-	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(0.0f, 0.0f, 1.0f));
+	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode2->translate(glm::vec3(1.2, 0, 0));
 	cubeNode2->yaw(30);
 	cubeNode2->attach(cubeEntity);
 
 	auto nanosuitEntity = sceneManager.createEntity("entidade2", "nanosuit");
-	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(0.5f, 1.0f, 1.0f));
+	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(1.5f, 1.0f, 2.0f));
 	cubeNode3->yaw(90);
 	cubeNode3->changeScale(glm::vec3(0.5, 0.5, 0.5));
 	cubeNode3->attach(nanosuitEntity);
@@ -178,14 +182,23 @@ int main()
 	Animation *anim = new LinearAnimation(points, 15, true);
 
 	GLfloat amb[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat dif[3] = { 0.3f, 0.3f, 0.3f };
-	GLfloat spec[3] = { 0.3f, 0.3f, 0.3f };
+	GLfloat dif[3] = { 0.0f, 0.0f, 0.3f };
+	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
 
-	/*auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.2f, 0.001f, "cube");
-	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(3.0f, 2.0f, 0.0f));
+	GLfloat amb2[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat dif2[3] = { 0.3f, 0.0f, 0.0f };
+	GLfloat spec2[3] = { 0.3f, 0.0f, 0.0f };
+
+	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.2f, 0.001f, "cube");
+	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
 	lightNode->changeScale(glm::vec3(0.2, 0.2, 0.2));
 	lightNode->attach(light1);
-	lightNode->setAnimation(anim);*/
+	lightNode->setAnimation(anim);
+
+	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.5f, 0.2f, 0.001f, "cube");
+	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(3.0f, 2.0f, 1.0f));
+	lightNode2->changeScale(glm::vec3(0.2, 0.2, 0.2));
+	lightNode2->attach(light2);
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);

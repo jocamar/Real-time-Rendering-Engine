@@ -14,6 +14,29 @@ Light::Light(const char *idLight, SceneManager* manager, GLfloat *ambient, GLflo
 	this->quadratic = quadratic;
 	this->directional = false;
 	this->direction = nullptr;
+
+	glGenFramebuffers(1, &depthMapFBO);
+
+	glGenTextures(1, &depthCubemap);
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+	for (GLuint i = 0; i < 6; ++i)
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+			SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -43,19 +66,26 @@ Light::Light(const char *idLight, SceneManager* manager, GLfloat* ambient, GLflo
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if(!directional)
+	{
+		
+	}
 }
 
 
 
-void Light::display(glm::mat4 transf, int material, Camera* camera, bool shadowMap)
+void Light::display(glm::mat4 transf, int material, Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
 	if (shadowMap && !this->shadowCaster)
 		return;
 
 	for(auto se : subEntities)
 	{
-		se.mesh->display(transf, material, camera, shadowMap);
+		se.mesh->display(transf, material, camera, shadowMap, shadowType);
 	}
 }
 
@@ -78,21 +108,42 @@ void Light::generateShadowMap()
 
 	if (this->directional)
 		this->cam = new Camera((glm::vec3(0) - glm::vec3(direction[0], direction[1], direction[2]))*10.f, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(direction[0], direction[1], direction[2]), true);
+	else
+	{
+		glm::vec3 wp = this->parent->getWorldPosition();
+		this->cam = new Camera(this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0));
+	}
 
 	glm::mat4 view;
 	view = cam->GetViewMatrix();
 	glm::mat4 projection;
 	if (!cam->Ortho)
-		projection = glm::perspective(cam->Zoom, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 5.0f, 50.0f);
-	else
-		projection = glm::ortho(-10.f, 10.f, -10.f, 10.f, 5.0f, 100.0f);
-	this->lightSpaceMatrix = projection * view;
-	cam->ViewProjMatrix = lightSpaceMatrix;
+	{
+		projection = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 0.1f, 100.0f);
 
-	manager->render(cam, true);
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
+		cam->cubeViewProjectionMatrixes = cubeLightSpaceMatrixes;
+		manager->render(cam, true, Globals::POINT);
+	}
+	else
+	{
+		projection = glm::ortho(-10.f, 10.f, -10.f, 10.f, 5.0f, 100.0f);
+		this->lightSpaceMatrix = projection * view;
+		cam->ViewProjMatrix = lightSpaceMatrix;
+		manager->render(cam, true);
+	}
+	//glClearDepth(0.0);
+	//glClear(GL_DEPTH_BUFFER_BIT);
+	//glClearDepth(1.0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 
+	this->cubeLightSpaceMatrixes.clear();
 	delete cam;
 }
 
@@ -143,6 +194,13 @@ glm::mat4* Light::getLightSpaceMatrix()
 GLuint Light::getShadowMap()
 {
 	return this->depthMap;
+}
+
+
+
+GLuint Light::getCubeShadowMap()
+{
+	return this->depthCubemap;
 }
 
 

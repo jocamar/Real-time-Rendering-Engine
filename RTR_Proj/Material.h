@@ -46,6 +46,6 @@ public:
 	vector<Texture*> getSpecMaps();
 	GLuint getEmissionMap();
 
-	void use(Camera *camera, bool shadowMap = false);
-	void unUse(Camera *camera, bool shadowMap = false);
+	void use(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
+	void unUse(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
 };

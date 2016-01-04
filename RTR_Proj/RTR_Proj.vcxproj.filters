@@ -158,6 +158,9 @@
     <None Include="blur.frag" />
     <None Include="shadowShader.vs" />
     <None Include="shadowShader.frag" />
+    <None Include="omniShadowShader.gs" />
+    <None Include="omniShadowShader.vs" />
+    <None Include="omniShadowShader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">

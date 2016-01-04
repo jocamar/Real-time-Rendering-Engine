@@ -34,7 +34,7 @@ public:
 	SceneNode(const char *id, SceneManager *manager, SceneNode *parent = nullptr, Animation *anim = nullptr);
 	~SceneNode();
 
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false) override;
+	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	void attach(AttacheableObject *object);
 	bool isLeaf() override;
 	void update(float seconds) override;
@@ -46,6 +46,7 @@ public:
 	glm::vec3 getRotOrig();
 
 	glm::mat4 getTransfMatrix();
+	glm::vec3 getWorldPosition();
 
 	void translate(glm::vec3 translation);
 	void changeScale(glm::vec3 scale);

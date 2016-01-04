@@ -20,6 +20,7 @@ protected:
 	vector<Light*> lights;
 	Light *directionalLight;
 	Shader *shadowShader;
+	Shader *omniShadowShader;
 
 public:
 
@@ -67,9 +68,10 @@ public:
 	SceneNode* getRoot();
 	
 	void update(float millis);
-	void render(Camera *camera, bool shadowMap = false);
+	void render(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
 	void generateShadowMaps();
 
 	void getRenderNodes();
 	Shader* getShadowShader();
+	Shader* getOmniShadowShader();
 };

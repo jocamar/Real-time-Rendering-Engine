@@ -29,14 +29,14 @@ Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId,
 
 
 
-void Entity::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap) {
+void Entity::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
 
 	if (shadowMap && !this->shadowCaster)
 		return;
 
 	for(auto se : subEntities)
 	{
-		se.mesh->display(transf, material, camera, shadowMap);
+		se.mesh->display(transf, material, camera, shadowMap, shadowType);
 	}
 }
 

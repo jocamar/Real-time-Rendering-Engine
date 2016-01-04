@@ -42,6 +42,7 @@ public:
 	GLfloat Zoom;
 
 	glm::mat4 ViewProjMatrix;
+	std::vector<glm::mat4> cubeViewProjectionMatrixes;
 
 	bool Ortho;
 

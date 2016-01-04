@@ -9,7 +9,7 @@ uniform float exposure;
 
 void main()
 {
-	const float gamma = 1.0;
+	const float gamma = 1.8;
 	vec3 hdrColor = texture(scene, TexCoords).rgb;
 	vec3 bloomColor = texture(bloomBlur, TexCoords).rgb;
 	//float n = 0.1;                                // the near plane

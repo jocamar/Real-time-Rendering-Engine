@@ -6,6 +6,7 @@ SceneManager::SceneManager()
 	this->materials = vector<Material*>();
 
 	this->shadowShader = new Shader("shadowShader.vs", "shadowShader.frag");
+	this->omniShadowShader = new Shader("omniShadowShader.vs", "omniShadowShader.frag", "omniShadowShader.gs");
 }
 
 
@@ -553,7 +554,7 @@ void SceneManager::update(float millis)
 
 
 
-void SceneManager::render(Camera *camera, bool shadowMap)
+void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
 	auto defMaterial = this->getMaterial(defaultMaterial);
 
@@ -561,7 +562,7 @@ void SceneManager::render(Camera *camera, bool shadowMap)
 		return;
 
 	auto mat = glm::mat4();
-	root->display(mat, defaultMaterial, camera, shadowMap);
+	root->display(mat, defaultMaterial, camera, shadowMap, shadowType);
 }
 
 
@@ -569,6 +570,11 @@ void SceneManager::render(Camera *camera, bool shadowMap)
 void SceneManager::generateShadowMaps()
 {
 	this->directionalLight->generateShadowMap();
+
+	for(auto l : lights)
+	{
+		l->generateShadowMap();
+	}
 }
 
 
@@ -582,4 +588,11 @@ void SceneManager::getRenderNodes()
 Shader* SceneManager::getShadowShader()
 {
 	return shadowShader;
+}
+
+
+
+Shader* SceneManager::getOmniShadowShader()
+{
+	return omniShadowShader;
 }

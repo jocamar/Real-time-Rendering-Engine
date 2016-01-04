@@ -19,9 +19,9 @@ SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, A
 
 
 
-void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap) {
+void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
 	
-	auto m_pos = glm::translate(glm::mat4(), position);
+	/*auto m_pos = glm::translate(glm::mat4(), position);
 	auto m_scale = glm::scale(glm::mat4(), scale);
 	auto m_rot = glm::mat4_cast(orientation);
 
@@ -32,7 +32,7 @@ void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool sha
 
 	auto modelMatrix = m_pos *(m_rot_orig_inv * m_rot * m_rot_orig) * (m_scale_orig_inv * m_scale * m_scale_orig);
 	modelMatrix = transf * modelMatrix;
-	this->transfMatrix = modelMatrix;
+	this->transfMatrix = modelMatrix;*/
 
 	int mat;
 	if (this->material >= 0)
@@ -41,7 +41,7 @@ void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool sha
 
 	for(auto child : children)
 	{
-		child->display(modelMatrix, mat, camera, shadowMap);
+		child->display(this->transfMatrix, mat, camera, shadowMap, shadowType);
 	}
 	
 }
@@ -119,6 +119,13 @@ glm::vec3 SceneNode::getRotOrig()
 glm::mat4 SceneNode::getTransfMatrix()
 {
 	return this->transfMatrix;
+}
+
+
+
+glm::vec3 SceneNode::getWorldPosition()
+{
+	return glm::vec3(transfMatrix[3]);
 }
 
 
@@ -213,6 +220,20 @@ void SceneNode::update(float millis) {
 		animation->applyTranslations(this);
 		animation->applyRotations(this);
 	}
+
+	auto m_pos = glm::translate(glm::mat4(), position);
+	auto m_scale = glm::scale(glm::mat4(), scale);
+	auto m_rot = glm::mat4_cast(orientation);
+
+	auto m_scale_orig = glm::translate(glm::mat4(), -scaleOrig);
+	auto m_rot_orig = glm::translate(glm::mat4(), -rotOrig);
+	auto m_scale_orig_inv = glm::translate(glm::mat4(), scaleOrig);
+	auto m_rot_orig_inv = glm::translate(glm::mat4(), rotOrig);
+
+	auto modelMatrix = m_pos *(m_rot_orig_inv * m_rot * m_rot_orig) * (m_scale_orig_inv * m_scale * m_scale_orig);
+	if(this->parent)
+		modelMatrix = this->parent->getTransfMatrix() * modelMatrix;
+	this->transfMatrix = modelMatrix;
 	
 	for (int x = 0; x < children.size(); x++)
 	{

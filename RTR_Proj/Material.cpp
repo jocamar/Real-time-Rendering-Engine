@@ -111,7 +111,7 @@ GLuint Material::getEmissionMap()
 
 
 
-void Material::use(Camera *camera, bool shadowMap)
+void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
 	if(!shadowMap)
 	{
@@ -199,10 +199,11 @@ void Material::use(Camera *camera, bool shadowMap)
 
 			glUniform1i(glGetUniformLocation(shader->Program, "activeLights"), lights.size());
 
-			for (auto i = 0; i < MAX_LIGHTS && i < lights.size(); i++)
+			int i = 0;
+			for (; i < MAX_LIGHTS && i < lights.size(); i++)
 			{
 				auto l = lights[i];
-				auto pos = glm::vec3(l->getParent()->getTransfMatrix()[3]);
+				auto pos = l->getParent()->getWorldPosition();// glm::vec3(l->getParent()->getTransfMatrix()[3]);
 				dif = l->getDiffuse();
 				amb = l->getAmbient();
 				spec = l->getSpecular();
@@ -217,6 +218,19 @@ void Material::use(Camera *camera, bool shadowMap)
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].constant").c_str()), constant);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].linear").c_str()), linear);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].quadratic").c_str()), quadratic);
+
+				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].far_plane").c_str()), 10.0f);
+				glActiveTexture(GL_TEXTURE7+i);
+				glUniform1i(glGetUniformLocation(shader->Program, ("shadowMap" + to_string(i)).c_str()), 7 + i);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, l->getCubeShadowMap());
+				glActiveTexture(GL_TEXTURE0);
+			}
+			for (; i < MAX_LIGHTS; i++)
+			{
+				glActiveTexture(GL_TEXTURE7 + i);
+				glUniform1i(glGetUniformLocation(shader->Program, ("shadowMap" + to_string(i)).c_str()), 7 + i);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+				glActiveTexture(GL_TEXTURE0);
 			}
 		}
 		else if (shaderType == EMITTER)
@@ -233,12 +247,15 @@ void Material::use(Camera *camera, bool shadowMap)
 	}
 	else
 	{
-		this->manager->getShadowShader()->Use();
+		if (shadowType == Globals::DIRECTIONAL)
+			this->manager->getShadowShader()->Use();
+		else if (shadowType == Globals::POINT)
+			this->manager->getOmniShadowShader()->Use();
 	}
 	
 }
 
-void Material::unUse(Camera* camera, bool shadowMap)
+void Material::unUse(Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;
@@ -265,5 +282,10 @@ void Material::unUse(Camera* camera, bool shadowMap)
 		glBindTexture(GL_TEXTURE_2D, NULL);
 		glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number + "_active").c_str()), 0);
 	}
+	glActiveTexture(GL_TEXTURE0);
+
+	glActiveTexture(GL_TEXTURE7);
+	//glUniform1i(glGetUniformLocation(shader->Program, "shadowMap"), 0);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, NULL);
 	glActiveTexture(GL_TEXTURE0);
 }
