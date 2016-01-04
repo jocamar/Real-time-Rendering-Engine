@@ -41,22 +41,42 @@ public:
 	GLfloat MouseSensitivity;
 	GLfloat Zoom;
 
+	glm::mat4 ViewProjMatrix;
+	std::vector<glm::mat4> cubeViewProjectionMatrixes;
+
+	bool Ortho;
+
 	// Constructor with vectors
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH, bool ortho = false) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
 	{
 		this->Position = position;
 		this->WorldUp = up;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
+		this->Ortho = ortho;
 		this->updateCameraVectors();
 	}
+
+
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 front = glm::vec3(0.0,0.0,-1.0), bool ortho = false) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+	{
+		this->Position = position;
+		this->WorldUp = up;
+		this->Front = front;
+		this->Pitch = glm::degrees(glm::asin(Front.y / glm::length(Front)));
+		this->Yaw = glm::degrees(glm::asin(Front.x / (glm::cos(glm::radians(Pitch*glm::length(Front))))))-90;
+		this->Ortho = ortho;
+		this->updateCameraVectors();
+	}
+
 	// Constructor with scalar values
-	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch, bool ortho = false) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
 	{
 		this->Position = glm::vec3(posX, posY, posZ);
 		this->WorldUp = glm::vec3(upX, upY, upZ);
 		this->Yaw = yaw;
 		this->Pitch = pitch;
+		this->Ortho = ortho;
 		this->updateCameraVectors();
 	}
 

@@ -1,25 +1,31 @@
 #include "AttacheableObject.h"
+#include "SceneManager.h"
 
-AttacheableObject::AttacheableObject(SceneManager *manager, SceneNode *parent)
+AttacheableObject::AttacheableObject(const char *id, SceneManager *manager, SceneNode *parent)
 {
-	this->material = nullptr;
+	this->id = id;
+	this->material = -1;
 	this->manager = manager;
 	this->parent = parent;
 }
 
 
 
-AttacheableObject::AttacheableObject(SceneManager *manager, char *material, SceneNode *parent)
+AttacheableObject::AttacheableObject(const char *id, SceneManager *manager, char *material, SceneNode *parent)
 {
-	this->material = material;
+	this->id = id;
+	this->material = manager->getMaterialNum(material);
 	this->manager = manager;
 	this->parent = parent;
 }
+
+
 
 SceneNode* AttacheableObject::getParent()
 {
 	return parent;
 }
+
 
 
 void AttacheableObject::setParent(SceneNode* parent)
@@ -31,5 +37,5 @@ void AttacheableObject::setParent(SceneNode* parent)
 
 void AttacheableObject::setMaterial(char* material)
 {
-	this->material = material;
+	this->material = manager->getMaterialNum(material);
 }

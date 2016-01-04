@@ -12,20 +12,21 @@
 #include "RectangleMesh.h"
 
 // Properties
-GLuint screenWidth = 800, screenHeight = 600;
+GLuint screenWidth = 1280, screenHeight = 720;
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void Do_Movement();
+void Do_Movement(Viewport *vp);
 
 // Camera
-Camera camera(glm::vec3(1.0f, 1.0f, 3.0f));
+Camera* camera;
 //Camera camera2(glm::vec3(3.0f, 3.0f, 3.0f));
 bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
+bool pressingToggleBloom = false;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
@@ -35,133 +36,176 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	RenderWindow window_ = RenderWindow(900, 600, "RTR - Window", false, true);
-	window_.addViewPort(&camera, 0, 0, 900, 600, 0, 0, 1);
+	camera = new Camera(glm::vec3(8.0f, 3.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(-1, 0, 0));
+	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
+	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
 	//window_.addViewPort(&camera2, 450, 0, 450, 300, 1, 1);
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
 
-	SceneManager sceneManager;
-	sceneManager.addMaterial("box_material", "container2.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag",Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("box_material2", "container.jpg", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag",Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("light_material", nullptr, nullptr, "lightVertShader.vs", "lightFragShader.frag",Material::EMITTER);
-	sceneManager.addMaterial("sky_front", "box_front.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("sky_back", "box_behind.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("sky_left", "box_left.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("sky_right", "box_right.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("sky_top", "box_ceiling.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("sky_bottom", "box_floor.png", "container2_specular.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("road", "road.jpg", "black.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("bricks", "bricks.jpg", "black.png", "boxVertShader.vs", "boxFragShader.frag", Material::LIGHTING_TEXTURED);
-	sceneManager.setDefaultMaterial("box_material");
+	GLfloat ambient[] = { 0.1, 0.1, 0.1 };
+	GLfloat diffuse[] = { 0.0, 0.0, 0.0 };
+	GLfloat specular[] = { 0.0, 0.0, 0.0 };
+	GLfloat specular_brick[] = { 0.3, 0.3, 0.3 };
 
-	GLfloat amb_dir[3] = { 0.2f, 0.2f, 0.2f };
-	GLfloat dif_dir[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat spec_dir[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat dir[3] = { -0.2f, -1.0f, -0.3f };
+	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
+	GLfloat diffuseL2[] = { 1.0, 0.0, 0.0 };
+	SceneManager sceneManager;
+	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL1, nullptr, 0, 1, 1, Material::EMITTER);
+	sceneManager.addMaterial("light_material2", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL2, nullptr, 0, 1, 1, Material::EMITTER);
+	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "box_front.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "box_behind.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "box_left.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_right", "defaultShader.vs", "defaultShader.frag", "box_right.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "box_ceiling.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "box_floor.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", nullptr, nullptr, ambient, nullptr, specular, 1, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.setDefaultMaterial(0);
+
+	sceneManager.addModel("plane", nullptr);
+	auto plane = sceneManager.getModel("plane");
+	plane->addMesh(new RectangleMesh("top", &sceneManager, 1));
+
+	sceneManager.addModel("planeGround", nullptr);
+	auto planeG = sceneManager.getModel("planeGround");
+	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 10));
+
+	sceneManager.addModel("planeWall", nullptr);
+	auto planeW = sceneManager.getModel("planeWall");
+	planeW->addMesh(new RectangleMesh("wall", &sceneManager, 10, 4, 3));
+
+	sceneManager.addModel("cube", nullptr);
+	auto cube = sceneManager.getModel("cube");
+	cube->addMesh(new Cube("cubinho", &sceneManager));
+
+	//sceneManager.addModel("nanosuit", "cs_havana/cs_havana.obj");
+	//sceneManager.addModel("nanosuit", "colony sector/colony sector.obj");
+	//sceneManager.addModel("nanosuit", "CODMapShipment/Files/CODMapShipment.obj");
+	//sceneManager.addModel("nanosuit", "castle/castle.obj");
+	//sceneManager.addModel("nanosuit", "Small Tropical Island/Small Tropical Island.obj");
+	sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
+	//sceneManager.addModel("nanosuit", "city/Center City Sci-Fi.obj");
+	//sceneManager.addModel("nanosuit", "Damaged Downtown/Downtown_Damage_0.obj");
+
+	GLfloat amb_dir[3] = { 0.1f, 0.1f, 0.1f };
+	GLfloat dif_dir[3] = { 1.0f, 1.0f, 1.0f };
+	GLfloat spec_dir[3] = { 0.1f, 0.1f, 0.1f };
+	GLfloat dir[3] = { 0.3f, -0.05f, -1.0f };
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
-	auto skyEntTop = sceneManager.createEntity("top", new RectangleMesh("top",10));
+	auto skyEntTop = sceneManager.createEntity("top", "plane");
 	auto skyNodeTop = sceneManager.getRoot()->createNewChildNode("skyNodeTop", "sky_top", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeTop->attach(shared_ptr<AttacheableObject>(skyEntTop));
-	skyNodeTop->changeScale(glm::vec3(200, 200, 1));
-	skyNodeTop->translate(glm::vec3(0, 100, 0));
-	skyNodeTop->pitch(90);
+	skyNodeTop->attach(skyEntTop);
+	skyNodeTop->changeScale(glm::vec3(500, 500, 1));
+	skyNodeTop->translate(glm::vec3(0, 250, 0));
+	skyNodeTop->pitch(-90);
+	skyNodeTop->roll(180);
 
 	auto skyNodeFront = sceneManager.getRoot()->createNewChildNode("skyNodeFront", "sky_front", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeFront->attach(shared_ptr<AttacheableObject>(skyEntTop));
-	skyNodeFront->changeScale(glm::vec3(200, 200, 1));
-	skyNodeFront->translate(glm::vec3(0, 0, 100));
+	skyNodeFront->attach(skyEntTop);
+	skyNodeFront->changeScale(glm::vec3(500, 500, 1));
+	skyNodeFront->translate(glm::vec3(0, 0, 250));
 	skyNodeFront->roll(180);
-	skyNodeFront->yaw(180);
 
 	auto skyNodeBack = sceneManager.getRoot()->createNewChildNode("skyNodeBack", "sky_back", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeBack->attach(shared_ptr<AttacheableObject>(skyEntTop));
-	skyNodeBack->changeScale(glm::vec3(200, 200, 1));
-	skyNodeBack->translate(glm::vec3(0, 0, -100));
+	skyNodeBack->attach(skyEntTop);
+	skyNodeBack->changeScale(glm::vec3(500, 500, 1));
+	skyNodeBack->translate(glm::vec3(0, 0, -250));
+	skyNodeBack->yaw(180);
 	skyNodeBack->roll(180);
 
 	auto skyNodeBottom = sceneManager.getRoot()->createNewChildNode("skyNodeBottom", "sky_bottom", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeBottom->attach(shared_ptr<AttacheableObject>(skyEntTop));
-	skyNodeBottom->changeScale(glm::vec3(200, 200, 1));
-	skyNodeBottom->translate(glm::vec3(0, -100, 0));
-	skyNodeBottom->pitch(-90);
+	skyNodeBottom->attach(skyEntTop);
+	skyNodeBottom->changeScale(glm::vec3(500, 500, 1));
+	skyNodeBottom->translate(glm::vec3(0, -250, 0));
+	skyNodeBottom->pitch(90);
+	skyNodeBottom->roll(180);
 
 	auto skyNodeLeft = sceneManager.getRoot()->createNewChildNode("skyNodeLeft", "sky_left", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeLeft->attach(shared_ptr<AttacheableObject>(skyEntTop));
-	skyNodeLeft->changeScale(glm::vec3(200, 200, 1));
-	skyNodeLeft->translate(glm::vec3(-100, 0, 0));
+	skyNodeLeft->attach(skyEntTop);
+	skyNodeLeft->changeScale(glm::vec3(500, 500, 1));
+	skyNodeLeft->translate(glm::vec3(250, 0, 0));
 	skyNodeLeft->yaw(90);
 	skyNodeLeft->roll(180);
 
 	auto skyNodeRight = sceneManager.getRoot()->createNewChildNode("skyNodeRight", "sky_right", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeRight->attach(shared_ptr<AttacheableObject>(skyEntTop));
-	skyNodeRight->changeScale(glm::vec3(200, 200, 1));
-	skyNodeRight->translate(glm::vec3(100, 0, 0));
+	skyNodeRight->attach(skyEntTop);
+	skyNodeRight->changeScale(glm::vec3(500, 500, 1));
+	skyNodeRight->translate(glm::vec3(-250, 0, 0));
 	skyNodeRight->yaw(-90);
 	skyNodeRight->roll(180);
 
-	auto groundEnt = sceneManager.createEntity("groundEnt", new RectangleMesh("ground", 100));
+	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround");
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
-	ground->attach(shared_ptr<AttacheableObject>(groundEnt));
+	ground->attach(groundEnt);
 	ground->changeScale(glm::vec3(10, 10, 1));
-	ground->translate(glm::vec3(0, -0.5, 0));
+	//ground->translate(glm::vec3(0, -0.5, 0));
 	ground->pitch(90);
 
-	auto wallEnt = sceneManager.createEntity("wallEnt", new RectangleMesh("wall", 100,2.5,5));
-	auto wall = sceneManager.getRoot()->createNewChildNode("wallNode", "bricks", glm::vec3(1.0f, 2.5f, 0.0f));
-	wall->attach(shared_ptr<AttacheableObject>(wallEnt));
-	wall->changeScale(glm::vec3(8, 5, 1));
-	wall->translate(glm::vec3(0, -0.5, -1));
+	auto wallEnt = sceneManager.createEntity("wallEnt", "planeWall");
+	auto wall = sceneManager.getRoot()->createNewChildNode("wallNode", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
+	wall->attach(wallEnt);
+	wall->changeScale(glm::vec3(10, 5, 1));
+	//wall->translate(glm::vec3(0, -0.5, -1));
     wall->yaw(180);
 
-	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 1.0f));
-	wall2->attach(shared_ptr<AttacheableObject>(wallEnt));
-	wall2->changeScale(glm::vec3(8, 5, 1));
-	wall2->translate(glm::vec3(-1, -0.5, 0));
+	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
+	wall2->attach(wallEnt);
+	wall2->changeScale(glm::vec3(10, 5, 1));
+	//wall2->translate(glm::vec3(-1, -0.5, 0));
 	wall2->yaw(-90);
 
-	auto cubeEntity = sceneManager.createEntity("entidade", new Cube("cubinho"));
-	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(0.0f, 0.0f, 1.0f));
-	cubeNode->attach(shared_ptr<AttacheableObject>(cubeEntity));
+	auto cubeEntity = sceneManager.createEntity("entidade", "cube");
+	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
+	cubeNode->attach(cubeEntity);
 
-	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(0.0f, 0.0f, 1.0f));
+	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode2->translate(glm::vec3(1.2, 0, 0));
 	cubeNode2->yaw(30);
-	cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity));
+	cubeNode2->attach(cubeEntity);
 
-	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(0.5f, 1.0f, 1.0f));
-	cubeNode3->yaw(15);
-	cubeNode3->attach(shared_ptr<AttacheableObject>(cubeEntity));
+	auto nanosuitEntity = sceneManager.createEntity("entidade2", "nanosuit");
+	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(1.5f, 1.0f, 2.0f));
+	cubeNode3->yaw(90);
+	cubeNode3->changeScale(glm::vec3(0.5, 0.5, 0.5));
+	cubeNode3->attach(nanosuitEntity);
 
-	/*auto cubeEntity2 = sceneManager.createEntity("entidade2", new RectangleMesh("cubinho2", 10));
-	auto cubeNode2 = cubeNode->createNewChildNode("cubeNode2", "box_material2", glm::vec3(0.0, 1.0, 1.0));*/
 	vector<glm::vec3> points;
-	points.push_back(glm::vec3(0, 0, 2));
-	points.push_back(glm::vec3(-2, 0, 2));
+	points.push_back(glm::vec3(0, 0, 4));
+	points.push_back(glm::vec3(-2, 0, 4));
 	points.push_back(glm::vec3(-2, 0, 0));
 	points.push_back(glm::vec3(0, 0, 0));
 
-	Animation *anim = new LinearAnimation(points, 5, true);
-	//cubeNode2->setAnimation(anim);
-	//cubeNode2->attach(shared_ptr<AttacheableObject>(cubeEntity2));
+	Animation *anim = new LinearAnimation(points, 15, true);
 
-	GLfloat amb[3] = { 0.0f,0.0f,0.0f };
-	GLfloat dif[3] = { 0.8f, 0.8f, 0.8f };
-	GLfloat spec[3] = { 1.0f, 1.0f, 1.0f };
+	GLfloat amb[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat dif[3] = { 0.0f, 0.0f, 0.3f };
+	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
 
-	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 1.0f, 0.5f, 0.1f, new Cube("cubinho3"));
-	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(3.0f, 2.0f, 0.0f));
+	GLfloat amb2[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat dif2[3] = { 0.3f, 0.0f, 0.0f };
+	GLfloat spec2[3] = { 0.3f, 0.0f, 0.0f };
+
+	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.2f, 0.001f, "cube");
+	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
 	lightNode->changeScale(glm::vec3(0.2, 0.2, 0.2));
-	lightNode->attach(shared_ptr<AttacheableObject>(light1));
+	lightNode->attach(light1);
 	lightNode->setAnimation(anim);
 
-	/*cubeNode->translate(glm::vec3(0, 0, 0));
-	cubeNode->changeScale(glm::vec3(1.0, 2.0, 1.0));
-	cubeNode->setScaleOrig(glm::vec3(0, -0.5, 0.0));
-	cubeNode->setRotOrig(glm::vec3(0, -0.5, 0.0));
-	cubeNode->pitch(90);
-	cubeNode->roll(45);*/
+	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.5f, 0.2f, 0.001f, "cube");
+	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(3.0f, 2.0f, 1.0f));
+	lightNode2->changeScale(glm::vec3(0.2, 0.2, 0.2));
+	lightNode2->attach(light2);
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	double lastTime = glfwGetTime();
+
+	int nbFrames = 0;
 
 	// Game loop
 	while (!window_.close())
@@ -171,30 +215,50 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		nbFrames++;
+
+		if (currentFrame - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
+
+											 // printf and reset timer
+			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
+			nbFrames = 0;
+			lastTime += 1.0;
+
+		}
+
 		// Check and call events
 		glfwPollEvents();
-		Do_Movement();
+		Do_Movement(vp);
 
-		window_.Update(sceneManager, deltaTime*1000);
+		window_.update(sceneManager, deltaTime*1000);
 
-		window_.Render(sceneManager);
+		window_.render(sceneManager);
 	}
 
 	return 0;
 }
 
 // Moves/alters the camera positions based on user input
-void Do_Movement()
+void Do_Movement(Viewport *vp)
 {
 	// Camera controls
 	if (keys[GLFW_KEY_W])
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		camera->ProcessKeyboard(FORWARD, deltaTime);
 	if (keys[GLFW_KEY_S])
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		camera->ProcessKeyboard(BACKWARD, deltaTime);
 	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		camera->ProcessKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		camera->ProcessKeyboard(RIGHT, deltaTime);
+	if (keys[GLFW_KEY_Q])
+	{
+		pressingToggleBloom = true;
+	}
+	else if(pressingToggleBloom)
+	{
+		vp->toggleBloom();
+		pressingToggleBloom = false;
+	}
 
 	/*if (keys[GLFW_KEY_W])
 		camera2.ProcessKeyboard(FORWARD, deltaTime);
@@ -236,13 +300,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	camera->ProcessMouseMovement(xoffset, yoffset);
 //	camera2.ProcessMouseMovement(xoffset, yoffset);
 }
 
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(yoffset);
+	camera->ProcessMouseScroll(yoffset);
 //	camera2.ProcessMouseScroll(yoffset);
 }

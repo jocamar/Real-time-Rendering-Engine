@@ -34,10 +34,12 @@ RenderWindow::RenderWindow(GLint width, GLint height, const char *name, bool res
 
 
 
-void RenderWindow::addViewPort(Camera* cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b)
+Viewport* RenderWindow::addViewPort(Camera* cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b)
 {
 	this->viewports.push_back(Viewport(cam, left, top, width, height, zOrder, r, g, b, this));
+	Viewport* rtrn = &(viewports[viewports.size() - 1]);
 	std::sort(viewports.begin(), viewports.end());
+	return rtrn;
 }
 
 
@@ -65,14 +67,16 @@ RenderWindow::~RenderWindow()
 
 
 
-void RenderWindow::Update(SceneManager& scene, float seconds)
+void RenderWindow::update(SceneManager& scene, float millis)
 {
-	scene.Update(seconds);
+	scene.update(millis);
 }
 
 
-void RenderWindow::Render(SceneManager& scene)
+
+void RenderWindow::render(SceneManager& scene)
 {
+	scene.generateShadowMaps();
 	for(auto viewport : viewports)
 	{
 		viewport.Render(scene);

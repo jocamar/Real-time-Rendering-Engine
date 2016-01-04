@@ -1,11 +1,12 @@
 #include "Animation.h"
 #include "SceneNode.h"
-#include <string>
 
 
 Animation::Animation(vector<glm::vec3> ctrlPoints) : ctrlPoints(ctrlPoints)
 {
 }
+
+
 
 LinearAnimation::LinearAnimation(vector<glm::vec3> ctrlPoints, float span, bool looping) : Animation(ctrlPoints)
 {
@@ -35,6 +36,8 @@ LinearAnimation::LinearAnimation(vector<glm::vec3> ctrlPoints, float span, bool 
 			curOrientation = 0;
 	}
 }
+
+
 
 void LinearAnimation::update(unsigned long milis, bool animationsPaused)
 {
@@ -105,6 +108,8 @@ void LinearAnimation::update(unsigned long milis, bool animationsPaused)
 	}
 }
 
+
+
 void LinearAnimation::reset()
 {
 	if (ctrlPoints.size() > 0)
@@ -119,14 +124,19 @@ void LinearAnimation::reset()
 	}
 }
 
+
+
 void LinearAnimation::applyTranslations(SceneNode *node) {
 	node->translate(curPos-prevPos);
-	//std::cout << std::to_string(curPos.x) + " - " + std::to_string(curPos.y) + " - " + std::to_string(curPos.z) + " / " + std::to_string( node->getPosition().x ) + " - " + std::to_string( node->getPosition().y ) + " - " + std::to_string( node->getPosition().z ) << endl;
 }
+
+
 
 void LinearAnimation::applyRotations(SceneNode *node) {
 	node->yaw(curOrientation-prevOrientation);
 }
+
+
 
 glm::vec3 LinearAnimation::getPos() const
 {

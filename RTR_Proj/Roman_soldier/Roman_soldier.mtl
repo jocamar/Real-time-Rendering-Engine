@@ -1,0 +1,14 @@
+# 
+# 
+
+newmtl Roman_soldier
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Roman_soldier_d.png
+map_Bump Roman_soldier_n.png
+map_Ks Roman_soldier_s.png

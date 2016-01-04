@@ -1,10 +1,11 @@
 #pragma once
 
+#include <Importer.hpp>
+#include <scene.h>
+#include <postprocess.h>
+
 #include "Globals.h"
-#include "Shader.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "Material.h"
 
 using namespace std;
 
@@ -12,39 +13,44 @@ struct Vertex {
 	glm::vec3 Position;
 	glm::vec3 Normal;
 	glm::vec2 TexCoords;
-};
-
-struct Texture {
-	GLuint id;
-	string type;
-	aiString path;  // We store the path of the texture to compare with other textures
+	glm::vec3 Tangent;
+	glm::vec3 Bitangent;
 };
 
 class Mesh
 {
 protected:
-	/*  Render data  */
 	GLuint VAO, VBO, EBO;
-	GLuint *buffers;
-	GLuint numBuffers;
-	string idMesh;
-private:
-	/*  Functions    */
-	void setupMesh();
-public:
-	/*  Mesh Data  */
+	const char *idMesh;
+	
+
+	SceneManager *manager;
 	vector<Vertex> vertices;
 	vector<GLuint> indices;
-	vector<Texture> textures;
-	/*  Functions  */
-	Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures);
-	Mesh() {};
-	void Draw(Shader shader);
-
-
+	int material;
+public:
+	explicit Mesh(const char *id);
+	Mesh(const char *id, SceneManager* manager, vector<Vertex> vertices, vector<GLuint> indices, const char *materialId = nullptr);
 	GLuint getVAO();
-	virtual void display();
+	virtual void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
 	virtual ~Mesh();
+	void setupMesh();
+};
 
+class Model
+{
+	const char *id;
+	vector<Mesh*> meshes;
+	SceneManager *manager;
+	std::string directory;
+public:
+	Model(const char *id, SceneManager *manager, const char *path);
+	void addMesh(Mesh *mesh);
+	const char* getId();
+	vector<Mesh*> getMeshes();
+	void processNode(aiNode* node, const aiScene* scene);
+	Mesh* processMesh(aiMesh* mesh, const aiScene* scene);
+	vector<Texture*> loadMaterialTextures(aiMaterial* mat, aiTextureType type, char *typeName);
+	GLint TextureFromFile(const char *path, string directory);
 };
 

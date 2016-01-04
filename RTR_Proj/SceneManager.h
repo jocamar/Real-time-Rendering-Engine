@@ -1,42 +1,77 @@
 #pragma once
 #include "SceneNode.h"
 
-#include <map>
 #include "Material.h"
 #include "Entity.h"
 #include "Light.h"
-
+#include "Mesh.h"
 
 class SceneManager
 {
 protected:
-	unique_ptr<SceneNode> root;
-	map<const string, Material*> materials;
-	vector<shared_ptr<Light>> lights;
+	SceneNode *root;
+
+	vector<Shader*> shaders;
+	vector<Texture*> textures;
+	vector<Material*> materials;
+	vector<Model*> models;
+	int defaultMaterial;
+
+	vector<Light*> lights;
 	Light *directionalLight;
-	char* defaultMaterial;
+	Shader *shadowShader;
+	Shader *omniShadowShader;
 
 public:
+
 	SceneManager();
-	void addMaterial(char *id, char *diffuse, char *specular, char *vert, char *frag, Material::shaderTypes shaderType = Material::LIGHTING);
-	void addMaterial(char *id, char *diffuse, char *specular, Shader *shader, Material::shaderTypes shaderType = Material::LIGHTING);
-	void setDefaultMaterial(char* id);
-	const char* getDefaultMaterialId();
-	Material* getMaterial(const char* material);
 
-	shared_ptr<Entity> createEntity(char *id, char *mesh);
-	shared_ptr<Entity> createEntity(char *id, Mesh *mesh);
+	void addMaterial(const char *id, const char *vert, const char *frag, char *diffuse = nullptr, char *specular = nullptr, char *normal = nullptr, GLfloat *ambientI = nullptr, 
+												GLfloat *diffuseI = nullptr, GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, 
+												int shadingModel = 1, Material::shaderTypes shaderType = Material::LIGHTING, GLint interpMethod = GL_REPEAT);
 
-	shared_ptr<Light> createLight(char *id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, char *mesh);
-	shared_ptr<Light> createLight(char *id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, Mesh *mesh = nullptr);
+	void addMaterial(const char *id, const char *vert, const char *frag, vector<Texture*> textures, GLfloat *ambientI = nullptr, GLfloat *diffuseI = nullptr,
+												GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, int shadingModel = 1,
+												Material::shaderTypes shaderType = Material::LIGHTING);
+	void setDefaultMaterial(int num);
+	Material* getDefaultMaterial();
+	Material* getMaterial(int material);
+	Material* getMaterial(const char *id);
+	int getMaterialNum(const char *id);
+	int getMaterialNum(Material *material);
 
-	void createDirectionalLight(char *id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction);
+	Shader* getShader(int shader);
+	Shader* getShader(const char *id);
+	int getShaderNum(const char *id);
+	int getShaderNum(Shader *shader);
 
-	vector<shared_ptr<Light>> getActiveLights();
+	void addTexture(Texture *texture);
+	Texture* getTexture(int texture);
+	Texture* getTexture(const char *id);
+	int getTextureNum(const char *id);
+	int getTextureNum(Texture *texture);
+
+	void addModel(const char *id, const char *model);
+	Model* getModel(int model);
+	Model* getModel(const char *id);
+	int getModelNum(const char *id);
+	int getModelNum(Model *model);
+
+	Entity* createEntity(const char *id, const char *modelId);
+
+	Light* createLight(const char *id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, const char *modelId);
+
+	void createDirectionalLight(const char *id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction);
+	vector<Light*> getActiveLights();
 	Light* getDirectionalLight();
 
 	SceneNode* getRoot();
 	
-	void Update(float seconds);
-	void render(Camera *camera);
+	void update(float millis);
+	void render(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
+	void generateShadowMaps();
+
+	void getRenderNodes();
+	Shader* getShadowShader();
+	Shader* getOmniShadowShader();
 };

@@ -1,40 +1,45 @@
 #include "Entity.h"
 #include "SceneManager.h"
 #include "Camera.h"
-#include "Mesh.h"
 
-Entity::Entity(string idEntity, Mesh *EntityMesh, SceneManager *manager, SceneNode *parent) : AttacheableObject(manager, parent) 
+Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent, bool shadowCaster) : AttacheableObject(idEntity, manager, parent) 
 {
-	this->idEntity = idEntity;
-	this->EntityMesh = EntityMesh;
+	if(modelId)
+	{
+		this->model = manager->getModelNum(modelId);
+		auto meshes = manager->getModel(model)->getMeshes();
+
+		for(auto m : meshes)
+		{
+			SubEntity se;
+			se.model = model;
+			se.entity = this;
+			se.material = -1;
+			se.mesh = m;
+
+			this->subEntities.push_back(se);
+		}
+	}
+	else {
+		this->model = -1;
+	}
+
+	this->shadowCaster = shadowCaster;
 }
 
 
 
-void Entity::display(glm::mat4 transf, char *material, Camera *camera) {
-	
-	char* materialToUse;
-	if (this->material)
-		materialToUse = this->material;
-	else
-		materialToUse = material;
+void Entity::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
 
-	auto s = this->manager->getMaterial(material);
+	if (shadowMap && !this->shadowCaster)
+		return;
 
-	s->use(camera);
-
-	// Create camera transformation
-	glm::mat4 view;
-	view = camera->GetViewMatrix();
-	glm::mat4 projection;
-	projection = glm::perspective(camera->Zoom, (float)800 / (float)600, 0.1f, 1000.0f);
-
-	// Pass the matrices to the shader
-	glUniformMatrix4fv(s->getShader()->ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(s->getShader()->ProjLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(s->getShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
-	EntityMesh->display();
+	for(auto se : subEntities)
+	{
+		se.mesh->display(transf, material, camera, shadowMap, shadowType);
+	}
 }
+
 
 
 bool Entity::isLeaf()
