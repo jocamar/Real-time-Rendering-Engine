@@ -19,21 +19,8 @@ SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, A
 
 
 
-void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
-	
-	/*auto m_pos = glm::translate(glm::mat4(), position);
-	auto m_scale = glm::scale(glm::mat4(), scale);
-	auto m_rot = glm::mat4_cast(orientation);
-
-	auto m_scale_orig = glm::translate(glm::mat4(), -scaleOrig);
-	auto m_rot_orig = glm::translate(glm::mat4(), -rotOrig);
-	auto m_scale_orig_inv = glm::translate(glm::mat4(), scaleOrig);
-	auto m_rot_orig_inv = glm::translate(glm::mat4(), rotOrig);
-
-	auto modelMatrix = m_pos *(m_rot_orig_inv * m_rot * m_rot_orig) * (m_scale_orig_inv * m_scale * m_scale_orig);
-	modelMatrix = transf * modelMatrix;
-	this->transfMatrix = modelMatrix;*/
-
+void SceneNode::display(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) 
+{
 	int mat;
 	if (this->material >= 0)
 		mat = this->material;
@@ -41,7 +28,7 @@ void SceneNode::display(glm::mat4 transf, int material, Camera *camera, bool sha
 
 	for(auto child : children)
 	{
-		child->display(this->transfMatrix, mat, camera, shadowMap, shadowType);
+		child->display(mat, camera, shadowMap, shadowType);
 	}
 	
 }
@@ -239,6 +226,48 @@ void SceneNode::update(float millis) {
 	{
 		children.at(x)->update(millis);
 	}
+}
+
+
+
+RenderOrder SceneNode::getRenderEntities(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
+{
+	auto stuff = this;
+	vector<RenderOrder> intermediate;
+	RenderOrder final;
+
+	for(auto child : children)
+	{
+		int materialToUse;
+		if (this->material >= 0)
+			materialToUse = this->material;
+		else
+			materialToUse = material;
+
+		intermediate.push_back(child->getRenderEntities(materialToUse, camera, shadowMap, shadowType));
+	}
+
+	for(auto ro : intermediate)
+	{
+		for (auto it = ro.Entities.begin(); it != ro.Entities.end(); ++it)
+		{
+			auto mats = it->second;
+			auto shader = it->first;
+
+			for (auto it2 = ro.Entities[shader].begin(); it2 != ro.Entities[shader].end(); ++it2)
+			{
+				auto ents = it2->second;
+				auto mat = it2->first;
+
+				for(auto ent : ents)
+				{
+					final.Entities[shader][mat].push_back(ent);
+				}
+			}
+		}
+	}
+
+	return final;
 }
 
 

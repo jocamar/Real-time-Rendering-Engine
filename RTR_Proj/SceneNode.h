@@ -34,10 +34,11 @@ public:
 	SceneNode(const char *id, SceneManager *manager, SceneNode *parent = nullptr, Animation *anim = nullptr);
 	~SceneNode();
 
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
+	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	void attach(AttacheableObject *object);
 	bool isLeaf() override;
 	void update(float seconds) override;
+	RenderOrder getRenderEntities(int material, Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 
 	glm::vec3 getPosition();
 	glm::vec3 getScale();

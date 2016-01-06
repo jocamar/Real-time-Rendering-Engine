@@ -92,6 +92,10 @@ RectangleMesh::RectangleMesh(const char *id, SceneManager *manager, int parts, f
 		}
 	}
 
+	this->boundingBox.points[0] = glm::vec3(-0.5, -0.5, 0);
+	this->boundingBox.points[1] = glm::vec3(0.5, 0.5, 0);
+	this->boundingBox.center = glm::vec3(0, 0, 0);
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 

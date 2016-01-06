@@ -39,3 +39,10 @@ void AttacheableObject::setMaterial(char* material)
 {
 	this->material = manager->getMaterialNum(material);
 }
+
+
+
+int AttacheableObject::getMaterial()
+{
+	return material;
+}

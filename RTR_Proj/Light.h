@@ -5,7 +5,7 @@
 
 class Mesh;
 
-const GLuint SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
+const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 using namespace std;
 class Light : public Entity
@@ -30,7 +30,7 @@ class Light : public Entity
 public:
 	Light(const char *idEntity, SceneManager *manager, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, const char *modelId, SceneNode *parent = nullptr);
 	Light(const char *idEntity, SceneManager *manager, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction);
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
+	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	bool isLeaf() override;
 	void update(float seconds) override {};
 	void generateShadowMap();

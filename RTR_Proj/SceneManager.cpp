@@ -7,6 +7,10 @@ SceneManager::SceneManager()
 
 	this->shadowShader = new Shader("shadowShader.vs", "shadowShader.frag");
 	this->omniShadowShader = new Shader("omniShadowShader.vs", "omniShadowShader.frag", "omniShadowShader.gs");
+
+	this->orderUpdatedDirectional = false;
+	this->orderUpdatedPoint = false;
+	this->orderUpdatedRegular = false;
 }
 
 
@@ -493,9 +497,9 @@ int SceneManager::getModelNum(Model* model)
 
 
 
-Entity* SceneManager::createEntity(const char *id, const char *modelId)
+Entity* SceneManager::createEntity(const char *id, const char *modelId, bool shadowCaster)
 {
-	return new Entity(id, this, modelId);
+	return new Entity(id, this, modelId, nullptr, shadowCaster);
 }
 
 
@@ -556,21 +560,66 @@ void SceneManager::update(float millis)
 
 void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
-	auto defMaterial = this->getMaterial(defaultMaterial);
+	/*if (!orderUpdatedDirectional && shadowMap && shadowType == Globals::DIRECTIONAL)
+	{
+		this->directionalShadowOrder = this->getRenderEntities(camera, shadowMap, shadowType);
+		this->orderUpdatedDirectional = true;
+	}
+	else if (!orderUpdatedPoint && shadowMap && shadowType == Globals::POINT)
+	{
+		this->pointShadowOrder = this->getRenderEntities(camera, shadowMap, shadowType);
+		this->orderUpdatedPoint = true;
+	} 
+	else if (!orderUpdatedRegular && !shadowMap)
+	{
+		this->regularOrder = this->getRenderEntities(camera, shadowMap, shadowType);
+		this->orderUpdatedRegular = true;
+	}
 
-	if (!defMaterial)
-		return;
+	RenderOrder *order;
+	if (!shadowMap)
+		order = &(this->regularOrder);
+	else if (shadowMap && shadowType == Globals::DIRECTIONAL)
+		order = &(this->directionalShadowOrder);
+	else order = &(this->pointShadowOrder);
 
-	auto mat = glm::mat4();
-	root->display(mat, defaultMaterial, camera, shadowMap, shadowType);
+
+	for (auto it = order->Entities.begin(); it != order->Entities.end(); ++it)
+	{
+		auto s = it->first;
+		auto mats = it->second;
+		if (!shadowMap)
+			s->Use();
+		
+		for (auto it2 = order->Entities[s].begin(); it2 != order->Entities[s].end(); ++it2)
+		{
+			auto mat = it2->first;
+			auto ents = it2->second;
+
+			if(!shadowMap)
+				mat->use(camera, shadowMap, shadowType);
+
+			for (auto ent : ents)
+			{
+				ent->mesh->display(ent->entity->getParent()->getTransfMatrix(), this->getMaterialNum(mat), camera, shadowMap, shadowType);
+			}
+
+			if (!shadowMap)
+				mat->unUse(camera, shadowMap, shadowType);
+		}
+	}*/
+
+	root->display(defaultMaterial, camera, shadowMap, shadowType);
 }
 
 
 
 void SceneManager::generateShadowMaps()
 {
+	this->shadowShader->Use();
 	this->directionalLight->generateShadowMap();
 
+	this->omniShadowShader->Use();
 	for(auto l : lights)
 	{
 		l->generateShadowMap();
@@ -579,8 +628,16 @@ void SceneManager::generateShadowMaps()
 
 
 
-void SceneManager::getRenderNodes()
+RenderOrder SceneManager::getRenderEntities(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
+	RenderOrder order;
+	auto defMaterial = this->getMaterial(defaultMaterial);
+
+	if (!defMaterial)
+		return order;
+
+	order = this->root->getRenderEntities(defaultMaterial, camera, shadowMap, shadowType);
+	return order;
 }
 
 

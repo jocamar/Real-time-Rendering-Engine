@@ -27,6 +27,15 @@ Material::Material(const char *id, SceneManager *manager, const char *shaderId, 
 		textures.push_back(manager->getTexture(normalId));
 
 	glGenTextures(1, &emissionMap);
+
+	if(opacity <= 0.9)
+	{
+		this->transparent = true;
+	}
+	else
+	{
+		this->transparent = false;
+	}
 }
 
 
@@ -49,6 +58,15 @@ Material::Material(const char* id, SceneManager* manager, const char* shaderId, 
 	this->textures = textures;
 
 	glGenTextures(1, &emissionMap);
+
+	if (opacity <= 0.9)
+	{
+		this->transparent = true;
+	}
+	else
+	{
+		this->transparent = false;
+	}
 }
 
 
@@ -107,6 +125,13 @@ vector<Texture*> Material::getSpecMaps()
 GLuint Material::getEmissionMap()
 {
 	return emissionMap;
+}
+
+
+
+bool Material::isTransparent()
+{
+	return transparent;
 }
 
 
@@ -247,45 +272,48 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 	}
 	else
 	{
-		if (shadowType == Globals::DIRECTIONAL)
+		/*if (shadowType == Globals::DIRECTIONAL)
 			this->manager->getShadowShader()->Use();
 		else if (shadowType == Globals::POINT)
-			this->manager->getOmniShadowShader()->Use();
+			this->manager->getOmniShadowShader()->Use();*/
 	}
 	
 }
 
 void Material::unUse(Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
-	GLuint diffuseNr = 1;
-	GLuint specularNr = 1;
-	GLuint normalNr  = 1;
-	for (GLuint i = 0; i < this->textures.size(); i++)
+	if(!shadowMap)
 	{
-		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
-										  // Retrieve texture number (the N in diffuse_textureN)
-		stringstream ss;
-		string number;
-		string name = this->textures[i]->type;
-		if (name == "diffuse_texture")
-			ss << diffuseNr++; // Transfer GLuint to stream
-		else if (name == "specular_texture")
+		GLuint diffuseNr = 1;
+		GLuint specularNr = 1;
+		GLuint normalNr = 1;
+		for (GLuint i = 0; i < this->textures.size(); i++)
 		{
-			ss << specularNr++; // Transfer GLuint to stream
-		}
-		else if (name == "normal_texture")
-		{
-			ss << normalNr++;
-		}
-		number = ss.str();
+			glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
+											  // Retrieve texture number (the N in diffuse_textureN)
+			stringstream ss;
+			string number;
+			string name = this->textures[i]->type;
+			if (name == "diffuse_texture")
+				ss << diffuseNr++; // Transfer GLuint to stream
+			else if (name == "specular_texture")
+			{
+				ss << specularNr++; // Transfer GLuint to stream
+			}
+			else if (name == "normal_texture")
+			{
+				ss << normalNr++;
+			}
+			number = ss.str();
 
-		glBindTexture(GL_TEXTURE_2D, NULL);
-		glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number + "_active").c_str()), 0);
+			glBindTexture(GL_TEXTURE_2D, NULL);
+			glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number + "_active").c_str()), 0);
+		}
+		glActiveTexture(GL_TEXTURE0);
 	}
-	glActiveTexture(GL_TEXTURE0);
 
-	glActiveTexture(GL_TEXTURE7);
+	//glActiveTexture(GL_TEXTURE7);
 	//glUniform1i(glGetUniformLocation(shader->Program, "shadowMap"), 0);
 	//glBindTexture(GL_TEXTURE_CUBE_MAP, NULL);
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 }

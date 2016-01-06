@@ -14,6 +14,9 @@ struct SubEntity
 	int material;
 	int model;
 	Entity *entity;
+
+	bool isInFrustum(Camera *camera);
+	float distanceToCamera(Camera *camera);
 };
 
 class Entity : public AttacheableObject
@@ -24,8 +27,9 @@ protected:
 	bool shadowCaster;
 public:
 	Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent = nullptr, bool shadowCaster = true);
-	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
+	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	bool isLeaf() override;
 	void update(float seconds) override {};
+	RenderOrder getRenderEntities(int material, Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 };
 

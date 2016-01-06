@@ -9,7 +9,7 @@ Mesh::Mesh(const char *id)
 
 
 
-Mesh::Mesh(const char *id, SceneManager *manager, vector<Vertex> vertices, vector<GLuint> indices, const char *materialId)
+Mesh::Mesh(const char *id, SceneManager *manager, vector<Vertex> vertices, vector<GLuint> indices, BoundingBox boundingBox, const char *materialId)
 {
 	this->idMesh = id;
 	this->vertices = vertices;
@@ -18,6 +18,7 @@ Mesh::Mesh(const char *id, SceneManager *manager, vector<Vertex> vertices, vecto
 	if(!materialId)
 		this->material = -1;
 	else this->material = manager->getMaterialNum(materialId);
+	this->boundingBox = boundingBox;
 
 	setupMesh();
 }
@@ -136,6 +137,20 @@ void Mesh::setupMesh()
 
 
 
+BoundingBox Mesh::getBoundingBox()
+{
+	return boundingBox;
+}
+
+
+
+int Mesh::getMaterialId()
+{
+	return material;
+}
+
+
+
 Model::Model(const char *id, SceneManager *manager, const char *path)
 {
 	this->id = id;
@@ -205,6 +220,14 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	vector<GLuint> indices;
 	vector<Texture*> textures;
 
+	float max_x = FLT_MIN;
+	float max_y = FLT_MIN;
+	float max_z = FLT_MIN;
+
+	float min_x = FLT_MAX;
+	float min_y = FLT_MAX;
+	float min_z = FLT_MAX;
+
 	// Walk through each of the mesh's vertices
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -215,6 +238,35 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 		vertex.Position = vector;
+
+		if(vector.x > max_x)
+		{
+			max_x = vector.x;
+		}
+		if(vector.x < min_x)
+		{
+			min_x = vector.x;
+		}
+
+		if (vector.y > max_y)
+		{
+			max_y = vector.y;
+		}
+		if (vector.y < min_y)
+		{
+			min_y = vector.y;
+		}
+
+		if (vector.z > max_z)
+		{
+			max_z = vector.z;
+		}
+		if (vector.z < min_z)
+		{
+			min_z = vector.z;
+		}
+
+		
 		// Normals
 		if(mesh->mNormals)
 		{
@@ -266,6 +318,15 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 		vertices.push_back(vertex);
 	}
+
+	float mid_x = min_x + ((max_x - min_x) / 2.0f);
+	float mid_y = min_y + ((max_y - min_y) / 2.0f);
+	float mid_z = min_z + ((max_z - min_z) / 2.0f);
+	BoundingBox bBox;
+	bBox.points[0] = glm::vec3(max_x, max_y, max_z);
+	bBox.points[1] = glm::vec3(min_x, min_y, min_z);
+	bBox.center = glm::vec3(mid_x, mid_y, mid_z);
+
 	// Now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
 	for (GLuint i = 0; i < mesh->mNumFaces; i++)
 	{
@@ -327,7 +388,7 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// Return a mesh object created from the extracted mesh data
-	return new Mesh(this->id, this->manager, vertices, indices, materialId);
+	return new Mesh(this->id, this->manager, vertices, indices, bBox, materialId);
 }
 
 
