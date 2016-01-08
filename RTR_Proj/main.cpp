@@ -96,7 +96,7 @@ int main()
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
-	auto skyEntTop = sceneManager.createEntity("top", "plane");
+	auto skyEntTop = sceneManager.createEntity("top", "plane", false);
 	auto skyNodeTop = sceneManager.getRoot()->createNewChildNode("skyNodeTop", "sky_top", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeTop->attach(skyEntTop);
 	skyNodeTop->changeScale(glm::vec3(500, 500, 1));
@@ -104,41 +104,46 @@ int main()
 	skyNodeTop->pitch(-90);
 	skyNodeTop->roll(180);
 
+	auto skyEntFront = sceneManager.createEntity("front", "plane", false);
 	auto skyNodeFront = sceneManager.getRoot()->createNewChildNode("skyNodeFront", "sky_front", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeFront->attach(skyEntTop);
+	skyNodeFront->attach(skyEntFront);
 	skyNodeFront->changeScale(glm::vec3(500, 500, 1));
 	skyNodeFront->translate(glm::vec3(0, 0, 250));
 	skyNodeFront->roll(180);
 
+	auto skyEntBack = sceneManager.createEntity("back", "plane", false);
 	auto skyNodeBack = sceneManager.getRoot()->createNewChildNode("skyNodeBack", "sky_back", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeBack->attach(skyEntTop);
+	skyNodeBack->attach(skyEntBack);
 	skyNodeBack->changeScale(glm::vec3(500, 500, 1));
 	skyNodeBack->translate(glm::vec3(0, 0, -250));
 	skyNodeBack->yaw(180);
 	skyNodeBack->roll(180);
 
+	auto skyEntBottom = sceneManager.createEntity("bottom", "plane", false);
 	auto skyNodeBottom = sceneManager.getRoot()->createNewChildNode("skyNodeBottom", "sky_bottom", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeBottom->attach(skyEntTop);
+	skyNodeBottom->attach(skyEntBottom);
 	skyNodeBottom->changeScale(glm::vec3(500, 500, 1));
 	skyNodeBottom->translate(glm::vec3(0, -250, 0));
 	skyNodeBottom->pitch(90);
 	skyNodeBottom->roll(180);
 
+	auto skyEntLeft = sceneManager.createEntity("left", "plane", false);
 	auto skyNodeLeft = sceneManager.getRoot()->createNewChildNode("skyNodeLeft", "sky_left", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeLeft->attach(skyEntTop);
+	skyNodeLeft->attach(skyEntLeft);
 	skyNodeLeft->changeScale(glm::vec3(500, 500, 1));
 	skyNodeLeft->translate(glm::vec3(250, 0, 0));
 	skyNodeLeft->yaw(90);
 	skyNodeLeft->roll(180);
 
+	auto skyEntRight = sceneManager.createEntity("right", "plane", false);
 	auto skyNodeRight = sceneManager.getRoot()->createNewChildNode("skyNodeRight", "sky_right", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeRight->attach(skyEntTop);
+	skyNodeRight->attach(skyEntRight);
 	skyNodeRight->changeScale(glm::vec3(500, 500, 1));
 	skyNodeRight->translate(glm::vec3(-250, 0, 0));
 	skyNodeRight->yaw(-90);
 	skyNodeRight->roll(180);
 
-	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround");
+	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround", false);
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
 	ground->attach(groundEnt);
 	ground->changeScale(glm::vec3(10, 10, 1));
@@ -152,8 +157,9 @@ int main()
 	//wall->translate(glm::vec3(0, -0.5, -1));
     wall->yaw(180);
 
+	auto wallEnt2 = sceneManager.createEntity("wallEnt2", "planeWall");
 	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
-	wall2->attach(wallEnt);
+	wall2->attach(wallEnt2);
 	wall2->changeScale(glm::vec3(10, 5, 1));
 	//wall2->translate(glm::vec3(-1, -0.5, 0));
 	wall2->yaw(-90);
@@ -162,12 +168,13 @@ int main()
 	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode->attach(cubeEntity);
 
+	auto cubeEntity2 = sceneManager.createEntity("entidade2", "cube");
 	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode2->translate(glm::vec3(1.2, 0, 0));
 	cubeNode2->yaw(30);
-	cubeNode2->attach(cubeEntity);
+	cubeNode2->attach(cubeEntity2);
 
-	auto nanosuitEntity = sceneManager.createEntity("entidade2", "nanosuit");
+	auto nanosuitEntity = sceneManager.createEntity("entidade3", "nanosuit");
 	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(1.5f, 1.0f, 2.0f));
 	cubeNode3->yaw(90);
 	cubeNode3->changeScale(glm::vec3(0.5, 0.5, 0.5));

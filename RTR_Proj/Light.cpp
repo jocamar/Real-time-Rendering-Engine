@@ -69,23 +69,18 @@ Light::Light(const char *idLight, SceneManager* manager, GLfloat* ambient, GLflo
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	if(!directional)
-	{
-		
-	}
 }
 
 
 
-void Light::display(glm::mat4 transf, int material, Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
+void Light::display(int material, Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
 	if (shadowMap && !this->shadowCaster)
 		return;
 
 	for(auto se : subEntities)
 	{
-		se.mesh->display(transf, material, camera, shadowMap, shadowType);
+		se.mesh->display(this->parent->getTransfMatrix(), material, camera, shadowMap, shadowType);
 	}
 }
 
@@ -137,9 +132,7 @@ void Light::generateShadowMap()
 		cam->ViewProjMatrix = lightSpaceMatrix;
 		manager->render(cam, true);
 	}
-	//glClearDepth(0.0);
-	//glClear(GL_DEPTH_BUFFER_BIT);
-	//glClearDepth(1.0);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 

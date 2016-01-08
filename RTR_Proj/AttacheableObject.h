@@ -4,6 +4,8 @@
 class Camera;
 class SceneManager;
 class SceneNode;
+struct SubEntity;
+struct RenderOrder;
 
 class AttacheableObject
 {
@@ -16,13 +18,15 @@ public:
 	explicit AttacheableObject(const char *id, SceneManager *manager, SceneNode *parent = nullptr);
 	AttacheableObject(const char *id, SceneManager *manager, char *material, SceneNode *parent = nullptr);
 
-	virtual void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) = 0;
+	virtual void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) = 0;
 	virtual bool isLeaf() = 0;
 	virtual void update(float seconds) = 0;
+	virtual RenderOrder getRenderEntities(int material, Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) = 0;
 
 	SceneNode* getParent();
 	void setParent(SceneNode *parent);
 	void setMaterial(char *material);
+	int getMaterial();
 
 	virtual ~AttacheableObject() {};
 };

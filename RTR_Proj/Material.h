@@ -26,6 +26,7 @@ protected:
 	GLfloat shininess;
 	GLfloat opacity;
 	int shadingModel;
+	bool transparent;
 
 
 	int shaderType;
@@ -45,6 +46,7 @@ public:
 	vector<Texture*> getDiffuseMaps();
 	vector<Texture*> getSpecMaps();
 	GLuint getEmissionMap();
+	bool isTransparent();
 
 	void use(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
 	void unUse(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);

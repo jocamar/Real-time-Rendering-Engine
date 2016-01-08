@@ -118,6 +118,10 @@ Cube::Cube(const char *id, SceneManager *manager) : Mesh(id)
 		vertices.push_back(v2);
 	}
 
+	this->boundingBox.points[0] = glm::vec3(-0.5, -0.5, -0.5);
+	this->boundingBox.points[1] = glm::vec3(0.5, 0.5, 0.5);
+	this->boundingBox.center = glm::vec3(0, 0, 0);
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 

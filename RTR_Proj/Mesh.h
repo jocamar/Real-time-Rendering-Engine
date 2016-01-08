@@ -17,6 +17,12 @@ struct Vertex {
 	glm::vec3 Bitangent;
 };
 
+struct BoundingBox
+{
+	glm::vec3 points[2];
+	glm::vec3 center;
+};
+
 class Mesh
 {
 protected:
@@ -28,13 +34,16 @@ protected:
 	vector<Vertex> vertices;
 	vector<GLuint> indices;
 	int material;
+	BoundingBox boundingBox;
 public:
 	explicit Mesh(const char *id);
-	Mesh(const char *id, SceneManager* manager, vector<Vertex> vertices, vector<GLuint> indices, const char *materialId = nullptr);
+	Mesh(const char *id, SceneManager* manager, vector<Vertex> vertices, vector<GLuint> indices, BoundingBox boundingBox, const char *materialId = nullptr);
 	GLuint getVAO();
 	virtual void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
 	virtual ~Mesh();
 	void setupMesh();
+	BoundingBox getBoundingBox();
+	int getMaterialId();
 };
 
 class Model
