@@ -49,6 +49,10 @@ public:
 	void addMaterial(const char *id, const char *vert, const char *frag, vector<Texture*> textures, GLfloat *ambientI = nullptr, GLfloat *diffuseI = nullptr,
 												GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, int shadingModel = 1,
 												Material::shaderTypes shaderType = Material::LIGHTING);
+	void addMaterial(const char *id, const char *vert, const char *frag, vector<const GLchar*> faces, GLfloat *ambientI = nullptr, GLfloat *diffuseI = nullptr,
+												GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, int shadingModel = 1,
+												Material::shaderTypes shaderType = Material::LIGHTING);
+
 	void setDefaultMaterial(int num);
 	Material* getDefaultMaterial();
 	Material* getMaterial(int material);

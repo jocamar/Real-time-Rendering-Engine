@@ -7,6 +7,8 @@
 #include "Camera.h"
 #include "SceneManager.h"
 #include "Cube.h"
+#include "Particle.h"
+#include "Particle.h"
 #include "RenderWindow.h"
 #include "Animation.h"
 #include "RectangleMesh.h"
@@ -36,6 +38,7 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
+
 	camera = new Camera(glm::vec3(8.0f, 3.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(-1, 0, 0));
 	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
@@ -49,6 +52,15 @@ int main()
 
 	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
 	GLfloat diffuseL2[] = { 1.0, 0.0, 0.0 };
+
+	vector<const GLchar*> faces;
+	faces.push_back("right.jpg");
+	faces.push_back("left.jpg");
+	faces.push_back("top.jpg");
+	faces.push_back("bottom.jpg");
+	faces.push_back("back.jpg");
+	faces.push_back("front.jpg");
+
 	SceneManager sceneManager;
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
@@ -62,6 +74,7 @@ int main()
 	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "box_floor.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", nullptr, nullptr, ambient, nullptr, specular, 1, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("skybox", "skybox.vs", "skybox.frag", faces, nullptr, diffuse, specular, 0, 1, 0, Material::REFLECTIVE);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);

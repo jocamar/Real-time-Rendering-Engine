@@ -19,6 +19,7 @@ protected:
 	Shader *shader;
 
 	vector<Texture*> textures;
+	GLuint cubemapTexture;
 	GLuint emissionMap;
 	GLfloat* ambientIntensity;
 	GLfloat* diffuseIntensity;
@@ -33,12 +34,15 @@ protected:
 
 	SceneManager *manager;
 public:
-	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER};
+	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER, REFLECTIVE};
 
 	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, 
 					GLfloat opacity, int shadingModel, const char *diffuseId = nullptr, const char *specularId = nullptr, const char *normalId = nullptr);
 	Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess,
 					GLfloat opacity, int shadingModel, vector<Texture*> textures);
+	Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess,
+		GLfloat opacity, int shadingModel, vector<const GLchar*> faces);
+
 	~Material();
 
 	const char* getId();
@@ -47,6 +51,8 @@ public:
 	vector<Texture*> getSpecMaps();
 	GLuint getEmissionMap();
 	bool isTransparent();
+
+	GLuint loadCubemap(vector<const GLchar*> faces);
 
 	void use(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
 	void unUse(Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL);
