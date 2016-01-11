@@ -123,6 +123,8 @@ GLuint Viewport::generateAttachmentTexture(GLboolean depth, GLboolean stencil, G
 
 void Viewport::Render(SceneManager& scene)
 {
+	scene.generateShadowMaps(this->camera);
+
 	glViewport(left, top, width, height);
 	glScissor(left, top, width, height);
 	glEnable(GL_SCISSOR_TEST);

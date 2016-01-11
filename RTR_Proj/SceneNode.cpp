@@ -244,10 +244,13 @@ RenderOrder SceneNode::getRenderEntities(int material, Camera *camera, bool shad
 		else
 			materialToUse = material;
 
-		intermediate.push_back(child->getRenderEntities(materialToUse, camera, shadowMap, shadowType));
+		auto order = child->getRenderEntities(materialToUse, camera, shadowMap, shadowType);
+
+		if(order.Entities.size() > 0)
+			final.Entities.insert(std::end(final.Entities), std::begin(order.Entities), std::end(order.Entities));
 	}
 
-	for(auto ro : intermediate)
+	/*for(auto ro : intermediate)
 	{
 		for (auto it = ro.Entities.begin(); it != ro.Entities.end(); ++it)
 		{
@@ -265,7 +268,7 @@ RenderOrder SceneNode::getRenderEntities(int material, Camera *camera, bool shad
 				}
 			}
 		}
-	}
+	}*/
 
 	return final;
 }

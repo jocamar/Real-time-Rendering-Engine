@@ -50,6 +50,12 @@ bool Entity::isLeaf()
 
 
 
+void Entity::update(float seconds)
+{
+}
+
+
+
 RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
 	RenderOrder order;
@@ -70,10 +76,16 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 		else
 			materialToUse = material;
 
-		Material *mat = manager->getMaterial(materialToUse);
-		Shader *shader = mat->getShader();
+		entity->materialToUse = materialToUse;
 
-		order.Entities[shader][mat].push_back(entity);
+		/*Material *mat = manager->getMaterial(materialToUse);
+		Shader *shader = mat->getShader();*/
+		auto omniCam = false;
+		if (shadowMap && shadowType == Globals::POINT)
+			omniCam = true;
+
+		if(entity->isInFrustum(camera, omniCam))
+			order.Entities.push_back(entity);
 	}
 
 	return order;
@@ -81,17 +93,213 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 
 
 
-bool SubEntity::isInFrustum(Camera* camera)
+bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 {
+	glm::mat4 modelMatrix = this->entity->getParent()->getTransfMatrix();
+	auto camPos = camera->Position;
+
+	auto radius = glm::length((modelMatrix * glm::vec4(this->mesh->getBoundingBox().points[0],1.0)) - (modelMatrix * glm::vec4(this->mesh->getBoundingBox().center,1.0)));
+	auto center = this->mesh->getBoundingBox().center;
+
+	glm::vec3 pos = glm::vec3(modelMatrix * glm::vec4(center, 1.0));
+	auto v = pos - camPos;
+
+	if (!omniCam)
+	{
+		auto Z = glm::normalize(camera->Front);
+
+		auto pointZ = glm::dot(v, Z);
+		if (pointZ > camera->Far + radius || pointZ < camera->Near - radius)
+			return false;
+
+		auto Y = glm::normalize(camera->Up);
+		auto X = glm::normalize(camera->Right);
+		auto pointY = glm::dot(v, Y);
+		auto pointX = glm::dot(v, X);
+
+		if(!camera->Ortho)
+		{
+			//auto d = radius / glm::cos(glm::radians(camera->Zoom));
+			auto d = radius * camera->yFactor;
+			pointZ *= glm::tan(glm::radians(camera->Zoom/2.0));
+
+			if (pointY > pointZ + d || pointY < -pointZ - d)
+				return false;
+				
+			//auto d2 = radius / glm::cos(glm::atan(glm::tan(glm::radians(camera->Zoom))*camera->Ratio));
+			auto d2 = radius * camera->xFactor;
+			pointZ *= camera->Ratio;
+
+			if (pointX > pointZ + d2 || pointX < -pointZ -d2)
+				return false;
+		}
+		else
+		{
+			if (-40.0 > pointY + radius || pointY - radius > 40)
+				return false;
+			if (-40.0 > pointX + radius || pointX - radius > 40)
+				return false;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			glm::vec3 Z;
+			glm::vec3 Y;
+			glm::vec3 X;
+
+			if (i == 0)
+			{
+				Z = glm::vec3(1.0, 0.0, 0.0);
+				Y = glm::vec3(0.0, -1.0, 0.0);
+				X = glm::vec3(0.0, 0.0, -1.0);
+			}
+			else if (i == 1)
+			{
+				Z = glm::vec3(-1.0, 0.0, 0.0);
+				Y = glm::vec3(0.0, -1.0, 0.0);
+				X = glm::vec3(0.0, 0.0, 1.0);
+			}
+			else if (i == 2)
+			{
+				Z = glm::vec3(0.0, 1.0, 0.0);
+				Y = glm::vec3(0.0, 0.0, 1.0);
+				X = glm::vec3(1.0, 0.0, 0.0);
+			}
+			else if (i == 3)
+			{
+				Z = glm::vec3(0.0, -1.0, 0.0);
+				Y = glm::vec3(0.0, 0.0, -1.0);
+				X = glm::vec3(1.0, 0.0, 0.0);
+			}
+			else if (i == 4)
+			{
+				Z = glm::vec3(0.0, 0.0, 1.0);
+				Y = glm::vec3(0.0, -1.0, 0.0);
+				X = glm::vec3(1.0, 0.0, 0.0);
+			}
+			else if (i == 5)
+			{
+				Z = glm::vec3(0.0, 0.0, -1.0);
+				Y = glm::vec3(0.0, -1.0, 0.0);
+				X = glm::vec3(-1.0, 0.0, 0.0);
+			}
+
+			auto pointZ = glm::dot(v, Z);
+			if (pointZ - radius > camera->Far || pointZ + radius < camera->Near)
+				continue;
+
+			auto pointY = glm::dot(v, Y);
+			auto pointX = glm::dot(v, X);
+
+			if (!camera->Ortho)
+			{
+				//auto d = radius / glm::cos(glm::radians(camera->Zoom));
+				auto d = radius * camera->yFactor;
+				pointZ *= glm::tan(glm::radians(camera->Zoom/2.0));
+
+				if (pointY > pointZ + d || pointY < -pointZ - d)
+					continue;
+
+				//auto d2 = radius / glm::cos(glm::atan(glm::tan(glm::radians(camera->Zoom))*camera->Ratio));
+				auto d2 = radius * camera->xFactor;
+				pointZ *= camera->Ratio;
+
+				if (pointX > pointZ + d2 || pointX < -pointZ - d2)
+					continue;
+			}
+			else
+			{
+				if (-50.0 > pointY + radius || pointY - radius > 50)
+					continue;
+				if (-50.0 > pointX + radius || pointX - radius > 50)
+					continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	return true;
 }
 
 
 
-float SubEntity::distanceToCamera(Camera* camera)
+float SubEntity::distanceToCamera(Camera* camera) const
 {
 	glm::vec3 cam_pos = camera->Position;
 	glm::vec3 this_pos = this->entity->getParent()->getWorldPosition();
 
 	return glm::distance(cam_pos, this_pos);
 }
+
+
+
+bool SubEntity::operator<(const SubEntity& se) const
+{
+	if (this->materialToUse < se.materialToUse)
+		return true;
+
+	return false;
+}
+
+bool SubEntity::less(SubEntity *se1, SubEntity *se2)
+{
+	auto manager = se1->entity->getManager();
+	auto mat1 = manager->getMaterial(se1->materialToUse);
+	auto mat2 = manager->getMaterial(se2->materialToUse);
+	bool trans1 = false;
+	bool trans2 = false;
+
+	if (mat1)
+	{
+		trans1 = mat1->isTransparent();
+	}
+	if (mat2) 
+	{
+		trans2 = mat2->isTransparent();
+	}
+
+	if (trans1 && !trans2)
+		return false;
+	else if (trans2 && !trans1)
+		return true;
+	else return (se1->materialToUse < se2->materialToUse);
+}
+
+
+
+/*bool sorter::operator()(SubEntity const* se1, SubEntity const* se2) const
+{
+	auto manager = se1->entity->getManager();
+	auto mat1 = manager->getMaterial(se1->materialToUse);
+	auto mat2 = manager->getMaterial(se2->materialToUse);
+	bool trans1 = false;
+	bool trans2 = false;
+
+	if (mat1)
+	{
+		trans1 = mat1->isTransparent();
+	}
+	if (mat2)
+	{
+		trans2 = mat2->isTransparent();
+	}
+
+	if (trans1 && !trans2)
+		return false;
+	else if (trans2 && !trans1)
+		return true;
+	else {
+		if (se1->distanceToCamera(cam) > se2->distanceToCamera(cam))
+			return false;
+		else return true;
+		if (se1->materialToUse < se2->materialToUse)
+			return true;
+		else if (se1->materialToUse >= se2->materialToUse)
+			return false;
+	}
+}*/

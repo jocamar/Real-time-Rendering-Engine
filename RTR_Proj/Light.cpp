@@ -54,7 +54,7 @@ Light::Light(const char *idLight, SceneManager* manager, GLfloat* ambient, GLflo
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		DIR_SHADOW_WIDTH, DIR_SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -93,29 +93,27 @@ bool Light::isLeaf()
 
 
 
-void Light::generateShadowMap()
+void Light::generateShadowMap(Camera *camera)
 {
-	glCullFace(GL_FRONT);
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if (this->directional)
-		this->cam = new Camera((glm::vec3(0) - glm::vec3(direction[0], direction[1], direction[2]))*10.f, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(direction[0], direction[1], direction[2]), true);
+		this->cam = new Camera(camera->Position+(glm::vec3(0) - glm::vec3(direction[0], direction[1], direction[2]))*100.f, glm::vec3(0.0f, 1.0f, 0.0f), 
+										glm::vec3(direction[0], direction[1], direction[2]), true, 0.1f, 200.0f, (float)DIR_SHADOW_WIDTH / (float)DIR_SHADOW_HEIGHT);
 	else
 	{
 		glm::vec3 wp = this->parent->getWorldPosition();
-		this->cam = new Camera(this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0));
+		this->cam = new Camera(this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.1f, 30.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 90.0f);
+		this->cam->Zoom = 90.0f;
 	}
 
-	glm::mat4 view;
+	glm::mat4 view, projection;
 	view = cam->GetViewMatrix();
-	glm::mat4 projection;
+	projection = cam->GetProjectionMatrix();
+
 	if (!cam->Ortho)
 	{
-		projection = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 0.1f, 100.0f);
-
 		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
 		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
 		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
@@ -127,14 +125,12 @@ void Light::generateShadowMap()
 	}
 	else
 	{
-		projection = glm::ortho(-10.f, 10.f, -10.f, 10.f, 5.0f, 100.0f);
 		this->lightSpaceMatrix = projection * view;
 		cam->ViewProjMatrix = lightSpaceMatrix;
 		manager->render(cam, true);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glCullFace(GL_BACK);
 
 	this->cubeLightSpaceMatrixes.clear();
 	delete cam;

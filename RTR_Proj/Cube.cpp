@@ -173,22 +173,16 @@ void Cube::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 
 	auto s = this->manager->getMaterial(material);
 
-	s->use(camera, shadowMap, shadowType);
+	//s->use(camera, shadowMap, shadowType);
 
 	// Create camera transformation
 	glm::mat4 mvm;
-	if (!shadowMap)
-	{
-		glm::mat4 view;
-		view = camera->GetViewMatrix();
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(camera->Zoom), (float)1280 / (float)720, 0.1f, 1000.0f);
-		mvm = projection * view * transf;
-	}
-	else
-	{
-		mvm = camera->ViewProjMatrix * transf;
-	}
+	glm::mat4 view;
+	view = camera->GetViewMatrix();
+	glm::mat4 projection;
+	projection = camera->GetProjectionMatrix();
+	mvm = projection * view * transf;
+
 	// Pass the matrices to the shader
 	if (!shadowMap)
 	{
@@ -214,5 +208,5 @@ void Cube::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 	glDrawArrays(GL_TRIANGLES, 0, 36);//, GL_UNSIGNED_BYTE, 0);
 	glBindVertexArray(0);
 
-	s->unUse(camera, shadowMap, shadowType);
+	//s->unUse(camera, shadowMap, shadowType);
 }

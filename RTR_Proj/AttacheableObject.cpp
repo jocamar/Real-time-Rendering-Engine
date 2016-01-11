@@ -46,3 +46,10 @@ int AttacheableObject::getMaterial()
 {
 	return material;
 }
+
+
+
+SceneManager* AttacheableObject::getManager()
+{
+	return manager;
+}
