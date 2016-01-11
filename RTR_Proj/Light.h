@@ -6,7 +6,7 @@
 class Mesh;
 
 const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-const GLuint DIR_SHADOW_WIDTH = 4096, DIR_SHADOW_HEIGHT = 4096;
+const GLuint DIR_SHADOW_WIDTH = 1024, DIR_SHADOW_HEIGHT = 1024;
 
 using namespace std;
 class Light : public Entity

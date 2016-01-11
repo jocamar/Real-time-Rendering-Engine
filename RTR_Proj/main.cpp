@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "SceneManager.h"
 #include "Cube.h"
+#include "Skybox.h"
 #include "RenderWindow.h"
 #include "Animation.h"
 #include "RectangleMesh.h"
@@ -49,6 +50,15 @@ int main()
 
 	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
 	GLfloat diffuseL2[] = { 1.0, 0.0, 0.0 };
+
+	vector<const GLchar*> faces;
+	faces.push_back("skybox/right.jpg");
+	faces.push_back("skybox/left.jpg");
+	faces.push_back("skybox/top.jpg");
+	faces.push_back("skybox/bottom.jpg");
+	faces.push_back("skybox/back.jpg");
+	faces.push_back("skybox/front.jpg");
+
 	SceneManager sceneManager;
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
@@ -63,6 +73,7 @@ int main()
 	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", nullptr, nullptr, ambient, nullptr, specular, 1, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("skybox", "skybox.vs", "skybox.frag", faces, nullptr, diffuse, specular, 0, 1, 0, Material::REFLECTIVE);
+	sceneManager.addMaterial("particles", "Particle.vs", "Particle.frag", "154.jpg", nullptr, nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::PARTICLE);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);
@@ -81,6 +92,10 @@ int main()
 	auto cube = sceneManager.getModel("cube");
 	cube->addMesh(new Cube("cubinho", &sceneManager));
 
+	sceneManager.addModel("skybox", nullptr);
+	auto sky = sceneManager.getModel("skybox");
+	sky->addMesh(new Skybox("skyboxinha", &sceneManager));
+
 	//sceneManager.addModel("nanosuit", "cs_havana/cs_havana.obj");
 	//sceneManager.addModel("nanosuit", "colony sector/colony sector.obj");
 	//sceneManager.addModel("nanosuit", "CODMapShipment/Files/CODMapShipment.obj");
@@ -97,7 +112,7 @@ int main()
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
-	auto skyEntTop = sceneManager.createEntity("top", "plane", false);
+	/*auto skyEntTop = sceneManager.createEntity("top", "plane", false);
 	auto skyNodeTop = sceneManager.getRoot()->createNewChildNode("skyNodeTop", "sky_top", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeTop->attach(skyEntTop);
 	skyNodeTop->changeScale(glm::vec3(500, 500, 1));
@@ -142,7 +157,7 @@ int main()
 	skyNodeRight->changeScale(glm::vec3(500, 500, 1));
 	skyNodeRight->translate(glm::vec3(-250, 0, 0));
 	skyNodeRight->yaw(-90);
-	skyNodeRight->roll(180);
+	skyNodeRight->roll(180);*/
 
 	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround", false);
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -169,11 +184,19 @@ int main()
 	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode->attach(cubeEntity);
 
+	auto skyboxEntity = sceneManager.createEntity("entidade20", "skybox");
+	auto skyboxNode = sceneManager.getRoot()->createNewChildNode("skyboxNode", "skybox", glm::vec3(2.0f, 0.5f, 6.0f));
+	//skyboxNode->changeScale(glm::vec3(100.0,100.0,100.0));
+	skyboxNode->attach(skyboxEntity);
+
 	auto cubeEntity2 = sceneManager.createEntity("entidade2", "cube");
 	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode2->translate(glm::vec3(1.2, 0, 0));
 	cubeNode2->yaw(30);
 	cubeNode2->attach(cubeEntity2);
+
+	//auto particleEmitter = sceneManager.createEmitter("emitter");
+	//cubeNode2->attach(particleEmitter);
 
 	auto nanosuitEntity = sceneManager.createEntity("entidade3", "nanosuit");
 	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(1.5f, 1.0f, 2.0f));

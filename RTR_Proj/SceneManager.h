@@ -5,10 +5,12 @@
 #include "Entity.h"
 #include "Light.h"
 #include "Mesh.h"
+#include "Emitter.h"
 
 struct RenderOrder
 {
 	vector<SubEntity*> Entities;
+	vector<Particle*> Particles;
 };
 
 class SceneManager
@@ -92,6 +94,12 @@ public:
 	//                                                  ENTITIES
 	//----------------------------------------------------------------------------------------------------------------------
 	Entity* createEntity(const char *id, const char *modelId, bool shadowCaster = true);
+
+	//----------------------------------------------------------------------------------------------------------------------
+	//                                                  EMITTER
+	//----------------------------------------------------------------------------------------------------------------------
+
+	Emitter* createEmitter(const char *id);
 
 	//----------------------------------------------------------------------------------------------------------------------
 	//                                                  LIGHTS

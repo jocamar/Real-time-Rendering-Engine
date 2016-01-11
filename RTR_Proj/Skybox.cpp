@@ -54,8 +54,6 @@ Skybox::Skybox(const char *id, SceneManager *manager) : Mesh(id)
 		1.0f, -1.0f, 1.0f
 	};
 
-
-	GLuint skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -75,15 +73,14 @@ Skybox::~Skybox()
 
 
 void Skybox::display(glm::mat4 transf, int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
+
 	int materialToUse;
 	if (this->material >= 0)
 		materialToUse = this->material;
 	else
 		materialToUse = material;
 
-	auto s = this->manager->getMaterial(material);
-
-	s->use(camera, shadowMap, shadowType);
+	auto s = this->manager->getMaterial(materialToUse);
 
 	// Create camera transformation
 	glm::mat4 mvm;
@@ -92,7 +89,7 @@ void Skybox::display(glm::mat4 transf, int material, Camera *camera, bool shadow
 		glm::mat4 view;
 		view = camera->GetViewMatrix();
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(camera->Zoom), (float)1280 / (float)720, 0.1f, 1000.0f);
+		projection = camera->GetProjectionMatrix();
 		mvm = projection * view * transf;
 	}
 	else
@@ -120,48 +117,8 @@ void Skybox::display(glm::mat4 transf, int material, Camera *camera, bool shadow
 		}
 	}
 
-	vector<const GLchar*> faces;
-	faces.push_back("skybox/right.jpg");
-	faces.push_back("skybox/left.jpg");
-	faces.push_back("skybox/top.jpg");
-	faces.push_back("skybox/bottom.jpg");
-	faces.push_back("skybox/back.jpg");
-	faces.push_back("skybox/front.jpg");
-	cubemapTexture = loadCubemap(faces);
-
-	glDepthMask(GL_FALSE);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);//, GL_UNSIGNED_BYTE, 0);
+	glBindVertexArray(skyboxVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthMask(GL_TRUE);
-
-	s->unUse(camera, shadowMap, shadowType);
-}
-
-
-GLuint Skybox::loadCubemap(vector<const GLchar*> faces)
-{
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-
-	int width, height;
-	unsigned char* image;
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-	for (GLuint i = 0; i < faces.size(); i++)
-	{
-		image = SOIL_load_image(faces[i], &width, &height, 0, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-		SOIL_free_image_data(image);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	return textureID;
 }

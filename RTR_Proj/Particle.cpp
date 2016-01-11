@@ -2,10 +2,8 @@
 #include "SceneManager.h"
 #include "Camera.h"
 
-Particle::Particle(const char *id, Emitter *em, SceneManager *manager) : AttacheableObject(id, manager)
+Particle::Particle(Emitter *em)
 {
-	this->manager = manager;
-	this->material = -1;
 	this->em = em;
 
 	enum { Vertices, /*Indexes,*/ numVBO };
@@ -25,12 +23,12 @@ Particle::Particle(const char *id, Emitter *em, SceneManager *manager) : Attache
 	glGenBuffers(1, &particles_position_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, particles_position_buffer);
 	// Initialize with empty (NULL) buffer : it will be updated later, each frame.
-	glBufferData(GL_ARRAY_BUFFER, 100000 * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MAXPARTICLES * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 	// The VBO containing the colors of the particles
 	glGenBuffers(1, &particles_color_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, particles_color_buffer);
 	// Initialize with empty (NULL) buffer : it will be updated later, each frame.
-	glBufferData(GL_ARRAY_BUFFER, 100000 * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MAXPARTICLES * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW);
 }
 
 
@@ -40,13 +38,13 @@ Particle::~Particle()
 }
 
 
-void Particle::update(float seconds) {
+void Particle::update() {
 	glBindBuffer(GL_ARRAY_BUFFER, particles_position_buffer);
-	glBufferData(GL_ARRAY_BUFFER, 100000 * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW); // Buffer orphaning, a common way to improve streaming perf. See above link for details.
+	glBufferData(GL_ARRAY_BUFFER, MAXPARTICLES * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW); // Buffer orphaning, a common way to improve streaming perf. See above link for details.
 	glBufferSubData(GL_ARRAY_BUFFER, 0, em->ParticlesCount * sizeof(GLfloat) * 4, em->g_particule_position_size_data);
 
 	glBindBuffer(GL_ARRAY_BUFFER, particles_color_buffer);
-	glBufferData(GL_ARRAY_BUFFER, 100000 * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW); // Buffer orphaning, a common way to improve streaming perf. See above link for details.
+	glBufferData(GL_ARRAY_BUFFER, MAXPARTICLES * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW); // Buffer orphaning, a common way to improve streaming perf. See above link for details.
 	glBufferSubData(GL_ARRAY_BUFFER, 0, em->ParticlesCount * sizeof(GLubyte) * 4, em->g_particule_color_data);
 
 }
@@ -54,14 +52,12 @@ void Particle::update(float seconds) {
 
 void Particle::display(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType) {
 	int materialToUse;
-	if (this->material >= 0)
-		materialToUse = this->material;
-	else
-		materialToUse = material;
+	
+	materialToUse = material;
 
-	auto s = this->manager->getMaterial(material);
+	auto s = em->getManager()->getMaterial(material);
 
-	s->use(camera, shadowMap, shadowType);
+	//s->use(camera, shadowMap, shadowType);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -109,34 +105,4 @@ void Particle::display(int material, Camera *camera, bool shadowMap, Globals::LI
 
 
 	s->unUse(camera, shadowMap, shadowType);
-}
-
-
-RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
-{
-	RenderOrder order;
-
-	if (shadowMap && !this->shadowCaster)
-		return order;
-
-	for (int j = 0; j < subEntities.size(); j++)
-	{
-		SubEntity *entity = &(subEntities[j]);
-		int materialToUse;
-		if (entity->material >= 0)
-			materialToUse = entity->material;
-		else if (entity->mesh->getMaterialId() >= 0)
-			materialToUse = entity->mesh->getMaterialId();
-		else if (this->material >= 0)
-			materialToUse = this->material;
-		else
-			materialToUse = material;
-
-		Material *mat = manager->getMaterial(materialToUse);
-		Shader *shader = mat->getShader();
-
-		order.Entities[shader][mat].push_back(entity);
-	}
-
-	return order;
 }

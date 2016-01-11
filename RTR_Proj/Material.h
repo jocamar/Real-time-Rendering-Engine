@@ -34,7 +34,7 @@ protected:
 
 	SceneManager *manager;
 public:
-	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER, REFLECTIVE};
+	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER, REFLECTIVE, PARTICLE};
 
 	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, 
 					GLfloat opacity, int shadingModel, const char *diffuseId = nullptr, const char *specularId = nullptr, const char *normalId = nullptr);

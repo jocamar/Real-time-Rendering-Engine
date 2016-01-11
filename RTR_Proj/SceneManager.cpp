@@ -580,6 +580,13 @@ Entity* SceneManager::createEntity(const char *id, const char *modelId, bool sha
 }
 
 
+Emitter* SceneManager::createEmitter(const char *id)
+{
+	return new Emitter(id, this, nullptr);
+}
+
+
+
 
 Light* SceneManager::createLight(const char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, const char* modelId)
 {
@@ -685,6 +692,32 @@ void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE sh
 		}
 
 		se->mesh->display(se->entity->getParent()->getTransfMatrix(), se->materialToUse, camera, shadowMap, shadowType);
+	}
+
+	for (auto pe : order->Particles)
+	{
+
+		auto mat = getMaterial(pe->em->getMaterial());
+		auto s = mat->getShader();
+
+		if (currentMaterial != pe->em->getMaterial() && currentMaterial >= 0)
+		{
+			auto curr_mat = getMaterial(currentMaterial);
+			curr_mat->unUse(camera, shadowMap, shadowType);
+		}
+		if (!shadowMap && currentShader != s)
+		{
+			s->Use();
+			currentShader = s;
+		}
+		if (currentMaterial != pe->em->getMaterial())
+		{
+			mat->use(camera, shadowMap, shadowType);
+			currentMaterial = pe->em->getMaterial();
+		}
+
+		pe->display(pe->em->getMaterial(), camera, shadowMap, shadowType);
+
 	}
 
 	if (currentMaterial >= 0)

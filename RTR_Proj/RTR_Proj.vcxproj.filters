@@ -91,7 +91,7 @@
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="Emitter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scene Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -159,12 +159,19 @@
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Emitter.h">
+      <Filter>Header Files\Scene Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FragShader.frag" />
     <None Include="VertShader.vs" />
+    <None Include="Particle.frag" />
+    <None Include="Particle.vs" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">

@@ -1,5 +1,9 @@
 #include "Emitter.h"
+#include "SceneManager.h"
 
+
+
+Emitter::Emitter(const char *id, SceneManager *manager, SceneNode *parent) : AttacheableObject(id, manager, parent) {}
 
 // Generate 10 new particule each millisecond,
 // but limit this to 16 ms (60 fps), or if you have 1 long frame (1sec),
@@ -12,8 +16,9 @@ void Emitter::update(float delta) {
 
 	for (int i = 0; i < newparticles; i++){
 		int particleIndex = FindUnusedParticle();
+		ParticlesContainer[particleIndex] = Particle(this);
 		ParticlesContainer[particleIndex].life = 5.0f; // This particle will live 5 seconds.
-		ParticlesContainer[particleIndex].pos = glm::vec3(0, 0, -20.0f);
+		ParticlesContainer[particleIndex].pos = this->parent->getWorldPosition();
 
 		float spread = 1.5f;
 		glm::vec3 maindir = glm::vec3(0.0f, 10.0f, 0.0f);
@@ -46,7 +51,7 @@ void Emitter::Simulate(float delta) {
 
 	// Simulate all particles
 	int ParticlesCount = 0;
-	for (int i = 0; i < 100000; i++){
+	for (int i = 0; i < MAXPARTICLES; i++){
 
 		Particle& p = ParticlesContainer[i]; // shortcut
 
@@ -84,10 +89,12 @@ void Emitter::Simulate(float delta) {
 
 		}
 	}
+
+	Simulate(delta);
 }
 
 int Emitter::FindUnusedParticle() {
-		for (int i = LastUsedParticle; i<100000; i++){
+		for (int i = LastUsedParticle; i<MAXPARTICLES; i++){
 			if (ParticlesContainer[i].life < 0){
 				LastUsedParticle = i;
 				return i;
@@ -102,4 +109,21 @@ int Emitter::FindUnusedParticle() {
 		}
 
 		return 0; // All particles are taken, override the first one
+}
+
+
+RenderOrder Emitter::getRenderEntities(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
+{
+	RenderOrder order;
+
+	std::vector<Particle*> v;
+
+	for (auto p : ParticlesContainer)
+	{
+		v.push_back(&p);
+	}
+
+	order.Particles = v;
+
+	return order;
 }

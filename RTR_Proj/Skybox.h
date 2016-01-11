@@ -7,6 +7,7 @@ using namespace std;
 class Skybox : public Mesh
 {
 	GLuint cubemapTexture;
+	GLuint skyboxVAO, skyboxVBO;
 public:
 	Skybox(const char *id, SceneManager *manager);
 	void display(glm::mat4 transf, int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;

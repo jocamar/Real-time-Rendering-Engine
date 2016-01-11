@@ -298,8 +298,29 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 		}
 		else if (shaderType == REFLECTIVE)
 		{
+			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(camera->GetProjectionMatrix()));
+
 			glActiveTexture(GL_TEXTURE0);
+			glUniform1i(glGetUniformLocation(shader->Program, "skybox"), 0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+
+		}
+		else if (shaderType == PARTICLE)
+		{
+			// Bind our texture in Texture Unit 0
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, textures[0]->texture);
+			// Set our "myTextureSampler" sampler to user Texture Unit 0
+			glUniform1i(glGetUniformLocation(shader->Program,"texture"),0);
+
+			// Same as the billboards tutorial
+			glUniform3f(glGetUniformLocation(shader->Program, "camera_right"), camera->Right.x, camera->Right.y, camera->Right.z);
+			glUniform3f(glGetUniformLocation(shader->Program, "camera_up"), camera->Up.x, camera->Up.y, camera->Up.z);
+
+			glm::mat4 viewProjection = camera->GetViewMatrix() * camera->GetProjectionMatrix();
+
+			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view_proj_matrix"), 1, GL_FALSE, glm::value_ptr(viewProjection));
 		}
 	}
 	else
