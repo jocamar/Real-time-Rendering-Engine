@@ -43,22 +43,32 @@ public:
 
 	glm::mat4 ViewProjMatrix;
 	std::vector<glm::mat4> cubeViewProjectionMatrixes;
+	float Near, Far, Ratio;
 
 	bool Ortho;
+	float yFactor, xFactor;
 
 	// Constructor with vectors
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH, bool ortho = false) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH, 
+		bool ortho = false, float near = 0.1f, float far = 1000.0f, float ratio = 1.0f, float zoom = 90.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
 	{
 		this->Position = position;
 		this->WorldUp = up;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
 		this->Ortho = ortho;
+		this->Near = near;
+		this->Far = far;
+		this->Ratio = ratio;
 		this->updateCameraVectors();
+
+		yFactor = 1.0f / glm::cos(glm::radians(Zoom / 2.0));
+		xFactor = 1.0f / glm::cos(glm::atan(glm::tan(glm::radians(Zoom / 2.0))*Ratio));
 	}
 
 
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 front = glm::vec3(0.0,0.0,-1.0), bool ortho = false) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 front = glm::vec3(0.0,0.0,-1.0), 
+		bool ortho = false, float near = 0.1f, float far = 1000.0f, float ratio = 1.0f, float zoom = 90.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
 	{
 		this->Position = position;
 		this->WorldUp = up;
@@ -66,24 +76,49 @@ public:
 		this->Pitch = glm::degrees(glm::asin(Front.y / glm::length(Front)));
 		this->Yaw = glm::degrees(glm::asin(Front.x / (glm::cos(glm::radians(Pitch*glm::length(Front))))))-90;
 		this->Ortho = ortho;
+		this->Near = near;
+		this->Far = far;
+		this->Ratio = ratio;
 		this->updateCameraVectors();
+
+		yFactor = 1.0f / glm::cos(glm::radians(Zoom/2.0));
+		xFactor = 1.0f / glm::cos(glm::atan(glm::tan(glm::radians(Zoom / 2.0))*Ratio));
 	}
 
 	// Constructor with scalar values
-	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch, bool ortho = false) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch, bool ortho = false, float zoom = 90.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
 	{
 		this->Position = glm::vec3(posX, posY, posZ);
 		this->WorldUp = glm::vec3(upX, upY, upZ);
 		this->Yaw = yaw;
 		this->Pitch = pitch;
 		this->Ortho = ortho;
+		this->Near = 0.1;
+		this->Far = 1000.0;
+		this->Ratio = 1.0;
 		this->updateCameraVectors();
+
+		yFactor = 1.0f / glm::cos(glm::radians(Zoom / 2.0));
+		xFactor = 1.0f / glm::cos(glm::atan(glm::tan(glm::radians(Zoom / 2.0))*Ratio));
 	}
 
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	glm::mat4 GetViewMatrix()
 	{
 		return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
+	}
+
+
+	glm::mat4 GetProjectionMatrix()
+	{
+		if(Ortho)
+		{
+			return glm::ortho(-50.f, 50.f, -50.f, 50.f, Near, Far);
+		}
+		else
+		{
+			return  glm::perspective(glm::radians(Zoom), Ratio, Near, Far);
+		}
 	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

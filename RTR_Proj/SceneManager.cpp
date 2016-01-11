@@ -11,6 +11,9 @@ SceneManager::SceneManager()
 	this->orderUpdatedDirectional = false;
 	this->orderUpdatedPoint = false;
 	this->orderUpdatedRegular = false;
+
+	this->currentShader = nullptr;
+	this->currentMaterial = -1;
 }
 
 
@@ -560,20 +563,20 @@ void SceneManager::update(float millis)
 
 void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
 {
-	/*if (!orderUpdatedDirectional && shadowMap && shadowType == Globals::DIRECTIONAL)
+	if (!orderUpdatedDirectional && shadowMap && shadowType == Globals::DIRECTIONAL)
 	{
 		this->directionalShadowOrder = this->getRenderEntities(camera, shadowMap, shadowType);
-		this->orderUpdatedDirectional = true;
+		//this->orderUpdatedDirectional = true;
 	}
 	else if (!orderUpdatedPoint && shadowMap && shadowType == Globals::POINT)
 	{
 		this->pointShadowOrder = this->getRenderEntities(camera, shadowMap, shadowType);
-		this->orderUpdatedPoint = true;
+		//this->orderUpdatedPoint = true;
 	} 
 	else if (!orderUpdatedRegular && !shadowMap)
 	{
 		this->regularOrder = this->getRenderEntities(camera, shadowMap, shadowType);
-		this->orderUpdatedRegular = true;
+		//this->orderUpdatedRegular = true;
 	}
 
 	RenderOrder *order;
@@ -583,47 +586,59 @@ void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE sh
 		order = &(this->directionalShadowOrder);
 	else order = &(this->pointShadowOrder);
 
+	this->currentShader = nullptr;
+	this->currentMaterial = -1;
 
-	for (auto it = order->Entities.begin(); it != order->Entities.end(); ++it)
+	for(auto se : order->Entities)
 	{
-		auto s = it->first;
-		auto mats = it->second;
-		if (!shadowMap)
-			s->Use();
-		
-		for (auto it2 = order->Entities[s].begin(); it2 != order->Entities[s].end(); ++it2)
+		auto mat = getMaterial(se->materialToUse);
+		auto s = mat->getShader();
+
+		if (currentMaterial != se->materialToUse && currentMaterial >= 0)
 		{
-			auto mat = it2->first;
-			auto ents = it2->second;
-
-			if(!shadowMap)
-				mat->use(camera, shadowMap, shadowType);
-
-			for (auto ent : ents)
-			{
-				ent->mesh->display(ent->entity->getParent()->getTransfMatrix(), this->getMaterialNum(mat), camera, shadowMap, shadowType);
-			}
-
-			if (!shadowMap)
-				mat->unUse(camera, shadowMap, shadowType);
+			auto curr_mat = getMaterial(currentMaterial);
+			curr_mat->unUse(camera, shadowMap, shadowType);
 		}
-	}*/
+		if (!shadowMap && currentShader != s)
+		{
+			s->Use();
+			currentShader = s;
+		}
+		if (currentMaterial != se->materialToUse)
+		{
+			mat->use(camera, shadowMap, shadowType);
+			currentMaterial = se->materialToUse;
+		}
 
-	root->display(defaultMaterial, camera, shadowMap, shadowType);
+		se->mesh->display(se->entity->getParent()->getTransfMatrix(), se->materialToUse, camera, shadowMap, shadowType);
+	}
+
+	if (currentMaterial >= 0)
+	{
+		auto curr_mat = getMaterial(currentMaterial);
+		curr_mat->unUse(camera, shadowMap, shadowType);
+	}
 }
 
 
 
-void SceneManager::generateShadowMaps()
+void SceneManager::generateShadowMaps(Camera *camera)
 {
 	this->shadowShader->Use();
-	this->directionalLight->generateShadowMap();
+	glCullFace(GL_FRONT);
+	//glDisable(GL_CULL_FACE);
+	glViewport(0, 0, DIR_SHADOW_WIDTH, DIR_SHADOW_HEIGHT);
+	glEnable(GL_DEPTH_TEST);
+	this->directionalLight->generateShadowMap(camera);
 
 	this->omniShadowShader->Use();
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	for(auto l : lights)
 	{
-		l->generateShadowMap();
+		l->generateShadowMap(camera);
 	}
+	//glDisable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }
 
 
@@ -637,6 +652,7 @@ RenderOrder SceneManager::getRenderEntities(Camera *camera, bool shadowMap, Glob
 		return order;
 
 	order = this->root->getRenderEntities(defaultMaterial, camera, shadowMap, shadowType);
+	std::sort(order.Entities.begin(), order.Entities.end(), SubEntity::less);
 	return order;
 }
 

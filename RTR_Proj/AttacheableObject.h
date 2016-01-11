@@ -27,6 +27,7 @@ public:
 	void setParent(SceneNode *parent);
 	void setMaterial(char *material);
 	int getMaterial();
+	SceneManager* getManager();
 
 	virtual ~AttacheableObject() {};
 };

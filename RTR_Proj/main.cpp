@@ -36,7 +36,7 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	camera = new Camera(glm::vec3(8.0f, 3.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(-1, 0, 0));
+	camera = new Camera(glm::vec3(8.0f, 3.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.1f, 1000.0f, (float)1280 / (float)720, 45.0f);
 	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
 	//window_.addViewPort(&camera2, 450, 0, 450, 300, 1, 1);
@@ -92,7 +92,7 @@ int main()
 	GLfloat amb_dir[3] = { 0.1f, 0.1f, 0.1f };
 	GLfloat dif_dir[3] = { 1.0f, 1.0f, 1.0f };
 	GLfloat spec_dir[3] = { 0.1f, 0.1f, 0.1f };
-	GLfloat dir[3] = { 0.3f, -0.05f, -1.0f };
+	GLfloat dir[3] = { 0.3f, -0.7f, -1.0f };
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
@@ -189,20 +189,20 @@ int main()
 	Animation *anim = new LinearAnimation(points, 15, true);
 
 	GLfloat amb[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat dif[3] = { 0.0f, 0.0f, 0.3f };
+	GLfloat dif[3] = { 0.0f, 0.0f, 1.0f };
 	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
 
 	GLfloat amb2[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat dif2[3] = { 0.3f, 0.0f, 0.0f };
+	GLfloat dif2[3] = { 1.0f, 0.0f, 0.0f };
 	GLfloat spec2[3] = { 0.3f, 0.0f, 0.0f };
 
-	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.2f, 0.001f, "cube");
+	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
 	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
 	lightNode->changeScale(glm::vec3(0.2, 0.2, 0.2));
 	lightNode->attach(light1);
 	lightNode->setAnimation(anim);
 
-	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.5f, 0.2f, 0.001f, "cube");
+	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.5f, 0.3f, 0.1f, "cube");
 	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(3.0f, 2.0f, 1.0f));
 	lightNode2->changeScale(glm::vec3(0.2, 0.2, 0.2));
 	lightNode2->attach(light2);

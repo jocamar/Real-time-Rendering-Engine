@@ -140,7 +140,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 {
 	if(!shadowMap)
 	{
-		shader->Use();
+		//shader->Use();
 
 		if (shaderType == LIGHTING_TEXTURED)
 		{
@@ -176,7 +176,6 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
 				glBindTexture(GL_TEXTURE_2D, this->textures[i]->texture);
 			}
-			glActiveTexture(GL_TEXTURE0);
 
 			glUniform1i(glGetUniformLocation(shader->Program, "material.shading_model"), this->shadingModel);
 
@@ -217,7 +216,6 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glActiveTexture(GL_TEXTURE6);
 				glUniform1i(glGetUniformLocation(shader->Program, "dirLight.shadowMap"), 6);
 				glBindTexture(GL_TEXTURE_2D, directionalLight->getShadowMap());
-				glActiveTexture(GL_TEXTURE0);
 			}
 
 			auto lights = this->manager->getActiveLights();
@@ -248,15 +246,16 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glActiveTexture(GL_TEXTURE7+i);
 				glUniform1i(glGetUniformLocation(shader->Program, ("shadowMap" + to_string(i)).c_str()), 7 + i);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, l->getCubeShadowMap());
-				glActiveTexture(GL_TEXTURE0);
 			}
 			for (; i < MAX_LIGHTS; i++)
 			{
 				glActiveTexture(GL_TEXTURE7 + i);
 				glUniform1i(glGetUniformLocation(shader->Program, ("shadowMap" + to_string(i)).c_str()), 7 + i);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-				glActiveTexture(GL_TEXTURE0);
 			}
+
+
+			glActiveTexture(GL_TEXTURE0);
 		}
 		else if (shaderType == EMITTER)
 		{

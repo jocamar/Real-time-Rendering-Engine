@@ -5,12 +5,10 @@
 #include "Entity.h"
 #include "Light.h"
 #include "Mesh.h"
-#include <unordered_map>
-#include <map>
 
 struct RenderOrder
 {
-	map<Shader*,map<Material*, vector<SubEntity*>>> Entities;
+	vector<SubEntity*> Entities;
 };
 
 class SceneManager
@@ -23,11 +21,13 @@ protected:
 	vector<Material*> materials;
 	vector<Model*> models;
 	int defaultMaterial;
+	int currentMaterial;
 
 	vector<Light*> lights;
 	Light *directionalLight;
 	Shader *shadowShader;
 	Shader *omniShadowShader;
+	Shader *currentShader;
 
 	RenderOrder directionalShadowOrder;
 	RenderOrder pointShadowOrder;
@@ -96,7 +96,7 @@ public:
 	void createDirectionalLight(const char *id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat *direction);
 	vector<Light*> getActiveLights();
 	Light* getDirectionalLight();
-	void generateShadowMaps();
+	void generateShadowMaps(Camera *camera);
 
 	//----------------------------------------------------------------------------------------------------------------------
 	//                                                  RENDERING

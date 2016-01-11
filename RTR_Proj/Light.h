@@ -6,6 +6,7 @@
 class Mesh;
 
 const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+const GLuint DIR_SHADOW_WIDTH = 4096, DIR_SHADOW_HEIGHT = 4096;
 
 using namespace std;
 class Light : public Entity
@@ -33,7 +34,7 @@ public:
 	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	bool isLeaf() override;
 	void update(float seconds) override {};
-	void generateShadowMap();
+	void generateShadowMap(Camera *camera);
 	bool isDirectional();
 
 	GLfloat* getAmbient();

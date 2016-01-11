@@ -40,22 +40,16 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 
 	auto s = this->manager->getMaterial(materialToUse);
 
-	s->use(camera, shadowMap, shadowType);
+	//s->use(camera, shadowMap, shadowType);
 
 	// Create camera transformation
 	glm::mat4 mvm;
-	if (!shadowMap)
-	{
-		glm::mat4 view;
-		view = camera->GetViewMatrix();
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(camera->Zoom), (float)1280 / (float)720, 0.1f, 1000.0f);
-		mvm = projection * view * transf;
-	}
-	else
-	{
-		mvm = camera->ViewProjMatrix * transf;
-	}
+	glm::mat4 view;
+	view = camera->GetViewMatrix();
+	glm::mat4 projection;
+	projection = camera->GetProjectionMatrix();
+	mvm = projection * view * transf;
+
 	// Pass the matrices to the shader
 	if(!shadowMap)
 	{
@@ -81,7 +75,7 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	s->unUse(camera, shadowMap, shadowType);
+	//s->unUse(camera, shadowMap, shadowType);
 }
 
 
@@ -159,7 +153,7 @@ Model::Model(const char *id, SceneManager *manager, const char *path)
 	if(path)
 	{
 		Assimp::Importer import;
-		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SortByPType );
 
 		if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
