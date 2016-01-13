@@ -211,5 +211,23 @@
     <Image Include="154.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="156.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="156.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="156_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Medieval_House_Diff.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Medieval_House_Nor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Medieval_House_Spec.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

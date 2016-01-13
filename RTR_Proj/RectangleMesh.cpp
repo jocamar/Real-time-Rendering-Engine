@@ -80,9 +80,9 @@ RectangleMesh::RectangleMesh(const char *id, SceneManager *manager, int parts, f
 				v1.Tangent = -Tangent;
 				v2.Tangent = -Tangent;
 
-				v0.Bitangent = -Bitangent;
-				v1.Bitangent = -Bitangent;
-				v2.Bitangent = -Bitangent;
+				v0.Bitangent = -glm::cross(v0.Normal, Tangent);
+				v1.Bitangent = -glm::cross(v1.Normal, Tangent);
+				v2.Bitangent = -glm::cross(v2.Normal, Tangent);
 
 				vertices.push_back(v0);
 				vertices.push_back(v1);

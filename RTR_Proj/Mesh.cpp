@@ -153,7 +153,7 @@ Model::Model(const char *id, SceneManager *manager, const char *path)
 	if(path)
 	{
 		Assimp::Importer import;
-		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SortByPType );
+		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SortByPType);
 
 		if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -364,11 +364,11 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		GLfloat amb[3] = { amb_color.r, amb_color.g, amb_color.b };
 
 		aiColor3D dif_color(0.f, 0.f, 0.f);
-		material->Get(AI_MATKEY_COLOR_AMBIENT, dif_color);
+		material->Get(AI_MATKEY_COLOR_DIFFUSE, dif_color);
 		GLfloat dif[3] = { dif_color.r, dif_color.g, dif_color.b };
 
 		aiColor3D spec_color(0.f, 0.f, 0.f);
-		material->Get(AI_MATKEY_COLOR_AMBIENT, spec_color);
+		material->Get(AI_MATKEY_COLOR_SPECULAR, spec_color);
 		GLfloat spec[3] = { spec_color.r, spec_color.g, spec_color.b };
 
 		float shininess = 0.0;

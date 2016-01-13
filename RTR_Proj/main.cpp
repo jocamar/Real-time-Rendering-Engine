@@ -62,6 +62,8 @@ int main()
 	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "box_floor.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", nullptr, nullptr, ambient, nullptr, specular, 1, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("grass", "defaultShader.vs", "defaultShader.frag", "156.png", nullptr, "156_norm.png", ambient, nullptr, nullptr, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("house4", "defaultShader.vs", "defaultShader.frag", "Medieval_House_Diff.png", "Medieval_House_Spec.png", "Medieval_House_Nor.png", ambient, nullptr, nullptr, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);
@@ -85,9 +87,16 @@ int main()
 	//sceneManager.addModel("nanosuit", "CODMapShipment/Files/CODMapShipment.obj");
 	//sceneManager.addModel("nanosuit", "castle/castle.obj");
 	//sceneManager.addModel("nanosuit", "Small Tropical Island/Small Tropical Island.obj");
-	sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
+	//sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
 	//sceneManager.addModel("nanosuit", "city/Center City Sci-Fi.obj");
 	//sceneManager.addModel("nanosuit", "Damaged Downtown/Downtown_Damage_0.obj");
+	//sceneManager.addModel("nanosuit", "Brick_Wall_Geo_Piskas/brick_wall_without_proxy.obj");
+	sceneManager.addModel("house1", "house/house_obj.obj");
+	sceneManager.addModel("house2", "cottage_3ds/cottage.3ds");
+	sceneManager.addModel("house3", "house3/fw43_lowpoly_n1.3ds");
+	sceneManager.addModel("house4", "Medieval_House/Medieval_House.obj");
+	//sceneManager.addModel("nanosuit", "valley/valley.obj");
+	sceneManager.addModel("mountain", "shasta_obj_high/vue_ready_shasta.obj");
 
 	GLfloat amb_dir[3] = { 0.1f, 0.1f, 0.1f };
 	GLfloat dif_dir[3] = { 1.0f, 1.0f, 1.0f };
@@ -143,7 +152,7 @@ int main()
 	skyNodeRight->yaw(-90);
 	skyNodeRight->roll(180);
 
-	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround", false);
+	/*auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround", false);
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
 	ground->attach(groundEnt);
 	ground->changeScale(glm::vec3(10, 10, 1));
@@ -172,13 +181,41 @@ int main()
 	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode2->translate(glm::vec3(1.2, 0, 0));
 	cubeNode2->yaw(30);
-	cubeNode2->attach(cubeEntity2);
+	cubeNode2->attach(cubeEntity2);*/
 
-	auto nanosuitEntity = sceneManager.createEntity("entidade3", "nanosuit");
-	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(1.5f, 1.0f, 2.0f));
-	cubeNode3->yaw(90);
-	cubeNode3->changeScale(glm::vec3(0.5, 0.5, 0.5));
-	cubeNode3->attach(nanosuitEntity);
+	auto mountainEntity = sceneManager.createEntity("mountain", "mountain");
+	auto mountainNode = sceneManager.getRoot()->createNewChildNode("mountainNode", "box_material", glm::vec3(0.0f, -60.0f, 0.0f));
+	mountainNode->yaw(90);
+	mountainNode->changeScale(glm::vec3(0.3, 0.2, 0.3));
+	mountainNode->attach(mountainEntity);
+
+	auto house1Entity = sceneManager.createEntity("house1", "house1");
+	auto house1Node = sceneManager.getRoot()->createNewChildNode("house1Node", "box_material", glm::vec3(0.0f, -19.0f, 0.0f));
+	house1Node->yaw(20);
+	house1Node->changeScale(glm::vec3(0.01, 0.01, 0.01));
+	house1Node->attach(house1Entity);
+
+	auto house2Entity = sceneManager.createEntity("house2", "house2");
+	auto house2Node = sceneManager.getRoot()->createNewChildNode("house2Node", "box_material", glm::vec3(16.0f, -22.0f, 10.0f));
+	house2Node->pitch(-90);
+	house2Node->roll(240);
+	house2Node->changeScale(glm::vec3(0.9, 0.9, 0.9));
+	house2Node->attach(house2Entity);
+
+	auto house3Entity = sceneManager.createEntity("house3", "house3");
+	auto house3Node = sceneManager.getRoot()->createNewChildNode("house3Node", "box_material", glm::vec3(-6.0f, -17.5f, 8.0f));
+	house3Node->pitch(-90);
+	house3Node->roll(60);
+	house3Node->changeScale(glm::vec3(0.7, 0.7, 0.7));
+	house3Node->attach(house3Entity);
+
+	auto house4Entity = sceneManager.createEntity("house4", "house4");
+	auto house4Node = sceneManager.getRoot()->createNewChildNode("house4Node", "box_material", glm::vec3(0.0f, -21.5f, 18.0f));
+	house4Node->pitch(0);
+	house4Node->yaw(270);
+	house4Node->roll(0);
+	house4Node->changeScale(glm::vec3(0.025, 0.025, 0.025));
+	house4Node->attach(house4Entity);
 
 	vector<glm::vec3> points;
 	points.push_back(glm::vec3(0, 0, 4));
@@ -196,7 +233,7 @@ int main()
 	GLfloat dif2[3] = { 1.0f, 0.0f, 0.0f };
 	GLfloat spec2[3] = { 0.3f, 0.0f, 0.0f };
 
-	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
+	/*auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
 	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
 	lightNode->changeScale(glm::vec3(0.2, 0.2, 0.2));
 	lightNode->attach(light1);
@@ -205,7 +242,7 @@ int main()
 	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.5f, 0.3f, 0.1f, "cube");
 	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(3.0f, 2.0f, 1.0f));
 	lightNode2->changeScale(glm::vec3(0.2, 0.2, 0.2));
-	lightNode2->attach(light2);
+	lightNode2->attach(light2);*/
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
