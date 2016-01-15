@@ -1,0 +1,16 @@
+# Blender MTL File: 'untitled.blend'
+# Material Count: 1
+
+newmtl Material
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Giovano\Documents\blender\AO.png
+map_Bump C:\\Users\\Giovano\\Documents\\blender\\meus modelos\\Mapa modelo - noemal map.png
+map_Ka C:\\Users\\Giovano\\Documents\\blender\\meus modelos\\Mapa modelo - lum.png
+map_Ks C:\\Users\\Giovano\\Documents\\blender\\meus modelos\\Mapa modelo - lum.png
+map_Ns C:\\Users\\Giovano\\Documents\\blender\\meus modelos\\Mapa modelo - lum.png

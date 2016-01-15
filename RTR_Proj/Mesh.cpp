@@ -65,8 +65,8 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 		{
 			for (GLuint i = 0; i < 6; ++i)
 				glUniformMatrix4fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, ("shadowMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, glm::value_ptr(camera->cubeViewProjectionMatrixes[i]));
-			glUniform1f(glGetUniformLocation(manager->getOmniShadowShader()->Program, "far_plane"), 10.0f);
-			glUniform3fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, "lightPos"), 1, &(camera->Position[0]));
+			glUniform1f(glGetUniformLocation(manager->getOmniShadowShader()->Program, "far_plane"), 15.0f);
+			glUniform3fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, "lightPos"), 1, &(camera->getPosition()[0]));
 			glUniformMatrix4fv(manager->getOmniShadowShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
 		}
 	}
@@ -153,7 +153,7 @@ Model::Model(const char *id, SceneManager *manager, const char *path)
 	if(path)
 	{
 		Assimp::Importer import;
-		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SortByPType);
+		const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FixInfacingNormals | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_FlipUVs | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SortByPType);
 
 		if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -221,6 +221,72 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	float min_x = FLT_MAX;
 	float min_y = FLT_MAX;
 	float min_z = FLT_MAX;
+
+	vector<vector<glm::vec3>> tangents(mesh->mNumVertices);
+	vector<vector<glm::vec3>> bitangents(mesh->mNumVertices);
+
+	if (mesh->mTextureCoords[0])
+	{
+		for (GLuint i = 0; i < mesh->mNumFaces; i++)
+		{
+			glm::vec3 pos1, pos2, pos3;
+			glm::vec2 uv1, uv2, uv3;
+
+			auto m = mesh->mFaces[i].mIndices;
+			pos1.x = mesh->mVertices[mesh->mFaces[i].mIndices[0]].x;
+			pos1.y = mesh->mVertices[mesh->mFaces[i].mIndices[0]].y;
+			pos1.z = mesh->mVertices[mesh->mFaces[i].mIndices[0]].z;
+
+			uv1.x = mesh->mTextureCoords[0][mesh->mFaces[i].mIndices[0]].x;
+			uv1.y = mesh->mTextureCoords[0][mesh->mFaces[i].mIndices[0]].y;
+
+			pos2.x = mesh->mVertices[mesh->mFaces[i].mIndices[1]].x;
+			pos2.y = mesh->mVertices[mesh->mFaces[i].mIndices[1]].y;
+			pos2.z = mesh->mVertices[mesh->mFaces[i].mIndices[1]].z;
+
+			uv2.x = mesh->mTextureCoords[0][mesh->mFaces[i].mIndices[1]].x;
+			uv2.y = mesh->mTextureCoords[0][mesh->mFaces[i].mIndices[1]].y;
+
+			pos3.x = mesh->mVertices[mesh->mFaces[i].mIndices[2]].x;
+			pos3.y = mesh->mVertices[mesh->mFaces[i].mIndices[2]].y;
+			pos3.z = mesh->mVertices[mesh->mFaces[i].mIndices[2]].z;
+
+			uv3.x = mesh->mTextureCoords[0][mesh->mFaces[i].mIndices[2]].x;
+			uv3.y = mesh->mTextureCoords[0][mesh->mFaces[i].mIndices[2]].y;
+
+			glm::vec3 edge1 = pos2 - pos1;
+			glm::vec3 edge2 = pos3 - pos1;
+			glm::vec2 deltaUV1 = uv2 - uv1;
+			glm::vec2 deltaUV2 = uv3 - uv1;
+
+			float area = glm::cross(edge1, edge2).length();
+
+			GLfloat f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+			glm::vec3 tangent;
+			tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+			tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+			tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+			tangent = glm::normalize(tangent);
+
+			glm::vec3 bitangent;
+			bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+			bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+			bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+			bitangent = glm::normalize(bitangent);
+
+			if (tangents[mesh->mFaces[i].mIndices[0]].size() > 0 || tangents[mesh->mFaces[i].mIndices[1]].size() > 0 || tangents[mesh->mFaces[i].mIndices[2]].size() > 0)
+				int wtf = 0;
+
+			tangents[mesh->mFaces[i].mIndices[0]].push_back(area*tangent);
+			tangents[mesh->mFaces[i].mIndices[1]].push_back(area*tangent);
+			tangents[mesh->mFaces[i].mIndices[2]].push_back(area*tangent);
+
+			bitangents[mesh->mFaces[i].mIndices[0]].push_back(area*bitangent);
+			bitangents[mesh->mFaces[i].mIndices[1]].push_back(area*bitangent);
+			bitangents[mesh->mFaces[i].mIndices[2]].push_back(area*bitangent);
+		}
+	}
 
 	// Walk through each of the mesh's vertices
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
@@ -307,6 +373,18 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			vec.x = mesh->mTextureCoords[0][i].x;
 			vec.y = mesh->mTextureCoords[0][i].y;
 			vertex.TexCoords = vec;
+
+			glm::vec3 tangent(0);
+			glm::vec3 bitangent(0);
+
+			for (int j = 0; j < tangents[i].size(); j++)
+			{
+				tangent += tangents[i][j];
+				bitangent += bitangents[i][j];
+			}
+
+			//vertex.Tangent = glm::normalize(tangent);
+			//vertex.Bitangent = glm::normalize(bitangent);
 		}
 		else
 			vertex.TexCoords = glm::vec2(0.0f, 0.0f);

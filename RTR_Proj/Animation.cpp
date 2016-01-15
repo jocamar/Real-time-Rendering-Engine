@@ -2,6 +2,11 @@
 #include "SceneNode.h"
 
 
+Animation::Animation()
+{
+}
+
+
 Animation::Animation(vector<glm::vec3> ctrlPoints) : ctrlPoints(ctrlPoints)
 {
 }
@@ -141,4 +146,333 @@ void LinearAnimation::applyRotations(SceneNode *node) {
 glm::vec3 LinearAnimation::getPos() const
 {
 	return curPos;
+}
+
+
+
+BetterAnimation::BetterAnimation(bool looping) : Animation()
+{
+	this->looping = looping;
+	this->started = false;
+	this->finished = false;
+	glm::vec3 prevPos(0);
+	this->prevPitch = 0;
+	this->prevYaw = 0;
+	this->prevRoll = 0;
+	this->totalTime = 0;
+}
+
+
+
+void BetterAnimation::update(unsigned long milis, bool animationsPaused)
+{
+	if(this->started && (!this->finished || this->looping))
+	{
+		if(this->pos_x_Ind < this->pos_xs.size())
+		{
+			auto timeToMove = milis;
+			float newPos = 0;
+			auto timeToNext = 0;
+			while(timeToMove > 0)
+			{
+				timeToNext = pos_xs[pos_x_Ind].first - (totalTime+timeToNext);
+				if(timeToMove == timeToNext)
+				{
+					newPos = pos_xs[pos_x_Ind].second;
+					pos_x_Ind++;
+					break;
+				}
+				if(timeToMove < timeToNext)
+				{
+					auto speed = (pos_xs[pos_x_Ind].second - this->currX) / (float)timeToNext;
+					auto d_x = speed * milis;
+
+					newPos = currX + d_x;
+					break;
+				}
+				else
+				{
+					currX = pos_xs[pos_x_Ind].second;
+					timeToMove -= timeToNext;
+					pos_x_Ind++;
+				}
+			}
+
+			this->prevPos.x = currX;
+			this->currX = newPos;
+		}
+
+		if (this->pos_y_Ind < this->pos_ys.size())
+		{
+			auto timeToMove = milis;
+			float newPos = 0;
+			auto timeToNext = 0;
+			while (timeToMove > 0)
+			{
+				timeToNext = pos_ys[pos_y_Ind].first - (totalTime + timeToNext);
+				if (timeToMove == timeToNext)
+				{
+					newPos = pos_ys[pos_y_Ind].second;
+					pos_y_Ind++;
+					break;
+				}
+				if (timeToMove < timeToNext)
+				{
+					auto speed = (pos_ys[pos_y_Ind].second - this->currY) / (float)timeToNext;
+					auto d_y = speed * milis;
+
+					newPos = currY + d_y;
+					break;
+				}
+				else
+				{
+					currY = pos_ys[pos_y_Ind].second;
+					timeToMove -= timeToNext;
+					pos_y_Ind++;
+				}
+			}
+
+			this->prevPos.y = currY;
+			this->currY = newPos;
+		}
+
+		if (this->pos_z_Ind < this->pos_zs.size())
+		{
+			auto timeToMove = milis;
+			float newPos = 0;
+			auto timeToNext = 0;
+			while (timeToMove > 0)
+			{
+				timeToNext = pos_zs[pos_z_Ind].first - (totalTime + timeToNext);
+				if (timeToMove == timeToNext)
+				{
+					newPos = pos_zs[pos_z_Ind].second;
+					pos_z_Ind++;
+					break;
+				}
+				if (timeToMove < timeToNext)
+				{
+					auto speed = (pos_zs[pos_z_Ind].second - this->currZ) / (float)timeToNext;
+					auto d_z = speed * milis;
+
+					newPos = currZ + d_z;
+					break;
+				}
+				else
+				{
+					currZ = pos_zs[pos_z_Ind].second;
+					timeToMove -= timeToNext;
+					pos_z_Ind++;
+				}
+			}
+
+			this->prevPos.z = currZ;
+			this->currZ = newPos;
+		}
+
+		if (this->yaws_Ind < this->yaws.size())
+		{
+			auto timeToMove = milis;
+			float newPos = 0;
+			auto timeToNext = 0;
+			while (timeToMove > 0)
+			{
+				timeToNext = yaws[yaws_Ind].first - (totalTime + timeToNext);
+				if (timeToMove == timeToNext)
+				{
+					newPos = yaws[yaws_Ind].second;
+					yaws_Ind++;
+					break;
+				}
+				if (timeToMove < timeToNext)
+				{
+					auto speed = (yaws[yaws_Ind].second - this->currYaw) / (float)timeToNext;
+					auto d_yaw = speed * milis;
+
+					newPos = currYaw + d_yaw;
+					break;
+				}
+				else
+				{
+					currYaw = yaws[yaws_Ind].second;
+					timeToMove -= timeToNext;
+					yaws_Ind++;
+				}
+			}
+
+			this->prevYaw = currYaw;
+			this->currYaw = newPos;
+		}
+
+		if (this->pitches_Ind < this->pitches.size())
+		{
+			auto timeToMove = milis;
+			float newPos = 0;
+			auto timeToNext = 0;
+			while (timeToMove > 0)
+			{
+				timeToNext = pitches[pitches_Ind].first - (totalTime + timeToNext);
+				if (timeToMove == timeToNext)
+				{
+					newPos = pitches[pitches_Ind].second;
+					pitches_Ind++;
+					break;
+				}
+				if (timeToMove < timeToNext)
+				{
+					auto speed = (pitches[pitches_Ind].second - this->currPitch) / (float)timeToNext;
+					auto d_pitch = speed * milis;
+
+					newPos = currPitch + d_pitch;
+					break;
+				}
+				else
+				{
+					currPitch = pitches[pitches_Ind].second;
+					timeToMove -= timeToNext;
+					pitches_Ind++;
+				}
+			}
+
+			this->prevPitch = currPitch;
+			this->currPitch = newPos;
+		}
+
+		if (this->rolls_Ind < this->rolls.size())
+		{
+			auto timeToMove = milis;
+			float newPos = 0;
+			auto timeToNext = 0;
+			while (timeToMove > 0)
+			{
+				timeToNext = rolls[rolls_Ind].first - (totalTime + timeToNext);
+				if (timeToMove == timeToNext)
+				{
+					newPos = rolls[rolls_Ind].second;
+					rolls_Ind++;
+					break;
+				}
+				if (timeToMove < timeToNext)
+				{
+					auto speed = (rolls[rolls_Ind].second - this->currRoll) / (float)timeToNext;
+					auto d_roll = speed * milis;
+
+					newPos = currRoll + d_roll;
+					break;
+				}
+				else
+				{
+					currRoll = rolls[rolls_Ind].second;
+					timeToMove -= timeToNext;
+					rolls_Ind++;
+				}
+			}
+
+			this->prevRoll = currRoll;
+			this->currRoll = newPos;
+		}
+
+		totalTime += milis;
+	}
+}
+
+void BetterAnimation::applyTranslations(SceneNode* node)
+{
+	node->translate(glm::vec3(currX,currY,currZ) - prevPos);
+	prevPos = glm::vec3(currX, currY, currZ);
+}
+
+
+
+void BetterAnimation::applyRotations(SceneNode* node)
+{
+	node->yaw(this->currYaw - prevYaw);
+	node->pitch(this->currPitch - prevPitch);
+	node->roll(this->currRoll - prevRoll);
+}
+
+
+
+void BetterAnimation::applyActive(SceneNode* node)
+{
+}
+
+
+
+void BetterAnimation::reset()
+{
+	this->totalTime = 0;
+	this->pos_x_Ind = 0;
+	this->pos_y_Ind = 0;
+	this->pos_z_Ind = 0;
+
+	this->pitches_Ind = 0;
+	this->yaws_Ind = 0;
+	this->rolls_Ind = 0;
+	this->active_Ind = 0;
+
+	glm::vec3 prevPos = glm::vec3(0);
+	this->prevPitch = 0;
+	this->prevYaw = 0;
+	this->prevRoll = 0;
+
+	this->totalTime = 0;
+	this->finished = false;
+	this->started = true;
+}
+
+
+glm::vec3 BetterAnimation::getPos() const
+{
+	return glm::vec3(this->currX, this->currY, this->currZ);
+}
+
+
+
+void BetterAnimation::addControlPoints(vector<std::pair<long, float>> ctrlPoints, Attribute type)
+{
+	if (type == Attribute::POS_X)
+	{
+		this->pos_xs = ctrlPoints;
+		this->pos_x_Ind = 0;
+	}
+	else if (type == Attribute::POS_Y)
+	{
+		this->pos_ys = ctrlPoints;
+		this->pos_y_Ind = 0;
+	}
+	else if (type == Attribute::POS_Z)
+	{
+		this->pos_zs = ctrlPoints;
+		this->pos_z_Ind = 0;
+	}
+	else if (type == Attribute::PITCH)
+	{
+		this->pitches = ctrlPoints;
+		this->pitches_Ind = 0;
+	}
+	else if (type == Attribute::YAW)
+	{
+		this->yaws = ctrlPoints;
+		this->yaws_Ind = 0;
+	}
+	else if (type == Attribute::ROLL)
+	{
+		this->rolls = ctrlPoints;
+		this->rolls_Ind = 0;
+	}
+}
+
+
+
+void BetterAnimation::start()
+{
+	glm::vec3 prevPos = glm::vec3(0);
+	this->prevPitch = 0;
+	this->prevYaw = 0;
+	this->prevRoll = 0;
+
+	this->totalTime = 0;
+	this->finished = false;
+	this->started = true;
 }

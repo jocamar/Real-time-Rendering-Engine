@@ -308,11 +308,11 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, sampler2D shadowM
 	// Transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
 	// Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	//float closestDepth = texture(shadowMap, projCoords.xy).r;
 	// Get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
 	// Check whether current frag pos is in shadow
-	float bias = max(0.0005 * (1.0 - dot(Normal, lightDir)), 0.00005);
+	float bias = max(0.001 * (1.0 - dot(Normal, lightDir)), 0.0005);
 	//float bias = 0.0;
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
@@ -321,7 +321,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, sampler2D shadowM
 		for (int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth + bias > pcfDepth ? 1.0 : 0.0;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
 		}
 	}
 	shadow /= 9.0;
@@ -341,7 +341,7 @@ float OmniShadowCalculation(vec3 fragPos, vec3 lightPos, float far_plane, sample
 	float currentDepth = length(fragToLight);
 
 	float shadow = 0.0;
-	float bias = 0.0;
+	float bias = 0.05;
 	int samples = 20;
 	float viewDistance = length(viewPos - fragPos);
 	float diskRadius = (1.0 + (viewDistance / far_plane)) / 50.0;

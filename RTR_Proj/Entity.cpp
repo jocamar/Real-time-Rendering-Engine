@@ -96,7 +96,7 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 {
 	glm::mat4 modelMatrix = this->entity->getParent()->getTransfMatrix();
-	auto camPos = camera->Position;
+	auto camPos = camera->getPosition();
 
 	auto radius = glm::length((modelMatrix * glm::vec4(this->mesh->getBoundingBox().points[0],1.0)) - (modelMatrix * glm::vec4(this->mesh->getBoundingBox().center,1.0)));
 	auto center = this->mesh->getBoundingBox().center;
@@ -106,14 +106,14 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 
 	if (!omniCam)
 	{
-		auto Z = glm::normalize(camera->Front);
+		auto Z = glm::normalize(camera->getFront());
 
 		auto pointZ = glm::dot(v, Z);
 		if (pointZ > camera->Far + radius || pointZ < camera->Near - radius)
 			return false;
 
-		auto Y = glm::normalize(camera->Up);
-		auto X = glm::normalize(camera->Right);
+		auto Y = glm::normalize(camera->getUp());
+		auto X = glm::normalize(camera->getRight());
 		auto pointY = glm::dot(v, Y);
 		auto pointX = glm::dot(v, X);
 
@@ -135,9 +135,9 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 		}
 		else
 		{
-			if (-40.0 > pointY + radius || pointY - radius > 40)
+			if (-50.0 > pointY + radius || pointY - radius > 50.0)
 				return false;
-			if (-40.0 > pointX + radius || pointX - radius > 40)
+			if (-50.0 > pointX + radius || pointX - radius > 50.0)
 				return false;
 		}
 	}
@@ -211,9 +211,9 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 			}
 			else
 			{
-				if (-50.0 > pointY + radius || pointY - radius > 50)
+				if (-50.0 > pointY + radius || pointY - radius > 50.0)
 					continue;
-				if (-50.0 > pointX + radius || pointX - radius > 50)
+				if (-50.0 > pointX + radius || pointX - radius > 50.0)
 					continue;
 			}
 
@@ -230,7 +230,7 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 
 float SubEntity::distanceToCamera(Camera* camera) const
 {
-	glm::vec3 cam_pos = camera->Position;
+	glm::vec3 cam_pos = camera->getPosition();
 	glm::vec3 this_pos = this->entity->getParent()->getWorldPosition();
 
 	return glm::distance(cam_pos, this_pos);

@@ -99,12 +99,15 @@ void Light::generateShadowMap(Camera *camera)
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if (this->directional)
-		this->cam = new Camera(camera->Position+(glm::vec3(0) - glm::vec3(direction[0], direction[1], direction[2]))*100.f, glm::vec3(0.0f, 1.0f, 0.0f), 
-										glm::vec3(direction[0], direction[1], direction[2]), true, 0.1f, 200.0f, (float)DIR_SHADOW_WIDTH / (float)DIR_SHADOW_HEIGHT);
+	{
+		auto pos = glm::normalize(glm::vec3(0) - glm::vec3(direction[0], direction[1], direction[2]))*50.f;
+		this->cam = new Camera(manager,camera->getPosition()+pos, glm::vec3(0.0f, 1.0f, 0.0f),
+			glm::vec3(direction[0], direction[1], direction[2]), true, 0.1f, 80.0f, (float)DIR_SHADOW_WIDTH / (float)DIR_SHADOW_HEIGHT);
+	}
 	else
 	{
 		glm::vec3 wp = this->parent->getWorldPosition();
-		this->cam = new Camera(this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.1f, 30.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 90.0f);
+		this->cam = new Camera(manager,this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.01f, 15.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 90.0f);
 		this->cam->Zoom = 90.0f;
 	}
 
@@ -114,12 +117,12 @@ void Light::generateShadowMap(Camera *camera)
 
 	if (!cam->Ortho)
 	{
-		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
-		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
-		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
-		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
-		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
-		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->Position, cam->Position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->getPosition(), cam->getPosition() + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->getPosition(), cam->getPosition() + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->getPosition(), cam->getPosition() + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->getPosition(), cam->getPosition() + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->getPosition(), cam->getPosition() + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
+		this->cubeLightSpaceMatrixes.push_back(projection * glm::lookAt(cam->getPosition(), cam->getPosition() + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
 		cam->cubeViewProjectionMatrixes = cubeLightSpaceMatrixes;
 		manager->render(cam, true, Globals::POINT);
 	}

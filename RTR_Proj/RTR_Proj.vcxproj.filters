@@ -229,5 +229,59 @@
     <Image Include="Medieval_House_Spec.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="186.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="186_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="152.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="152_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="196.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="196_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="178.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="178_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="180.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="180_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="181.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="181_norm.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="negx.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="negy.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="negz.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="posx.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="posy.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="posz.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

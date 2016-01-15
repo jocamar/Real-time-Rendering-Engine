@@ -1,0 +1,62 @@
+# 3ds Max Wavefront OBJ Exporter v0.94b - (c)2007 guruware
+# File Created: 23.04.2011 13:22:47
+
+newmtl brick
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 1.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0900 0.0900 0.0900
+	Ke 0.0000 0.0000 0.0000
+	map_Ka brick.jpg
+	map_Kd brick.jpg
+	map_bump -bm 0.3000 brick_NRM.jpg
+
+newmtl wall
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 1.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0900 0.0900 0.0900
+	Ke 0.0000 0.0000 0.0000
+	map_Ka wall.jpg
+	map_Kd wall.jpg
+	map_bump -bm 0.3000 wall_NRM.jpg
+
+newmtl column
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 1.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0900 0.0900 0.0900
+	Ke 0.0000 0.0000 0.0000
+	map_Ka column.jpg
+	map_Kd column.jpg
+	map_bump -bm 0.3000 column_NRM.jpg
+
+newmtl cement
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 1.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0900 0.0900 0.0900
+	Ke 0.0000 0.0000 0.0000
+	map_Ka cement.jpg
+	map_Kd cement.jpg
+	map_bump -bm 0.3000 cement_NRM.jpg
