@@ -4,7 +4,8 @@
 #include <vector>
 
 #include "Globals.h"
-
+#include "AttacheableObject.h"
+#include "SceneManager.h"
 
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
@@ -24,9 +25,8 @@ const GLfloat ZOOM = 45.0f;
 
 
 // An abstract camera class that processes input and calculates the corresponding Eular Angles, Vectors and Matrices for use in OpenGL
-class Camera
+class Camera : public AttacheableObject
 {
-public:
 	// Camera Attributes
 	glm::vec3 Position;
 	glm::vec3 Front;
@@ -36,6 +36,7 @@ public:
 	// Eular Angles
 	GLfloat Yaw;
 	GLfloat Pitch;
+public:
 	// Camera options
 	GLfloat MovementSpeed;
 	GLfloat MouseSensitivity;
@@ -49,8 +50,8 @@ public:
 	float yFactor, xFactor;
 
 	// Constructor with vectors
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH, 
-		bool ortho = false, float near = 0.1f, float far = 1000.0f, float ratio = 1.0f, float zoom = 90.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
+	Camera(SceneManager *manager, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH, 
+		bool ortho = false, float near = 0.1f, float far = 1000.0f, float ratio = 1.0f, float zoom = 90.0f) : AttacheableObject("camera", manager), Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
 	{
 		this->Position = position;
 		this->WorldUp = up;
@@ -67,14 +68,20 @@ public:
 	}
 
 
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 front = glm::vec3(0.0,0.0,-1.0), 
-		bool ortho = false, float near = 0.1f, float far = 1000.0f, float ratio = 1.0f, float zoom = 90.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
+	Camera(SceneManager *manager, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 front = glm::vec3(0.0,0.0,-1.0),
+		bool ortho = false, float near = 0.1f, float far = 1000.0f, float ratio = 1.0f, float zoom = 90.0f) : AttacheableObject("camera", manager), Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
 	{
 		this->Position = position;
 		this->WorldUp = up;
 		this->Front = front;
+		auto angle = 0.0;
+		if(Front.x != 0 || Front.z != 0)
+			angle = glm::acos(glm::dot(glm::vec3(1,0,0),glm::normalize(glm::vec3(Front.x,0,Front.z))));
+		if (Front.z < 0)
+			angle = -angle;
+
 		this->Pitch = glm::degrees(glm::asin(Front.y / glm::length(Front)));
-		this->Yaw = glm::degrees(glm::asin(Front.x / (glm::cos(glm::radians(Pitch*glm::length(Front))))))-90;
+		this->Yaw = glm::degrees(angle);
 		this->Ortho = ortho;
 		this->Near = near;
 		this->Far = far;
@@ -86,7 +93,7 @@ public:
 	}
 
 	// Constructor with scalar values
-	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch, bool ortho = false, float zoom = 90.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
+	Camera(SceneManager *manager, GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch, bool ortho = false, float zoom = 90.0f) : AttacheableObject("camera", manager), Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(zoom)
 	{
 		this->Position = glm::vec3(posX, posY, posZ);
 		this->WorldUp = glm::vec3(upX, upY, upZ);
@@ -105,7 +112,7 @@ public:
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	glm::mat4 GetViewMatrix()
 	{
-		return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
+		return glm::lookAt(this->getPosition(), this->getPosition() + this->getFront(), this->getUp());
 	}
 
 
@@ -168,6 +175,64 @@ public:
 			this->Zoom = 45.0f;
 	}
 
+	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override
+	{
+		
+	};
+
+
+	bool isLeaf() override
+	{
+		return true;
+	};
+
+	void update(float seconds) override
+	{
+		
+	};
+
+	glm::vec3 getPosition()
+	{
+		if(this->parent)
+			return glm::vec3(this->parent->getTransfMatrix() * glm::vec4(this->Position, 1.0));
+		else return this->Position;
+	}
+
+	glm::vec3 getFront()
+	{
+		if (this->parent)
+		{
+			auto front = glm::vec3(this->parent->getTransfMatrix() * glm::vec4(this->Front, 1.0));
+			return front - this->getPosition();
+		}
+		else return this->Front;
+	}
+
+	glm::vec3 getUp()
+	{
+		glm::mat4 mat;
+		mat = glm::translate(mat, glm::vec3(0,1.2,2));
+		if (this->parent)
+		{
+			auto up = glm::vec3(this->parent->getTransfMatrix() * glm::vec4(this->Up, 1.0));
+			return up - this->getPosition();
+		}
+		else return this->Up;
+	}
+
+	glm::vec3 getRight()
+	{
+		if (this->parent)
+		{
+			auto right = glm::vec3(this->parent->getTransfMatrix() * glm::vec4(this->Right, 1.0));
+			return right - this->getPosition();
+		}
+		else return this->Right;
+	}
+
+
+	RenderOrder getRenderEntities(int material, Camera* camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
+
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors()
@@ -183,3 +248,9 @@ private:
 		this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 	}
 };
+
+inline RenderOrder Camera::getRenderEntities(int material, Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
+{
+	RenderOrder order;
+	return order;
+}

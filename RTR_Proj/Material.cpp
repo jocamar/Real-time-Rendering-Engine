@@ -173,7 +173,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 		if (shaderType == LIGHTING_TEXTURED)
 		{
 			GLint viewPosLoc = glGetUniformLocation(shader->Program, "viewPos");
-			glUniform3f(viewPosLoc, camera->Position.x, camera->Position.y, camera->Position.z);
+			glUniform3f(viewPosLoc, camera->getPosition().x, camera->getPosition().y, camera->getPosition().z);
 
 			glUniform1f(glGetUniformLocation(shader->Program, "material.shininess"), this->shininess);
 			glUniform1f(glGetUniformLocation(shader->Program, "material.opacity"), this->opacity);
@@ -270,7 +270,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].linear").c_str()), linear);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].quadratic").c_str()), quadratic);
 
-				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].far_plane").c_str()), 10.0f);
+				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].far_plane").c_str()), 15.0f);
 				glActiveTexture(GL_TEXTURE7+i);
 				glUniform1i(glGetUniformLocation(shader->Program, ("shadowMap" + to_string(i)).c_str()), 7 + i);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, l->getCubeShadowMap());

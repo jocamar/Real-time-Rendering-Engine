@@ -80,9 +80,9 @@ RectangleMesh::RectangleMesh(const char *id, SceneManager *manager, int parts, f
 				v1.Tangent = -Tangent;
 				v2.Tangent = -Tangent;
 
-				v0.Bitangent = -Bitangent;
-				v1.Bitangent = -Bitangent;
-				v2.Bitangent = -Bitangent;
+				v0.Bitangent = -glm::cross(v0.Normal, Tangent);
+				v1.Bitangent = -glm::cross(v1.Normal, Tangent);
+				v2.Bitangent = -glm::cross(v2.Normal, Tangent);
 
 				vertices.push_back(v0);
 				vertices.push_back(v1);
@@ -173,8 +173,8 @@ void RectangleMesh::display(glm::mat4 transf, int material, Camera *camera, bool
 		{
 			for (GLuint i = 0; i < 6; ++i)
 				glUniformMatrix4fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, ("shadowMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, glm::value_ptr(camera->cubeViewProjectionMatrixes[i]));
-			glUniform1f(glGetUniformLocation(manager->getOmniShadowShader()->Program, "far_plane"), 10.0f);
-			glUniform3fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, "lightPos"), 1, &(camera->Position[0]));
+			glUniform1f(glGetUniformLocation(manager->getOmniShadowShader()->Program, "far_plane"), 15.0f);
+			glUniform3fv(glGetUniformLocation(manager->getOmniShadowShader()->Program, "lightPos"), 1, &(camera->getPosition()[0]));
 			glUniformMatrix4fv(manager->getOmniShadowShader()->ModelLoc, 1, GL_FALSE, glm::value_ptr(transf));
 		}
 	}

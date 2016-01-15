@@ -7,13 +7,12 @@
 #include "Camera.h"
 #include "SceneManager.h"
 #include "Cube.h"
-#include "Skybox.h"
 #include "RenderWindow.h"
 #include "Animation.h"
 #include "RectangleMesh.h"
 
 // Properties
-GLuint screenWidth = 1280, screenHeight = 720;
+GLuint screenWidth = 1920, screenHeight = 1080;
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -37,8 +36,9 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	camera = new Camera(glm::vec3(8.0f, 3.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.1f, 1000.0f, (float)1280 / (float)720, 45.0f);
 	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
+	SceneManager sceneManager;
+	camera = new Camera(&sceneManager, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 0, 1), false, 0.1f, 2000.0f, (float)1280 / (float)720, 45.0f);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
 	//window_.addViewPort(&camera2, 450, 0, 450, 300, 1, 1);
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
@@ -49,31 +49,26 @@ int main()
 	GLfloat specular_brick[] = { 0.3, 0.3, 0.3 };
 
 	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
-	GLfloat diffuseL2[] = { 1.0, 0.0, 0.0 };
-
-	vector<const GLchar*> faces;
-	faces.push_back("skybox/right.jpg");
-	faces.push_back("skybox/left.jpg");
-	faces.push_back("skybox/top.jpg");
-	faces.push_back("skybox/bottom.jpg");
-	faces.push_back("skybox/back.jpg");
-	faces.push_back("skybox/front.jpg");
-
-	SceneManager sceneManager;
+	GLfloat diffuseL2[] = { 1.0, 1.0, 1.0 };
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL1, nullptr, 0, 1, 1, Material::EMITTER);
 	sceneManager.addMaterial("light_material2", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL2, nullptr, 0, 1, 1, Material::EMITTER);
-	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "box_front.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "box_behind.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "box_left.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_right", "defaultShader.vs", "defaultShader.frag", "box_right.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "box_ceiling.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "box_floor.png", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "road.jpg", nullptr, nullptr, ambient, nullptr, specular, 1, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "posx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "negx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "posz.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_right", "defaultShader.vs", "defaultShader.frag", "negz.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "posy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "negy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "186.png", nullptr, "186_norm.png", ambient, nullptr, specular, 1, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("skybox", "skybox.vs", "skybox.frag", faces, nullptr, diffuse, specular, 0, 1, 0, Material::REFLECTIVE);
-	sceneManager.addMaterial("particles", "Particle.vs", "Particle.frag", "154.jpg", nullptr, nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::PARTICLE);
+	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("grass", "defaultShader.vs", "defaultShader.frag", "156.png", nullptr, "156_norm.png", ambient, nullptr, nullptr, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("house4", "defaultShader.vs", "defaultShader.frag", "Medieval_House_Diff.png", "Medieval_House_Spec.png", "Medieval_House_Nor.png", ambient, nullptr, nullptr, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);
@@ -82,98 +77,342 @@ int main()
 
 	sceneManager.addModel("planeGround", nullptr);
 	auto planeG = sceneManager.getModel("planeGround");
-	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 10));
+	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 10, 10, 5));
 
 	sceneManager.addModel("planeWall", nullptr);
 	auto planeW = sceneManager.getModel("planeWall");
-	planeW->addMesh(new RectangleMesh("wall", &sceneManager, 10, 4, 3));
+	planeW->addMesh(new RectangleMesh("wall", &sceneManager, 10, 6, 4));
+
+	sceneManager.addModel("planeWallLarge", nullptr);
+	auto planeWL = sceneManager.getModel("planeWallLarge");
+	planeWL->addMesh(new RectangleMesh("wallL", &sceneManager, 10, 6, 8));
+
+	sceneManager.addModel("planeWallSmall", nullptr);
+	auto planeWS = sceneManager.getModel("planeWallSmall");
+	planeWS->addMesh(new RectangleMesh("wallS", &sceneManager, 10, 1, 4));
 
 	sceneManager.addModel("cube", nullptr);
 	auto cube = sceneManager.getModel("cube");
 	cube->addMesh(new Cube("cubinho", &sceneManager));
-
-	sceneManager.addModel("skybox", nullptr);
-	auto sky = sceneManager.getModel("skybox");
-	sky->addMesh(new Skybox("skyboxinha", &sceneManager));
 
 	//sceneManager.addModel("nanosuit", "cs_havana/cs_havana.obj");
 	//sceneManager.addModel("nanosuit", "colony sector/colony sector.obj");
 	//sceneManager.addModel("nanosuit", "CODMapShipment/Files/CODMapShipment.obj");
 	//sceneManager.addModel("nanosuit", "castle/castle.obj");
 	//sceneManager.addModel("nanosuit", "Small Tropical Island/Small Tropical Island.obj");
-	sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
+	//sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
 	//sceneManager.addModel("nanosuit", "city/Center City Sci-Fi.obj");
 	//sceneManager.addModel("nanosuit", "Damaged Downtown/Downtown_Damage_0.obj");
+	//sceneManager.addModel("nanosuit", "Brick_Wall_Geo_Piskas/brick_wall_without_proxy.obj");
+	//sceneManager.addModel("house1", "house/house_obj.obj");
+	//sceneManager.addModel("house2", "cottage_3ds/cottage.3ds");
+	//sceneManager.addModel("house3", "house3/fw43_lowpoly_n1.3ds");
+	//sceneManager.addModel("house4", "Medieval_House/Medieval_House.obj");
+	//sceneManager.addModel("nanosuit", "valley/valley.obj");
+	//sceneManager.addModel("mountain", "shasta_obj_high/vue_ready_shasta.obj");
+	sceneManager.addModel("building", "building1/building.3ds");
+	sceneManager.addModel("lamp", "Street Lamp/StreetLamp.obj");
+	sceneManager.addModel("dumpster", "trash/Dumpster.obj");
+	sceneManager.addModel("fence", "fence/fence.fbx");
+	sceneManager.addModel("helicopter", "Combine Helicopter/Combine_Helicopter.obj");
 
-	GLfloat amb_dir[3] = { 0.1f, 0.1f, 0.1f };
-	GLfloat dif_dir[3] = { 1.0f, 1.0f, 1.0f };
-	GLfloat spec_dir[3] = { 0.1f, 0.1f, 0.1f };
-	GLfloat dir[3] = { 0.3f, -0.7f, -1.0f };
+	GLfloat amb_dir[3] = { 0.01f, 0.01f, 0.005f };
+	GLfloat dif_dir[3] = { 0.2f, 0.2f, 0.15f };
+	GLfloat spec_dir[3] = { 0.2f, 0.2f, 0.1f };
+	GLfloat dir[3] = { -1.0f, -0.5f, -1.0f };
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
-	/*auto skyEntTop = sceneManager.createEntity("top", "plane", false);
-	auto skyNodeTop = sceneManager.getRoot()->createNewChildNode("skyNodeTop", "sky_top", glm::vec3(0.0f, 0.0f, 0.0f));
+	auto skyBox = sceneManager.getRoot()->createNewChildNode("skyBox", "sky_top", glm::vec3(0.0f, 0.0f, 0.0f));
+	skyBox->yaw(90);
+
+	auto skyEntTop = sceneManager.createEntity("top", "plane", false);
+	auto skyNodeTop = skyBox->createNewChildNode("skyNodeTop", "sky_top", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeTop->attach(skyEntTop);
-	skyNodeTop->changeScale(glm::vec3(500, 500, 1));
-	skyNodeTop->translate(glm::vec3(0, 250, 0));
+	skyNodeTop->changeScale(glm::vec3(300, 300, 1));
+	skyNodeTop->translate(glm::vec3(0, 150, 0));
 	skyNodeTop->pitch(-90);
-	skyNodeTop->roll(180);
+	skyNodeTop->roll(-90);
 
 	auto skyEntFront = sceneManager.createEntity("front", "plane", false);
-	auto skyNodeFront = sceneManager.getRoot()->createNewChildNode("skyNodeFront", "sky_front", glm::vec3(0.0f, 0.0f, 0.0f));
+	auto skyNodeFront = skyBox->createNewChildNode("skyNodeFront", "sky_front", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeFront->attach(skyEntFront);
-	skyNodeFront->changeScale(glm::vec3(500, 500, 1));
-	skyNodeFront->translate(glm::vec3(0, 0, 250));
+	skyNodeFront->changeScale(glm::vec3(300, 300, 1));
+	skyNodeFront->translate(glm::vec3(0, 0, 150));
 	skyNodeFront->roll(180);
 
 	auto skyEntBack = sceneManager.createEntity("back", "plane", false);
-	auto skyNodeBack = sceneManager.getRoot()->createNewChildNode("skyNodeBack", "sky_back", glm::vec3(0.0f, 0.0f, 0.0f));
+	auto skyNodeBack = skyBox->createNewChildNode("skyNodeBack", "sky_back", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeBack->attach(skyEntBack);
-	skyNodeBack->changeScale(glm::vec3(500, 500, 1));
-	skyNodeBack->translate(glm::vec3(0, 0, -250));
+	skyNodeBack->changeScale(glm::vec3(300, 300, 1));
+	skyNodeBack->translate(glm::vec3(0, 0, -150));
 	skyNodeBack->yaw(180);
 	skyNodeBack->roll(180);
 
-	auto skyEntBottom = sceneManager.createEntity("bottom", "plane", false);
+	/*auto skyEntBottom = sceneManager.createEntity("bottom", "plane", false);
 	auto skyNodeBottom = sceneManager.getRoot()->createNewChildNode("skyNodeBottom", "sky_bottom", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeBottom->attach(skyEntBottom);
-	skyNodeBottom->changeScale(glm::vec3(500, 500, 1));
-	skyNodeBottom->translate(glm::vec3(0, -250, 0));
+	skyNodeBottom->changeScale(glm::vec3(300, 300, 1));
+	skyNodeBottom->translate(glm::vec3(0, -150, 0));
 	skyNodeBottom->pitch(90);
-	skyNodeBottom->roll(180);
+	skyNodeBottom->roll(180);*/
 
 	auto skyEntLeft = sceneManager.createEntity("left", "plane", false);
-	auto skyNodeLeft = sceneManager.getRoot()->createNewChildNode("skyNodeLeft", "sky_left", glm::vec3(0.0f, 0.0f, 0.0f));
+	auto skyNodeLeft = skyBox->createNewChildNode("skyNodeLeft", "sky_left", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeLeft->attach(skyEntLeft);
-	skyNodeLeft->changeScale(glm::vec3(500, 500, 1));
-	skyNodeLeft->translate(glm::vec3(250, 0, 0));
+	skyNodeLeft->changeScale(glm::vec3(300, 300, 1));
+	skyNodeLeft->translate(glm::vec3(150, 0, 0));
 	skyNodeLeft->yaw(90);
 	skyNodeLeft->roll(180);
 
 	auto skyEntRight = sceneManager.createEntity("right", "plane", false);
-	auto skyNodeRight = sceneManager.getRoot()->createNewChildNode("skyNodeRight", "sky_right", glm::vec3(0.0f, 0.0f, 0.0f));
+	auto skyNodeRight = skyBox->createNewChildNode("skyNodeRight", "sky_right", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeRight->attach(skyEntRight);
-	skyNodeRight->changeScale(glm::vec3(500, 500, 1));
-	skyNodeRight->translate(glm::vec3(-250, 0, 0));
+	skyNodeRight->changeScale(glm::vec3(300, 300, 1));
+	skyNodeRight->translate(glm::vec3(-150, 0, 0));
 	skyNodeRight->yaw(-90);
-	skyNodeRight->roll(180);*/
+	skyNodeRight->roll(180);
 
 	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround", false);
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
 	ground->attach(groundEnt);
-	ground->changeScale(glm::vec3(10, 10, 1));
+	ground->changeScale(glm::vec3(20, 10, 1));
 	//ground->translate(glm::vec3(0, -0.5, 0));
 	ground->pitch(90);
 
 	auto wallEnt = sceneManager.createEntity("wallEnt", "planeWall");
-	auto wall = sceneManager.getRoot()->createNewChildNode("wallNode", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
+	auto wall = sceneManager.getRoot()->createNewChildNode("wallNode", "bricks", glm::vec3(5.0f, 2.5f, -5.0f));
 	wall->attach(wallEnt);
 	wall->changeScale(glm::vec3(10, 5, 1));
-	//wall->translate(glm::vec3(0, -0.5, -1));
     wall->yaw(180);
 
+	auto buildingEnt = sceneManager.createEntity("buildingEnt", "building");
+	auto building = sceneManager.getRoot()->createNewChildNode("buildingNode", "bricks", glm::vec3(-40.0f, 8.0f, -10.0f));
+	building->attach(buildingEnt);
+	building->changeScale(glm::vec3(0.003, 0.003, 0.003));
+	building->yaw(0);
+
 	auto wallEnt2 = sceneManager.createEntity("wallEnt2", "planeWall");
+	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "wall2", glm::vec3(10.0f, 2.5f, 0.0f));
+	wall2->attach(wallEnt2);
+	wall2->changeScale(glm::vec3(10, 5, 1));
+	wall2->yaw(90);
+
+	auto wallEnt3 = sceneManager.createEntity("wallEnt3", "planeWall");
+	auto wall3 = sceneManager.getRoot()->createNewChildNode("wallNode3", "bricks", glm::vec3(5.0f, 2.5f, 5.0f));
+	wall3->attach(wallEnt3);
+	wall3->changeScale(glm::vec3(10, 5, 1));
+	wall3->yaw(0);
+
+	auto wallEnt3Shadow = sceneManager.createEntity("wallEnt3Shadow", "planeWall");
+	auto wall3Shadow = sceneManager.getRoot()->createNewChildNode("wallNode3Shadow", "bricks", glm::vec3(5.0f, 5.0f, 6.0f));
+	wall3Shadow->attach(wallEnt3Shadow);
+	wall3Shadow->changeScale(glm::vec3(12, 10, 1));
+	wall3Shadow->yaw(0);
+
+	auto wallEnt3Shadow2 = sceneManager.createEntity("wallEnt3Shadow2", "planeWall");
+	auto wall3Shadow2 = sceneManager.getRoot()->createNewChildNode("wallNode3Shadow2", "bricks", glm::vec3(13.0f, 3.5f, 1.0f));
+	wall3Shadow2->attach(wallEnt3Shadow2);
+	wall3Shadow2->changeScale(glm::vec3(15, 7, 1));
+	wall3Shadow2->yaw(90);
+
+
+	auto wallEnt4 = sceneManager.createEntity("wallEnt4", "planeWall");
+	auto wall4 = sceneManager.getRoot()->createNewChildNode("wallNode4", "wall3", glm::vec3(0.0f, 2.5f, 5.0f));
+	wall4->attach(wallEnt4);
+	wall4->changeScale(glm::vec3(10, 5, 1));
+	wall4->yaw(-90);
+
+	auto wallEnt5 = sceneManager.createEntity("wallEnt5", "planeWall");
+	auto wall5 = sceneManager.getRoot()->createNewChildNode("wallNode5", "wall3", glm::vec3(-5.0f, 2.5f, 0.0f));
+	wall5->attach(wallEnt5);
+	wall5->changeScale(glm::vec3(10, 5, 1));
+	wall5->yaw(0);
+
+	auto wallEnt5Shadow = sceneManager.createEntity("wallEnt5Shadow", "planeWall");
+	auto wall5Shadow = sceneManager.getRoot()->createNewChildNode("wallNode5Shadow", "wall3", glm::vec3(-7.0f, 2.5f, 2.0f));
+	wall5Shadow->attach(wallEnt5Shadow);
+	wall5Shadow->changeScale(glm::vec3(10, 5, 1));
+	wall5Shadow->yaw(0);
+
+	auto wallEnt6 = sceneManager.createEntity("wallEnt6", "planeWall");
+	auto wall6 = sceneManager.getRoot()->createNewChildNode("wallNode6", "wall4", glm::vec3(3.0f, 2.5f, -9.0f));
+	wall6->attach(wallEnt6);
+	wall6->changeScale(glm::vec3(10, 5, 1));
+	wall6->yaw(-90);
+
+	auto wallEnt7 = sceneManager.createEntity("wallEnt7", "planeWallLarge");
+	auto wall7 = sceneManager.getRoot()->createNewChildNode("wallNode7", "wall4", glm::vec3(-2.0f, 5.0f, -4.0f));
+	wall7->attach(wallEnt7);
+	wall7->changeScale(glm::vec3(10, 10, 1));
+	wall7->yaw(180);
+
+	auto wallEnt8 = sceneManager.createEntity("wallEnt8", "planeWallSmall");
+	auto wall8 = sceneManager.getRoot()->createNewChildNode("wallNode8", "wall5", glm::vec3(5.5f, 3.5f, -4.7f));
+	wall8->attach(wallEnt8);
+	wall8->changeScale(glm::vec3(1, 5, 1));
+	wall8->yaw(180);
+	wall8->roll(90);
+
+	auto wallEnt9 = sceneManager.createEntity("wallEnt9", "planeWallSmall");
+	auto wall9 = sceneManager.getRoot()->createNewChildNode("wallNode9", "wall5", glm::vec3(10.5f, 3.5f, -4.7f));
+	wall9->attach(wallEnt9);
+	wall9->changeScale(glm::vec3(1, 5, 1));
+	wall9->yaw(180);
+	wall9->roll(90);
+
+	auto wallEnt10 = sceneManager.createEntity("wallEnt10", "planeWallSmall");
+	auto wall10 = sceneManager.getRoot()->createNewChildNode("wallNode10", "wall5", glm::vec3(5.5f, 3.0f, -5.2f));
+	wall10->attach(wallEnt10);
+	wall10->changeScale(glm::vec3(1, 5, 1));
+	wall10->yaw(180);
+	wall10->pitch(-90);
+	wall10->roll(90);
+
+	auto wallEnt11 = sceneManager.createEntity("wallEnt11", "planeWallSmall");
+	auto wall11 = sceneManager.getRoot()->createNewChildNode("wallNode11", "wall5", glm::vec3(10.5f,3.0f, -5.2f));
+	wall11->attach(wallEnt11);
+	wall11->changeScale(glm::vec3(1, 5, 1));
+	wall11->yaw(180);
+	wall11->pitch(-90);
+	wall11->roll(90);
+
+	auto wallEnt12 = sceneManager.createEntity("wallEnt12", "planeWallSmall");
+	auto wall12 = sceneManager.getRoot()->createNewChildNode("wallNode12", "wall5", glm::vec3(5.5f, 5.0f, -4.7f));
+	wall12->attach(wallEnt12);
+	wall12->changeScale(glm::vec3(1, 5, 1));
+	wall12->yaw(180);
+	wall12->pitch(-90);
+	wall12->roll(90);
+
+	auto wallEnt13 = sceneManager.createEntity("wallEnt13", "planeWallSmall");
+	auto wall13 = sceneManager.getRoot()->createNewChildNode("wallNode13", "wall5", glm::vec3(10.5f, 5.0f, -4.7f));
+	wall13->attach(wallEnt13);
+	wall13->changeScale(glm::vec3(1, 5, 1));
+	wall13->yaw(180);
+	wall13->pitch(-90);
+	wall13->roll(90);
+
+	auto wallEnt14 = sceneManager.createEntity("wallEnt14", "planeWall");
+	auto wall14 = sceneManager.getRoot()->createNewChildNode("wallNode14", "wall5", glm::vec3(5.5f, 7.5f, -4.2f));
+	wall14->attach(wallEnt14);
+	wall14->changeScale(glm::vec3(10, 5, 1));
+	wall14->yaw(180);
+
+	auto wallEnt15 = sceneManager.createEntity("wallEnt15", "planeWallSmall");
+	auto wall15 = sceneManager.getRoot()->createNewChildNode("wallNode15", "wall5", glm::vec3(10.0f, 5.0f, 2.5f));
+	wall15->attach(wallEnt15);
+	wall15->changeScale(glm::vec3(1, 5, 1));
+	wall15->yaw(90);
+	wall15->pitch(-90);
+	wall15->roll(90);
+
+	auto wallEnt16 = sceneManager.createEntity("wallEnt16", "planeWallSmall");
+	auto wall16 = sceneManager.getRoot()->createNewChildNode("wallNode16", "wall5", glm::vec3(10.0f, 5.0f, -2.5f));
+	wall16->attach(wallEnt16);
+	wall16->changeScale(glm::vec3(1, 5, 1));
+	wall16->yaw(90);
+	wall16->pitch(-90);
+	wall16->roll(90);
+
+	auto wallEnt17 = sceneManager.createEntity("wallEnt17", "planeWallSmall");
+	auto wall17 = sceneManager.getRoot()->createNewChildNode("wallNode17", "wall5", glm::vec3(9.5f, 5.5f, -2.5f));
+	wall17->attach(wallEnt17);
+	wall17->changeScale(glm::vec3(1, 5, 1));
+	wall17->yaw(90);
+	wall17->roll(90);
+
+	auto wallEnt18 = sceneManager.createEntity("wallEnt18", "planeWallSmall");
+	auto wall18 = sceneManager.getRoot()->createNewChildNode("wallNode18", "wall5", glm::vec3(9.5f, 5.5f, 2.5f));
+	wall18->attach(wallEnt18);
+	wall18->changeScale(glm::vec3(1, 5, 1));
+	wall18->yaw(90);
+	wall18->roll(90);
+
+	auto wallEnt19 = sceneManager.createEntity("wallEnt19", "planeWall");
+	auto wall19 = sceneManager.getRoot()->createNewChildNode("wallNode19", "wall4", glm::vec3(3.0f, 7.5f, -9.0f));
+	wall19->attach(wallEnt19);
+	wall19->changeScale(glm::vec3(10, 5, 1));
+	wall19->yaw(-90);
+
+	auto wallEnt20 = sceneManager.createEntity("wallEnt20", "planeWall");
+	auto wall20 = sceneManager.getRoot()->createNewChildNode("wallNode20", "wall4", glm::vec3(-2.0f, 7.5f, -4.0f));
+	wall20->attach(wallEnt20);
+	wall20->changeScale(glm::vec3(10, 5, 1));
+	wall20->yaw(180);
+
+	auto wallEnt21 = sceneManager.createEntity("wallEnt21", "planeWall");
+	auto wall21 = sceneManager.getRoot()->createNewChildNode("wallNode21", "bricks", glm::vec3(5.0f, 7.5f, 5.0f));
+	wall21->attach(wallEnt21);
+	wall21->changeScale(glm::vec3(10, 5, 1));
+	wall21->yaw(0);
+
+	auto wallEnt22 = sceneManager.createEntity("wallEnt22", "planeWallSmall", false);
+	auto wall22 = sceneManager.getRoot()->createNewChildNode("wallNode22", "wall6", glm::vec3(0.1f, 5.5f, 2.5f));
+	wall22->attach(wallEnt22);
+	wall22->changeScale(glm::vec3(1, 5, 1));
+	wall22->yaw(-90);
+	wall22->roll(90);
+
+	auto wallEnt23 = sceneManager.createEntity("wallEnt23", "planeWallSmall");
+	auto wall23 = sceneManager.getRoot()->createNewChildNode("wallNode23", "wall6", glm::vec3(-0.4f, 5.0f, 2.5f));
+	wall23->attach(wallEnt23);
+	wall23->changeScale(glm::vec3(1, 5, 1));
+	wall23->pitch(-90);
+
+	auto wallEnt24 = sceneManager.createEntity("wallEnt24", "planeWallSmall");
+	auto wall24 = sceneManager.getRoot()->createNewChildNode("wallNode24", "wall6", glm::vec3(0.1f, 5.5f, 7.5f));
+	wall24->attach(wallEnt24);
+	wall24->changeScale(glm::vec3(1, 5, 1));
+	wall24->yaw(-90);
+	wall24->roll(90);
+
+	auto wallEnt25 = sceneManager.createEntity("wallEnt25", "planeWallSmall");
+	auto wall25 = sceneManager.getRoot()->createNewChildNode("wallNode25", "wall6", glm::vec3(-0.4f, 5.0f, 7.5f));
+	wall25->attach(wallEnt25);
+	wall25->changeScale(glm::vec3(1, 5, 1));
+	wall25->pitch(-90);
+
+	auto wallEnt26 = sceneManager.createEntity("wallEnt26", "planeWallSmall");
+	auto wall26 = sceneManager.getRoot()->createNewChildNode("wallNode26", "wall6", glm::vec3(-2.4f, 5.5f, 0.0f));
+	wall26->attach(wallEnt26);
+	wall26->changeScale(glm::vec3(1, 5, 1));
+	wall26->yaw(0);
+	wall26->roll(90);
+
+	auto wallEnt27 = sceneManager.createEntity("wallEnt27", "planeWall", false);
+	auto wall27 = sceneManager.getRoot()->createNewChildNode("wallNode27", "bricks", glm::vec3(-10.f, 0.5f, -3.0f));
+	wall27->attach(wallEnt27);
+	wall27->changeScale(glm::vec3(10, 5, 1));
+	wall27->yaw(-90);
+
+	auto lampEnt = sceneManager.createEntity("lampEnt", "lamp");
+	auto lamp = sceneManager.getRoot()->createNewChildNode("lamp", "bricks", glm::vec3(0.5f, -1.0f, 1.8f));
+	lamp->attach(lampEnt);
+	lamp->changeScale(glm::vec3(0.3, 0.5, 0.3));
+	lamp->yaw(0);
+
+	auto dumpsterEnt = sceneManager.createEntity("dumpsterEnt", "dumpster");
+	auto dumpster = sceneManager.getRoot()->createNewChildNode("dumpster", "bricks", glm::vec3(6.5f, 0.0f, 3.0f));
+	dumpster->attach(dumpsterEnt);
+	dumpster->changeScale(glm::vec3(0.5, 0.5, 0.5));
+	dumpster->yaw(-12);
+
+	auto fenceEnt = sceneManager.createEntity("fenceEnt", "fence", false);
+	auto fence = sceneManager.getRoot()->createNewChildNode("fenceNode", "bricks", glm::vec3(-5.0f, 1.0f, -2.0f));
+	fence->attach(fenceEnt);
+	fence->changeScale(glm::vec3(0.02, 0.03, 0.02));
+	fence->pitch(-90);
+	fence->yaw(0);
+
+	auto helicopterEnt = sceneManager.createEntity("helicopterEnt", "helicopter", false);
+	auto helicopter = sceneManager.getRoot()->createNewChildNode("helicopterNode", "bricks", glm::vec3(20.0f, 20.0f, 0.0f));
+	helicopter->attach(helicopterEnt);
+	helicopter->changeScale(glm::vec3(0.02, 0.02, 0.02));
+	helicopter->yaw(-90);
+	helicopter->pitch(30);
+
+	/*auto wallEnt2 = sceneManager.createEntity("wallEnt2", "planeWall");
 	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
 	wall2->attach(wallEnt2);
 	wall2->changeScale(glm::vec3(10, 5, 1));
@@ -184,58 +423,89 @@ int main()
 	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
 	cubeNode->attach(cubeEntity);
 
-	auto skyboxEntity = sceneManager.createEntity("entidade20", "skybox");
-	auto skyboxNode = sceneManager.getRoot()->createNewChildNode("skyboxNode", "skybox", glm::vec3(2.0f, 0.5f, 6.0f));
-	//skyboxNode->changeScale(glm::vec3(100.0,100.0,100.0));
-	skyboxNode->attach(skyboxEntity);
-
-	auto cubeEntity2 = sceneManager.createEntity("entidade2", "cube");
+	auto cubeEntity2 = sceneManager.createEntity("entidade2", "nanosuit");
 	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
+	cubeNode2->changeScale(glm::vec3(0.5, 0.5, 0.5));
 	cubeNode2->translate(glm::vec3(1.2, 0, 0));
 	cubeNode2->yaw(30);
 	cubeNode2->attach(cubeEntity2);
 
-	//auto particleEmitter = sceneManager.createEmitter("emitter");
-	//cubeNode2->attach(particleEmitter);
+	auto mountainEntity = sceneManager.createEntity("mountain", "mountain");
+	auto mountainNode = sceneManager.getRoot()->createNewChildNode("mountainNode", "box_material", glm::vec3(0.0f, -60.0f, 0.0f));
+	mountainNode->yaw(90);
+	mountainNode->changeScale(glm::vec3(0.3, 0.2, 0.3));
+	mountainNode->attach(mountainEntity);
 
-	auto nanosuitEntity = sceneManager.createEntity("entidade3", "nanosuit");
-	auto cubeNode3 = sceneManager.getRoot()->createNewChildNode("cubeNode3", "box_material", glm::vec3(1.5f, 1.0f, 2.0f));
-	cubeNode3->yaw(90);
-	cubeNode3->changeScale(glm::vec3(0.5, 0.5, 0.5));
-	cubeNode3->attach(nanosuitEntity);
+	auto house1Entity = sceneManager.createEntity("house1", "house1");
+	auto house1Node = sceneManager.getRoot()->createNewChildNode("house1Node", "box_material", glm::vec3(0.0f, -19.0f, 0.0f));
+	house1Node->yaw(20);
+	house1Node->changeScale(glm::vec3(0.01, 0.01, 0.01));
+	house1Node->attach(house1Entity);
+
+	auto house2Entity = sceneManager.createEntity("house2", "house2");
+	auto house2Node = sceneManager.getRoot()->createNewChildNode("house2Node", "box_material", glm::vec3(16.0f, -22.0f, 10.0f));
+	house2Node->pitch(-90);
+	house2Node->roll(240);
+	house2Node->changeScale(glm::vec3(0.9, 0.9, 0.9));
+	house2Node->attach(house2Entity);
+
+	auto house3Entity = sceneManager.createEntity("house3", "house3");
+	auto house3Node = sceneManager.getRoot()->createNewChildNode("house3Node", "box_material", glm::vec3(-6.0f, -17.5f, 8.0f));
+	house3Node->pitch(-90);
+	house3Node->roll(60);
+	house3Node->changeScale(glm::vec3(0.7, 0.7, 0.7));
+	house3Node->attach(house3Entity);
+
+	auto house4Entity = sceneManager.createEntity("house4", "house4");
+	auto house4Node = sceneManager.getRoot()->createNewChildNode("house4Node", "box_material", glm::vec3(0.0f, -21.5f, 18.0f));
+	house4Node->pitch(0);
+	house4Node->yaw(270);
+	house4Node->roll(0);
+	house4Node->changeScale(glm::vec3(0.025, 0.025, 0.025));
+	house4Node->attach(house4Entity);*/
 
 	vector<glm::vec3> points;
 	points.push_back(glm::vec3(0, 0, 4));
-	points.push_back(glm::vec3(-2, 0, 4));
-	points.push_back(glm::vec3(-2, 0, 0));
 	points.push_back(glm::vec3(0, 0, 0));
+	/*points.push_back(glm::vec3(-2, 0, 0));
+	points.push_back(glm::vec3(0, 0, 0));*/
 
-	Animation *anim = new LinearAnimation(points, 15, true);
+	vector<std::pair<long, float>> points_X;
+	points_X.push_back(std::pair<long, float>(5000, 3));
+	points_X.push_back(std::pair<long, float>(2500, 6));
+	points_X.push_back(std::pair<long, float>(1250, 9));
+	points_X.push_back(std::pair<long, float>(625, 12));
+	BetterAnimation *anim = new BetterAnimation(false);
+	anim->addControlPoints(points_X, BetterAnimation::Attribute::POS_X);
 
 	GLfloat amb[3] = { 0.0f, 0.0f, 0.0f };
 	GLfloat dif[3] = { 0.0f, 0.0f, 1.0f };
 	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
 
 	GLfloat amb2[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat dif2[3] = { 1.0f, 0.0f, 0.0f };
-	GLfloat spec2[3] = { 0.3f, 0.0f, 0.0f };
+	GLfloat dif2[3] = { 1.0f, 1.0f, 1.0f };
+	GLfloat spec2[3] = { 0.3f, 0.3f, 0.3f };
 
-	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
-	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
-	lightNode->changeScale(glm::vec3(0.2, 0.2, 0.2));
-	lightNode->attach(light1);
-	lightNode->setAnimation(anim);
+	/*auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");*/
+	//auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
+	//lightNode->changeScale(glm::vec3(0, 0, 0));
+	//lightNode->attach(camera);
+	//lightNode->setAnimation(anim);
+	//anim->start();
 
-	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.5f, 0.3f, 0.1f, "cube");
-	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(3.0f, 2.0f, 1.0f));
-	lightNode2->changeScale(glm::vec3(0.2, 0.2, 0.2));
+	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.1f, 0.2f, nullptr);
+	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
+	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.5f, 5.5f, 1.8f));
+	auto lightNodeCube = sceneManager.getRoot()->createNewChildNode("lightNodeCube", "light_material2", glm::vec3(2.7f, 5.5f, 1.8f));
+	lightNodeCube->changeScale(glm::vec3(0.4, 0.15, 0.3));
 	lightNode2->attach(light2);
+	lightNodeCube->attach(lightCube);
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	double lastTime = glfwGetTime();
-
+	lastFrame = glfwGetTime();
 	int nbFrames = 0;
 
 	// Game loop
