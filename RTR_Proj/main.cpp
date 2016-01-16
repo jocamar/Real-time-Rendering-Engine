@@ -12,7 +12,7 @@
 #include "RectangleMesh.h"
 
 // Properties
-GLuint screenWidth = 1920, screenHeight = 1080;
+GLuint screenWidth = 1280, screenHeight = 720;
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -472,9 +472,9 @@ int main()
 
 	vector<std::pair<long, float>> points_X;
 	points_X.push_back(std::pair<long, float>(5000, 3));
-	points_X.push_back(std::pair<long, float>(2500, 6));
-	points_X.push_back(std::pair<long, float>(1250, 9));
-	points_X.push_back(std::pair<long, float>(625, 12));
+	points_X.push_back(std::pair<long, float>(7500, 6));
+	points_X.push_back(std::pair<long, float>(8750, 9));
+	points_X.push_back(std::pair<long, float>(9375, 12));
 	BetterAnimation *anim = new BetterAnimation(false);
 	anim->addControlPoints(points_X, BetterAnimation::Attribute::POS_X);
 
@@ -486,20 +486,20 @@ int main()
 	GLfloat dif2[3] = { 1.0f, 1.0f, 1.0f };
 	GLfloat spec2[3] = { 0.3f, 0.3f, 0.3f };
 
-	/*auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");*/
-	//auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
+	//auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
+	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
 	//lightNode->changeScale(glm::vec3(0, 0, 0));
 	//lightNode->attach(camera);
-	//lightNode->setAnimation(anim);
-	//anim->start();
+	lightNode->setAnimation(anim);
+	anim->start();
 
-	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.1f, 0.2f, nullptr);
+	/*auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.1f, 0.2f, nullptr);
 	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
 	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.5f, 5.5f, 1.8f));
 	auto lightNodeCube = sceneManager.getRoot()->createNewChildNode("lightNodeCube", "light_material2", glm::vec3(2.7f, 5.5f, 1.8f));
 	lightNodeCube->changeScale(glm::vec3(0.4, 0.15, 0.3));
 	lightNode2->attach(light2);
-	lightNodeCube->attach(lightCube);
+	lightNodeCube->attach(lightCube);*/
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
