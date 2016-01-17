@@ -270,7 +270,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].linear").c_str()), linear);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].quadratic").c_str()), quadratic);
 
-				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].far_plane").c_str()), 15.0f);
+				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].far_plane").c_str()), 30.0f);
 				glActiveTexture(GL_TEXTURE7+i);
 				glUniform1i(glGetUniformLocation(shader->Program, ("shadowMap" + to_string(i)).c_str()), 7 + i);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, l->getCubeShadowMap());
@@ -315,8 +315,8 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 			glUniform1i(glGetUniformLocation(shader->Program,"texture"),0);
 
 			// Same as the billboards tutorial
-			glUniform3f(glGetUniformLocation(shader->Program, "camera_right"), camera->Right.x, camera->Right.y, camera->Right.z);
-			glUniform3f(glGetUniformLocation(shader->Program, "camera_up"), camera->Up.x, camera->Up.y, camera->Up.z);
+			glUniform3f(glGetUniformLocation(shader->Program, "camera_right"), camera->getRight().x, camera->getRight().y, camera->getRight().z);
+			glUniform3f(glGetUniformLocation(shader->Program, "camera_up"), camera->getUp().x, camera->getUp().y, camera->getUp().z);
 
 			glm::mat4 viewProjection = camera->GetViewMatrix() * camera->GetProjectionMatrix();
 
