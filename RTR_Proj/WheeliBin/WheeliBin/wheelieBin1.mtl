@@ -1,0 +1,75 @@
+#
+# wheelieBin1.mtl
+#
+
+newmtl binlogoo
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd wBinF.jpg
+
+newmtl binPlastic
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd wBin.jpg
+
+newmtl binjunk
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/r442008_2134622.jpg
+
+newmtl metalAxel
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/metalAx.jpg
+
+newmtl wweheels1
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/blackwheel.jpg
+
+newmtl binbag1
+illum 2
+Kd 0.588200 0.588200 0.588200
+Ka 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 1.500000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/binbagtexture.jpg
+
+newmtl binbag33
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/bindbag_shineenv2.jpg
+
+newmtl binbag2
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps\GreenWheeliBin/binbagtexture2.jpg

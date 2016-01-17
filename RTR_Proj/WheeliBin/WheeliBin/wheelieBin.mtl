@@ -1,0 +1,30 @@
+#
+# wheelieBin.mtl
+#
+
+newmtl 01___Default
+illum 2
+Kd 0.588200 0.588200 0.588200
+Ka 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 1.500000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps/F:\Poser Content\Poser Pro 2010 Content\PaxProps/F:\Poser Content\Poser Pro 2010 Content\PaxProps\greenWheelieBin.jpg
+
+newmtl 02___Default
+illum 2
+Kd 0.588200 0.588200 0.588200
+Ka 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 1.500000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps/F:\Poser Content\Poser Pro 2010 Content\PaxProps/F:\Poser Content\Poser Pro 2010 Content\PaxProps\wrenchMetal.jpg
+
+newmtl 03___Default
+illum 2
+Kd 0.588200 0.588200 0.588200
+Ka 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 1.500000
+map_Kd F:\Poser Content\Poser Pro 2010 Content\PaxProps/F:\Poser Content\Poser Pro 2010 Content\PaxProps/F:\Poser Content\Poser Pro 2010 Content\PaxProps\binbag1.jpg

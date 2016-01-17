@@ -69,6 +69,34 @@ Material::Material(const char* id, SceneManager* manager, const char* shaderId, 
 	}
 }
 
+Material::Material(const char *id, SceneManager *manager, const char *shaderId, shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess,
+	GLfloat opacity, int shadingModel, vector<const GLchar*> faces) {
+
+	this->id = id;
+	this->shader = manager->getShader(shaderId);
+	this->shaderType = shaderType;
+	this->manager = manager;
+
+	this->ambientIntensity = ambientI;
+	this->diffuseIntensity = diffuseI;
+	this->specularIntensity = specularI;
+	this->shininess = shininess;
+	this->opacity = opacity;
+	this->shadingModel = shadingModel;
+
+	this->cubemapTexture = loadCubemap(faces);
+
+	if (opacity <= 0.9)
+	{
+		this->transparent = true;
+	}
+	else
+	{
+		this->transparent = false;
+	}
+
+}
+
 
 
 Material::~Material()
@@ -268,6 +296,32 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glUniform3f(glGetUniformLocation(shader->Program, "diffuse"), 1.0, 1.0, 1.0);
 			}
 		}
+		else if (shaderType == REFLECTIVE)
+		{
+			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(camera->GetProjectionMatrix()));
+
+			glActiveTexture(GL_TEXTURE0);
+			glUniform1i(glGetUniformLocation(shader->Program, "skybox"), 0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+
+		}
+		else if (shaderType == PARTICLE)
+		{
+			// Bind our texture in Texture Unit 0
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, textures[0]->texture);
+			// Set our "myTextureSampler" sampler to user Texture Unit 0
+			glUniform1i(glGetUniformLocation(shader->Program,"texture"),0);
+
+			// Same as the billboards tutorial
+			glUniform3f(glGetUniformLocation(shader->Program, "camera_right"), camera->getRight().x, camera->getRight().y, camera->getRight().z);
+			glUniform3f(glGetUniformLocation(shader->Program, "camera_up"), camera->getUp().x, camera->getUp().y, camera->getUp().z);
+
+			glm::mat4 viewProjection = camera->GetViewMatrix() * camera->GetProjectionMatrix();
+
+			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view_proj_matrix"), 1, GL_FALSE, glm::value_ptr(viewProjection));
+		}
 	}
 	else
 	{
@@ -315,4 +369,29 @@ void Material::unUse(Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowT
 	//glUniform1i(glGetUniformLocation(shader->Program, "shadowMap"), 0);
 	//glBindTexture(GL_TEXTURE_CUBE_MAP, NULL);
 	//glActiveTexture(GL_TEXTURE0);
+}
+
+GLuint Material::loadCubemap(vector<const GLchar*> faces)
+{
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+
+	int width, height;
+	unsigned char* image;
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	for (GLuint i = 0; i < faces.size(); i++)
+	{
+		image = SOIL_load_image(faces[i], &width, &height, 0, SOIL_LOAD_RGB);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		SOIL_free_image_data(image);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	return textureID;
 }

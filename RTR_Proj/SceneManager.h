@@ -5,10 +5,12 @@
 #include "Entity.h"
 #include "Light.h"
 #include "Mesh.h"
+#include "Emitter.h"
 
 struct RenderOrder
 {
 	vector<SubEntity*> Entities;
+	vector<Particle*> Particles;
 };
 
 class SceneManager
@@ -49,6 +51,10 @@ public:
 	void addMaterial(const char *id, const char *vert, const char *frag, vector<Texture*> textures, GLfloat *ambientI = nullptr, GLfloat *diffuseI = nullptr,
 												GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, int shadingModel = 1,
 												Material::shaderTypes shaderType = Material::LIGHTING);
+	void addMaterial(const char *id, const char *vert, const char *frag, vector<const GLchar*> faces, GLfloat *ambientI = nullptr, GLfloat *diffuseI = nullptr,
+												GLfloat *specularI = nullptr, GLfloat shininess = 32.0, GLfloat opacity = 1.0, int shadingModel = 1,
+												Material::shaderTypes shaderType = Material::LIGHTING);
+
 	void setDefaultMaterial(int num);
 	Material* getDefaultMaterial();
 	Material* getMaterial(int material);
@@ -88,6 +94,12 @@ public:
 	//                                                  ENTITIES
 	//----------------------------------------------------------------------------------------------------------------------
 	Entity* createEntity(const char *id, const char *modelId, bool shadowCaster = true);
+
+	//----------------------------------------------------------------------------------------------------------------------
+	//                                                  EMITTER
+	//----------------------------------------------------------------------------------------------------------------------
+
+	Emitter* createEmitter(const char *id);
 
 	//----------------------------------------------------------------------------------------------------------------------
 	//                                                  LIGHTS

@@ -272,6 +272,80 @@ void SceneManager::addMaterial(const char *id, const char *vert, const char *fra
 	this->materials.push_back(m);
 }
 
+void SceneManager::addMaterial(const char *id, const char *vert, const char *frag, vector<const GLchar*> faces, GLfloat *ambientI, GLfloat *diffuseI,
+	GLfloat *specularI, GLfloat shininess, GLfloat opacity, int shadingModel, Material::shaderTypes shaderType)
+{
+	Material *m = this->getMaterial(id);
+
+	if (m) return;
+
+	GLfloat* tmpAmbient = new GLfloat[3];
+	GLfloat* tmpDiffuse = new GLfloat[3];
+	GLfloat* tmpSpecular = new GLfloat[3];
+
+	string shaderId = vert;
+	shaderId += frag;
+
+	Shader *shader = nullptr;
+	for (auto s : shaders)
+	{
+		if (strcmp(s->id, shaderId.c_str()) == 0)
+		{
+			shader = s;
+			break;
+		}
+	}
+
+	if (!shader)
+	{
+		shader = new Shader(vert, frag);
+		shaders.push_back(shader);
+	}
+
+
+	if (!ambientI)
+	{
+		tmpAmbient[0] = 1.0f;
+		tmpAmbient[1] = 1.0f;
+		tmpAmbient[2] = 1.0f;
+	}
+	else
+	{
+		tmpAmbient[0] = ambientI[0];
+		tmpAmbient[1] = ambientI[1];
+		tmpAmbient[2] = ambientI[2];
+	}
+
+	if (!diffuseI)
+	{
+		tmpDiffuse[0] = 1.0f;
+		tmpDiffuse[1] = 1.0f;
+		tmpDiffuse[2] = 1.0f;
+	}
+	else
+	{
+		tmpDiffuse[0] = diffuseI[0];
+		tmpDiffuse[1] = diffuseI[1];
+		tmpDiffuse[2] = diffuseI[2];
+	}
+
+	if (!specularI)
+	{
+		tmpSpecular[0] = 1.0f;
+		tmpSpecular[1] = 1.0f;
+		tmpSpecular[2] = 1.0f;
+	}
+	else
+	{
+		tmpSpecular[0] = specularI[0];
+		tmpSpecular[1] = specularI[1];
+		tmpSpecular[2] = specularI[2];
+	}
+
+	m = new Material(id, this, shaderId.c_str(), shaderType, tmpAmbient, tmpDiffuse, tmpSpecular, shininess, opacity, shadingModel, faces);
+	this->materials.push_back(m);
+}
+
 
 
 void SceneManager::setDefaultMaterial(int num)
@@ -506,6 +580,13 @@ Entity* SceneManager::createEntity(const char *id, const char *modelId, bool sha
 }
 
 
+Emitter* SceneManager::createEmitter(const char *id)
+{
+	return new Emitter(id, this, nullptr);
+}
+
+
+
 
 Light* SceneManager::createLight(const char* id, GLfloat *ambient, GLfloat *diffuse, GLfloat *specular, GLfloat constant, GLfloat linear, GLfloat quadratic, const char* modelId)
 {
@@ -611,6 +692,32 @@ void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE sh
 		}
 
 		se->mesh->display(se->entity->getParent()->getTransfMatrix(), se->materialToUse, camera, shadowMap, shadowType);
+	}
+
+	for (auto pe : order->Particles)
+	{
+
+		auto mat = getMaterial(pe->em->getMaterial());
+		auto s = mat->getShader();
+
+		if (currentMaterial != pe->em->getMaterial() && currentMaterial >= 0)
+		{
+			auto curr_mat = getMaterial(currentMaterial);
+			curr_mat->unUse(camera, shadowMap, shadowType);
+		}
+		if (!shadowMap && currentShader != s)
+		{
+			s->Use();
+			currentShader = s;
+		}
+		if (currentMaterial != pe->em->getMaterial())
+		{
+			mat->use(camera, shadowMap, shadowType);
+			currentMaterial = pe->em->getMaterial();
+		}
+
+		pe->display(pe->em->getMaterial(), camera, shadowMap, shadowType);
+
 	}
 
 	if (currentMaterial >= 0)

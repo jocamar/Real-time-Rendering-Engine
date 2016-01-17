@@ -48,7 +48,7 @@ int main()
 	GLfloat specular[] = { 0.0, 0.0, 0.0 };
 	GLfloat specular_brick[] = { 0.3, 0.3, 0.3 };
 
-	GLfloat diffuseL1[] = { 1.0, 0.0, 0.0 };
+	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
 	GLfloat diffuseL2[] = { 1.0, 1.0, 1.0 };
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
@@ -61,12 +61,12 @@ int main()
 	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "posy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "negy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "186.png", nullptr, "186_norm.png", ambient, nullptr, specular, 1, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("grass", "defaultShader.vs", "defaultShader.frag", "156.png", nullptr, "156_norm.png", ambient, nullptr, nullptr, 5, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("house4", "defaultShader.vs", "defaultShader.frag", "Medieval_House_Diff.png", "Medieval_House_Spec.png", "Medieval_House_Nor.png", ambient, nullptr, nullptr, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
@@ -115,6 +115,10 @@ int main()
 	sceneManager.addModel("dumpster", "trash/Dumpster.obj");
 	sceneManager.addModel("fence", "fence/fence.fbx");
 	sceneManager.addModel("helicopter", "Combine Helicopter/Combine_Helicopter.obj");
+	sceneManager.addModel("trash_bags", "trashbags/Rubbish 1.3DS");
+	sceneManager.addModel("trash_bin", "Trash_Bin/trashbin.3ds");
+	sceneManager.addModel("clearbag", "WheeliBin/WheeliBin/clearPlasticBag.obj");
+	sceneManager.addModel("blackbag", "WheeliBin/WheeliBin/blackPlasticBag.obj");
 
 	GLfloat amb_dir[3] = { 0.01f, 0.01f, 0.005f };
 	GLfloat dif_dir[3] = { 0.2f, 0.2f, 0.15f };
@@ -398,6 +402,27 @@ int main()
 	dumpster->changeScale(glm::vec3(0.5, 0.5, 0.5));
 	dumpster->yaw(-12);
 
+	auto trashbinEnt = sceneManager.createEntity("trashbinEnt", "trash_bin");
+	auto trashbin = sceneManager.getRoot()->createNewChildNode("trash_bin", "bricks", glm::vec3(6.5f, 0.0f, -3.0f));
+	trashbin->attach(trashbinEnt);
+	trashbin->changeScale(glm::vec3(0.01, 0.01, 0.01));
+
+	auto trashbin2Ent = sceneManager.createEntity("trashbin2Ent", "trash_bin");
+	auto trashbin2 = sceneManager.getRoot()->createNewChildNode("trash_bin2", "bricks", glm::vec3(-4.5f, 0.0f, -0.6f));
+	trashbin2->attach(trashbin2Ent);
+	trashbin2->changeScale(glm::vec3(0.01, 0.01, 0.01));
+	//trashbin->yaw(-12);
+
+	auto clearbagEnt = sceneManager.createEntity("clearbagEnt", "clearbag");
+	auto clearbag = sceneManager.getRoot()->createNewChildNode("clearbag", "bricks", glm::vec3(6.5f, 0.0f, -3.0f));
+	clearbag->attach(clearbagEnt);
+	clearbag->changeScale(glm::vec3(0.01, 0.01, 0.02));
+
+	auto blackbagEnt = sceneManager.createEntity("blackbagEnt", "blackbag");
+	auto blackbag = sceneManager.getRoot()->createNewChildNode("blackbag", "bricks", glm::vec3(6.5f, 0.0f, -2.0f));
+	blackbag->attach(blackbagEnt);
+	blackbag->changeScale(glm::vec3(0.01, 0.01, 0.01));
+
 	auto fenceEnt = sceneManager.createEntity("fenceEnt", "fence", false);
 	auto fence = sceneManager.getRoot()->createNewChildNode("fenceNode", "bricks", glm::vec3(-5.0f, 1.0f, -2.0f));
 	fence->attach(fenceEnt);
@@ -405,22 +430,83 @@ int main()
 	fence->pitch(-90);
 	fence->yaw(0);
 
+	vector<std::pair<long, float>> points_Y_heli;
+	points_Y_heli.push_back(std::pair<long, float>(30000, 3));
+	points_Y_heli.push_back(std::pair<long, float>(31500, 6));
+	points_Y_heli.push_back(std::pair<long, float>(33000, 9));
+	points_Y_heli.push_back(std::pair<long, float>(34500, 12));
+	points_Y_heli.push_back(std::pair<long, float>(36000, 15));
+	points_Y_heli.push_back(std::pair<long, float>(37500, 18));
+	points_Y_heli.push_back(std::pair<long, float>(39000, 20));
+	BetterAnimation *anim_heli = new BetterAnimation(false);
+	anim_heli->addControlPoints(points_Y_heli, BetterAnimation::Attribute::POS_Y);
+
+	/*vector<std::pair<long, float>> points_X_heli;
+	points_X_heli.push_back(std::pair<long, float>(39000, 20.0));
+	points_X_heli.push_back(std::pair<long, float>(45000, 20.0));
+	/*points_X_heli.push_back(std::pair<long, float>(48000, 12));
+	points_X_heli.push_back(std::pair<long, float>(51000, 15));
+	points_X_heli.push_back(std::pair<long, float>(54000, 18));
+	points_X_heli.push_back(std::pair<long, float>(57000, 20));
+	anim_heli->addControlPoints(points_X_heli, BetterAnimation::Attribute::POS_X);*/
+
+	/*vector<std::pair<long, float>> points_Z_heli;
+	points_Z_heli.push_back(std::pair<long, float>(39000, 0.0));
+	points_Z_heli.push_back(std::pair<long, float>(45000, -10.0));
+	/*points_Z_heli.push_back(std::pair<long, float>(48000, 12));
+	points_Z_heli.push_back(std::pair<long, float>(51000, 15));
+	points_Z_heli.push_back(std::pair<long, float>(54000, 18));
+	points_Z_heli.push_back(std::pair<long, float>(57000, 20));
+	anim_heli->addControlPoints(points_Z_heli, BetterAnimation::Attribute::POS_Z);*/
+
+
 	auto helicopterEnt = sceneManager.createEntity("helicopterEnt", "helicopter", true);
-	auto helicopter = sceneManager.getRoot()->createNewChildNode("helicopterNode", "bricks", glm::vec3(20.0f, 16.0f, 0.0f));
+	auto helicopter = sceneManager.getRoot()->createNewChildNode("helicopterNode", "bricks", glm::vec3(20.0f, 3.0f, 0.0f));
 	helicopter->attach(helicopterEnt);
 	helicopter->changeScale(glm::vec3(0.02, 0.02, 0.02));
 	helicopter->yaw(-90);
 	helicopter->pitch(20);
 
-	GLfloat amb[3] = { 0.01f, 0.0f, 0.0f };
-	GLfloat dif[3] = { 1.0f, 0.0f, 0.0f };
-	GLfloat spec[3] = { 0.3f, 0.0f, 0.0f };
+	GLfloat amb_heli[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat dif_heli[3] = { 1.0f, 0.0f, 0.0f };
+	GLfloat spec_heli[3] = { 0.0f, 0.0f, 0.0f };
 
-	auto light3 = sceneManager.createLight("light3", amb, dif, spec, 0.0f, 0.0f, 0.01f, "cube");
+	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.0f, 0.0f, 0.01f, "cube");
 	auto heliLightNode = helicopter->createNewChildNode("heliLightNode", "light_material", glm::vec3(0, -70, 140));
 	heliLightNode->changeScale(glm::vec3(5, 5, 5));
 	heliLightNode->attach(light3);
+	helicopter->setAnimation(anim_heli);
+	anim_heli->start();
 
+
+	vector<std::pair<long, float>> points_yaw;
+	points_yaw.push_back(std::pair<long, float>(2000, 0));
+	points_yaw.push_back(std::pair<long, float>(7000, 45));
+	points_yaw.push_back(std::pair<long, float>(12000, -45));
+	points_yaw.push_back(std::pair<long, float>(17000, -45));
+	points_yaw.push_back(std::pair<long, float>(22000, -45));
+	points_yaw.push_back(std::pair<long, float>(27000, 0));
+	points_yaw.push_back(std::pair<long, float>(32000, 180));
+	points_yaw.push_back(std::pair<long, float>(33000, 180));
+	points_yaw.push_back(std::pair<long, float>(34000, 0));
+	BetterAnimation *anim_player = new BetterAnimation(false);
+	anim_player->addControlPoints(points_yaw, BetterAnimation::Attribute::YAW);
+
+	vector<std::pair<long, float>> points_pitch;
+	points_pitch.push_back(std::pair<long, float>(12000, 0));
+	points_pitch.push_back(std::pair<long, float>(17000, -50));
+	points_pitch.push_back(std::pair<long, float>(22000, 0));
+	points_pitch.push_back(std::pair<long, float>(34000, 0));
+	points_pitch.push_back(std::pair<long, float>(39000, -50));
+	anim_player->addControlPoints(points_pitch, BetterAnimation::Attribute::PITCH);
+
+	auto cameraNode = sceneManager.getRoot()->createNewChildNode("cameraNode", "box_material", glm::vec3(0.0f, 1.0f, -2.0f));
+	cameraNode->attach(camera);
+	cameraNode->yaw(90);
+	cameraNode->setAnimation(anim_player);
+	anim_player->start();
+
+	
 
 	/*auto wallEnt2 = sceneManager.createEntity("wallEnt2", "planeWall");
 	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
@@ -485,20 +571,29 @@ int main()
 	points_X.push_back(std::pair<long, float>(7500, 6));
 	points_X.push_back(std::pair<long, float>(8750, 9));
 	points_X.push_back(std::pair<long, float>(9375, 12));
-	BetterAnimation *anim = new BetterAnimation(false);
+	points_X.push_back(std::pair<long, float>(9875, 9));
+	points_X.push_back(std::pair<long, float>(10375, 6));
+	points_X.push_back(std::pair<long, float>(10875, 3));
+	points_X.push_back(std::pair<long, float>(11375, 1));
+	BetterAnimation *anim = new BetterAnimation(true);
 	anim->addControlPoints(points_X, BetterAnimation::Attribute::POS_X);
 
-	GLfloat amb2[3] = { 0.1f, 0.1f, 0.1f };
+
+	GLfloat amb[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat dif[3] = { 0.0f, 0.0f, 1.0f };
+	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
+
+	GLfloat amb2[3] = { 0.0f, 0.0f, 0.0f };
 	GLfloat dif2[3] = { 1.0f, 1.0f, 1.0f };
 	GLfloat spec2[3] = { 0.3f, 0.3f, 0.3f };
 
-	//auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
-	auto camNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
-	//lightNode->changeScale(glm::vec3(0, 0, 0));
-	//camNode->yaw(90);
-	camNode->attach(camera);
-	//lightNode->setAnimation(anim);
-	//anim->start();
+
+	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
+	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
+	lightNode->changeScale(glm::vec3(0, 0, 0));
+	lightNode->attach(light1);
+	lightNode->setAnimation(anim);
+	anim->start();
 
 	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.1f, 0.2f, nullptr);
 	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);

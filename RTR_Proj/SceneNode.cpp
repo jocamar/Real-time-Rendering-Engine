@@ -248,6 +248,9 @@ RenderOrder SceneNode::getRenderEntities(int material, Camera *camera, bool shad
 
 		if(order.Entities.size() > 0)
 			final.Entities.insert(std::end(final.Entities), std::begin(order.Entities), std::end(order.Entities));
+
+		if (order.Particles.size() > 0)
+			final.Particles.insert(std::end(final.Particles), std::begin(order.Particles), std::end(order.Particles));
 	}
 
 	/*for(auto ro : intermediate)
