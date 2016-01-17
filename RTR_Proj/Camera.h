@@ -210,8 +210,6 @@ public:
 
 	glm::vec3 getUp()
 	{
-		glm::mat4 mat;
-		mat = glm::translate(mat, glm::vec3(0,1.2,2));
 		if (this->parent)
 		{
 			auto up = glm::vec3(this->parent->getTransfMatrix() * glm::vec4(this->Up, 1.0));

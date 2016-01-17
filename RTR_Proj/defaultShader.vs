@@ -25,7 +25,6 @@ out vec3 Bitangent;
 
 #define NR_POINT_LIGHTS 10
 out vec4 FragPosDirectionalLightSpace;
-//out vec4 FragPosPointLightSpace[NR_POINT_LIGHTS];
 
 uniform mat4 model;
 uniform mat4 modelview;

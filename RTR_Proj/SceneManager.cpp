@@ -625,20 +625,23 @@ void SceneManager::render(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE sh
 void SceneManager::generateShadowMaps(Camera *camera)
 {
 	this->shadowShader->Use();
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 	glViewport(0, 0, DIR_SHADOW_WIDTH, DIR_SHADOW_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 	this->directionalLight->generateShadowMap(camera);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
+	//CullFace(GL_FRONT);
+	//glDisable(GL_CULL_FACE);
 	this->omniShadowShader->Use();
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-	for(auto l : lights)
+	auto ls = getActiveLights();
+	for(auto l : ls)
 	{
 		l->generateShadowMap(camera);
 	}
 	//glDisable(GL_CULL_FACE);
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 }
 
