@@ -738,7 +738,7 @@ void SceneManager::generateShadowMaps(Camera *camera)
 	glViewport(0, 0, DIR_SHADOW_WIDTH, DIR_SHADOW_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 	this->directionalLight->generateShadowMap(camera);
-	//CullFace(GL_FRONT);
+	//glCullFace(GL_BACK);
 	//glDisable(GL_CULL_FACE);
 	this->omniShadowShader->Use();
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);

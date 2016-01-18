@@ -107,7 +107,7 @@ void Light::generateShadowMap(Camera *camera)
 	else
 	{
 		glm::vec3 wp = this->parent->getWorldPosition();
-		this->cam = new Camera(manager,this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.01f, 30.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 90.0f);
+		this->cam = new Camera(manager,this->parent->getWorldPosition(), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1, 0, 0), false, 0.01f, 45.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, 90.0f);
 		this->cam->Zoom = 90.0f;
 	}
 

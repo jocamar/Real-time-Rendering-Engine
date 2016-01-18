@@ -319,7 +319,8 @@ float OmniShadowCalculation(vec3 fragPos, vec3 lightPos, float far_plane, sample
 		return 0.0;
 
 	float shadow = 0.0;
-	float bias = max(0.001 * (1.0 - dot(Normal, fragToLight)), 0.0005);;
+	//float bias = max(0.001 * (1.0 - dot(Normal, fragToLight)), 0.0005);
+	float bias = 0.05;
 	int samples = 20;
 	float viewDistance = length(viewPos - fragPos);
 	float diskRadius = (1.0 + (viewDistance / far_plane)) / 50.0;

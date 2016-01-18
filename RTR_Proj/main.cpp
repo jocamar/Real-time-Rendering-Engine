@@ -297,7 +297,7 @@ int main()
 	wall15->roll(90);
 
 	auto wallEnt16 = sceneManager.createEntity("wallEnt16", "planeWallSmall");
-	auto wall16 = sceneManager.getRoot()->createNewChildNode("wallNode16", "wall5", glm::vec3(10.0f, 5.0f, -2.5f));
+	auto wall16 = sceneManager.getRoot()->createNewChildNode("wallNode16", "wall5", glm::vec3(10.0f, 5.0f, -1.75f));
 	wall16->attach(wallEnt16);
 	wall16->changeScale(glm::vec3(1, 5, 1));
 	wall16->yaw(90);
@@ -561,12 +561,12 @@ int main()
 	helicopter->yaw(-90);
 	helicopter->pitch(20);
 
-	GLfloat amb_heli[3] = { 0.01f, 0.0f, 0.0f };
+	GLfloat amb_heli[3] = { 0.1f, 0.0f, 0.0f };
 	GLfloat dif_heli[3] = { 9.0f, 0.0f, 0.0f };
 	GLfloat spec_heli[3] = { 1.0f, 0.0f, 0.0f };
 
-	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.0f, 0.0f, 0.1f, "cube");
-	auto heliLightNode = helicopter->createNewChildNode("heliLightNode", "light_material", glm::vec3(0, -50, 140));
+	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.0f, 0.0f, 0.2f, nullptr);
+	auto heliLightNode = helicopter->createNewChildNode("heliLightNode", "light_material", glm::vec3(0, -100, 130));
 	heliLightNode->changeScale(glm::vec3(5, 5, 5));
 	heliLightNode->attach(light3);
 	helicopter->setAnimation(anim_heli);
@@ -581,8 +581,8 @@ int main()
 	points_yaw.push_back(std::pair<long, float>(18000, 270));
 	points_yaw.push_back(std::pair<long, float>(25000, 360));
 	points_yaw.push_back(std::pair<long, float>(29000, 540));
-	points_yaw.push_back(std::pair<long, float>(33000, 540));
-	points_yaw.push_back(std::pair<long, float>(34000, 360));
+	points_yaw.push_back(std::pair<long, float>(34000, 540));
+	points_yaw.push_back(std::pair<long, float>(35000, 360));
 	points_yaw.push_back(std::pair<long, float>(40000, 420));
 	points_yaw.push_back(std::pair<long, float>(46000, 520));
 	points_yaw.push_back(std::pair<long, float>(49000, 520));
@@ -610,6 +610,7 @@ int main()
 	points_pitch.push_back(std::pair<long, float>(51000, -60));
 	points_pitch.push_back(std::pair<long, float>(52000, -60));
 	points_pitch.push_back(std::pair<long, float>(60000, -45));
+	points_pitch.push_back(std::pair<long, float>(65000, 5));
 	points_pitch.push_back(std::pair<long, float>(72000, -45));
 	points_pitch.push_back(std::pair<long, float>(80000, 5));
 	anim_player->addControlPoints(points_pitch, BetterAnimation::Attribute::PITCH);
