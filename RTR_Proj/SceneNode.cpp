@@ -150,11 +150,6 @@ void SceneNode::changeOrientation(glm::quat quaternion)
 void SceneNode::yaw(GLfloat degrees)
 {
 	this->curr_yaw += degrees;
-	/*auto rot = glm::angleAxis(glm::radians(degrees), up);
-
-	this->right = rot * right;
-	this->front = rot * front;
-	this->orientation = rot * orientation;*/
 }
 
 
@@ -162,11 +157,6 @@ void SceneNode::yaw(GLfloat degrees)
 void SceneNode::pitch(GLfloat degrees)
 {
 	this->curr_pitch += degrees;
-	/*auto rot = glm::angleAxis(glm::radians(degrees), right);
-
-	this->up = rot * up;
-	this->front = rot * front;
-	this->orientation = rot * orientation;*/
 }
 
 
@@ -174,11 +164,6 @@ void SceneNode::pitch(GLfloat degrees)
 void SceneNode::roll(GLfloat degrees)
 {
 	this->curr_roll += degrees;
-	/*auto rot = glm::angleAxis(glm::radians(degrees), front);
-
-	this->up = rot * up;
-	this->right = rot * right;
-	this->orientation = rot * orientation;*/
 }
 
 
@@ -264,29 +249,7 @@ RenderOrder SceneNode::getRenderEntities(int material, Camera *camera, bool shad
 		if(order.Entities.size() > 0)
 			final.Entities.insert(std::end(final.Entities), std::begin(order.Entities), std::end(order.Entities));
 
-		if (order.Particles.size() > 0)
-			final.Particles.insert(std::end(final.Particles), std::begin(order.Particles), std::end(order.Particles));
 	}
-
-	/*for(auto ro : intermediate)
-	{
-		for (auto it = ro.Entities.begin(); it != ro.Entities.end(); ++it)
-		{
-			auto mats = it->second;
-			auto shader = it->first;
-
-			for (auto it2 = ro.Entities[shader].begin(); it2 != ro.Entities[shader].end(); ++it2)
-			{
-				auto ents = it2->second;
-				auto mat = it2->first;
-
-				for(auto ent : ents)
-				{
-					final.Entities[shader][mat].push_back(ent);
-				}
-			}
-		}
-	}*/
 
 	return final;
 }

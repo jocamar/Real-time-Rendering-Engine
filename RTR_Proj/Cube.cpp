@@ -173,7 +173,6 @@ void Cube::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 
 	auto s = this->manager->getMaterial(material);
 
-	//s->use(camera, shadowMap, shadowType);
 
 	// Create camera transformation
 	glm::mat4 mvm;
@@ -205,8 +204,6 @@ void Cube::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 	}
 
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);//, GL_UNSIGNED_BYTE, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
-
-	//s->unUse(camera, shadowMap, shadowType);
 }

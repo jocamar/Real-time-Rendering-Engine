@@ -23,13 +23,6 @@ struct SubEntity
 	static bool less(SubEntity *se1, SubEntity *se2);
 };
 
-/*class sorter {
-	Camera *cam;
-public:
-	sorter(Camera *cam) : cam(cam) {}
-	bool operator()(SubEntity const* se1, SubEntity const* se2) const;
-};*/
-
 class Entity : public AttacheableObject
 {
 protected:
@@ -41,6 +34,7 @@ public:
 	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	bool isLeaf() override;
 	void update(float seconds) override;
+	void setMaterialToUse(const char* material);
 	RenderOrder getRenderEntities(int material, Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 };
 

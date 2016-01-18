@@ -81,7 +81,7 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 		Material *mat = manager->getMaterial(materialToUse);
 		if (mat->isTransparent())
 			continue;
-		/*Shader *shader = mat->getShader();*/
+
 		auto omniCam = false;
 		if (shadowMap && shadowType == Globals::POINT)
 			omniCam = true;
@@ -91,6 +91,17 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 	}
 
 	return order;
+}
+
+void Entity::setMaterialToUse(const char* material)
+{
+	auto mat = manager->getMaterialNum(material);
+	for (int i = 0; i < subEntities.size(); i++)
+	{
+		auto se = &(subEntities[i]);
+		se->material = mat;
+		se->materialToUse = mat;
+	}
 }
 
 
@@ -121,14 +132,12 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 
 		if(!camera->Ortho)
 		{
-			//auto d = radius / glm::cos(glm::radians(camera->Zoom));
 			auto d = radius * camera->yFactor;
 			pointZ *= glm::tan(glm::radians(camera->Zoom/2.0));
 
 			if (pointY > pointZ + d || pointY < -pointZ - d)
 				return false;
-				
-			//auto d2 = radius / glm::cos(glm::atan(glm::tan(glm::radians(camera->Zoom))*camera->Ratio));
+		
 			auto d2 = radius * camera->xFactor;
 			pointZ *= camera->Ratio;
 
@@ -197,14 +206,12 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 
 			if (!camera->Ortho)
 			{
-				//auto d = radius / glm::cos(glm::radians(camera->Zoom));
 				auto d = radius * camera->yFactor;
 				pointZ *= glm::tan(glm::radians(camera->Zoom/2.0));
 
 				if (pointY > pointZ + d || pointY < -pointZ - d)
 					continue;
 
-				//auto d2 = radius / glm::cos(glm::atan(glm::tan(glm::radians(camera->Zoom))*camera->Ratio));
 				auto d2 = radius * camera->xFactor;
 				pointZ *= camera->Ratio;
 
@@ -271,37 +278,3 @@ bool SubEntity::less(SubEntity *se1, SubEntity *se2)
 		return true;
 	else return (se1->materialToUse < se2->materialToUse);
 }
-
-
-
-/*bool sorter::operator()(SubEntity const* se1, SubEntity const* se2) const
-{
-	auto manager = se1->entity->getManager();
-	auto mat1 = manager->getMaterial(se1->materialToUse);
-	auto mat2 = manager->getMaterial(se2->materialToUse);
-	bool trans1 = false;
-	bool trans2 = false;
-
-	if (mat1)
-	{
-		trans1 = mat1->isTransparent();
-	}
-	if (mat2)
-	{
-		trans2 = mat2->isTransparent();
-	}
-
-	if (trans1 && !trans2)
-		return false;
-	else if (trans2 && !trans1)
-		return true;
-	else {
-		if (se1->distanceToCamera(cam) > se2->distanceToCamera(cam))
-			return false;
-		else return true;
-		if (se1->materialToUse < se2->materialToUse)
-			return true;
-		else if (se1->materialToUse >= se2->materialToUse)
-			return false;
-	}
-}*/

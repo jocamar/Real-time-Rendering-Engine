@@ -40,7 +40,6 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 
 	auto s = this->manager->getMaterial(materialToUse);
 
-	//s->use(camera, shadowMap, shadowType);
 
 	// Create camera transformation
 	glm::mat4 mvm;
@@ -75,7 +74,6 @@ void Mesh::display(glm::mat4 transf, int material, Camera *camera, bool shadowMa
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	//s->unUse(camera, shadowMap, shadowType);
 }
 
 
@@ -275,9 +273,6 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
 			bitangent = glm::normalize(bitangent);
 
-			if (tangents[mesh->mFaces[i].mIndices[0]].size() > 0 || tangents[mesh->mFaces[i].mIndices[1]].size() > 0 || tangents[mesh->mFaces[i].mIndices[2]].size() > 0)
-				int wtf = 0;
-
 			tangents[mesh->mFaces[i].mIndices[0]].push_back(area*tangent);
 			tangents[mesh->mFaces[i].mIndices[1]].push_back(area*tangent);
 			tangents[mesh->mFaces[i].mIndices[2]].push_back(area*tangent);
@@ -292,8 +287,8 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
-		glm::vec3 vector; // We declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
-						  // Positions
+		glm::vec3 vector; 
+
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
@@ -340,7 +335,7 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.Normal = glm::vec3(0, 1, 0);
 		}
 
-		if (mesh->mTangents)
+		/*if (mesh->mTangents)
 		{
 			vector.x = mesh->mTangents[i].x;
 			vector.y = mesh->mTangents[i].y;
@@ -362,14 +357,13 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		else
 		{
 			vertex.Bitangent = glm::vec3(0, 0, 1);
-		}
+		}*/
 		
 		// Texture Coordinates
-		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
+		if (mesh->mTextureCoords[0])
 		{
 			glm::vec2 vec;
-			// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
-			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+			
 			vec.x = mesh->mTextureCoords[0][i].x;
 			vec.y = mesh->mTextureCoords[0][i].y;
 			vertex.TexCoords = vec;
@@ -383,8 +377,8 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 				bitangent += bitangents[i][j];
 			}
 
-			//vertex.Tangent = glm::normalize(tangent);
-			//vertex.Bitangent = glm::normalize(bitangent);
+			vertex.Tangent = glm::normalize(tangent);
+			vertex.Bitangent = glm::normalize(bitangent);
 		}
 		else
 			vertex.TexCoords = glm::vec2(0.0f, 0.0f);
