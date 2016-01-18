@@ -23,6 +23,7 @@ protected:
 	glm::vec3 right;
 
 	glm::quat orientation;
+	float curr_yaw, curr_pitch, curr_roll;
 
 	glm::vec3 scaleOrig;
 	glm::vec3 rotOrig;

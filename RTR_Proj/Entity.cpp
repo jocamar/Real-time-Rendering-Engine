@@ -78,8 +78,10 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 
 		entity->materialToUse = materialToUse;
 
-		/*Material *mat = manager->getMaterial(materialToUse);
-		Shader *shader = mat->getShader();*/
+		Material *mat = manager->getMaterial(materialToUse);
+		if (mat->isTransparent())
+			continue;
+		/*Shader *shader = mat->getShader();*/
 		auto omniCam = false;
 		if (shadowMap && shadowType == Globals::POINT)
 			omniCam = true;
@@ -135,9 +137,9 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 		}
 		else
 		{
-			if (-50.0 > pointY + radius || pointY - radius > 50.0)
+			if (-30.0 > pointY + radius || pointY - radius > 30.0)
 				return false;
-			if (-50.0 > pointX + radius || pointX - radius > 50.0)
+			if (-30.0 > pointX + radius || pointX - radius > 30.0)
 				return false;
 		}
 	}

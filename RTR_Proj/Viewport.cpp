@@ -14,6 +14,7 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 	this->b = b;
 	this->bloom = true;
 	this->exposure = 1.0f;
+	this->totalMillis = 0;
 
 	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 								 // Positions   // TexCoords

@@ -170,6 +170,55 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 	{
 		//shader->Use();
 
+		if(shaderType == TEXTURED)
+		{
+			glUniform1f(glGetUniformLocation(shader->Program, "material.shininess"), this->shininess);
+			glUniform1f(glGetUniformLocation(shader->Program, "material.opacity"), this->opacity);
+
+			GLuint diffuseNr = 1;
+			GLuint specularNr = 1;
+			GLuint normalNr = 1;
+			for (GLuint i = 0; i < this->textures.size(); i++)
+			{
+				glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
+												  // Retrieve texture number (the N in diffuse_textureN)
+				stringstream ss;
+				string number;
+				string name = this->textures[i]->type;
+				if (name == "diffuse_texture")
+					ss << diffuseNr++; // Transfer GLuint to stream
+				else if (name == "specular_texture")
+				{
+					ss << specularNr++; // Transfer GLuint to stream
+				}
+				else if (name == "normal_texture")
+				{
+					ss << normalNr++;
+				}
+				number = ss.str();
+
+				glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number + "_active").c_str()), 1);
+				glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
+				glBindTexture(GL_TEXTURE_2D, this->textures[i]->texture);
+			}
+
+			glUniform1i(glGetUniformLocation(shader->Program, "material.shading_model"), this->shadingModel);
+
+			if (ambientIntensity)
+			{
+				glUniform3f(glGetUniformLocation(shader->Program, "material.ambientI"), ambientIntensity[0], ambientIntensity[1], ambientIntensity[2]);
+			}
+
+			if (diffuseIntensity)
+			{
+				glUniform3f(glGetUniformLocation(shader->Program, "material.diffuseI"), diffuseIntensity[0], diffuseIntensity[1], diffuseIntensity[2]);
+			}
+
+			if (specularIntensity)
+			{
+				glUniform3f(glGetUniformLocation(shader->Program, "material.specularI"), specularIntensity[0], specularIntensity[1], specularIntensity[2]);
+			}
+		}
 		if (shaderType == LIGHTING_TEXTURED)
 		{
 			GLint viewPosLoc = glGetUniformLocation(shader->Program, "viewPos");

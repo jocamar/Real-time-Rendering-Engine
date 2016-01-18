@@ -48,25 +48,25 @@ int main()
 	GLfloat specular[] = { 0.0, 0.0, 0.0 };
 	GLfloat specular_brick[] = { 0.3, 0.3, 0.3 };
 
-	GLfloat diffuseL1[] = { 0.0, 0.0, 1.0 };
+	GLfloat diffuseL1[] = { 1.0, 0.0, 0.0 };
 	GLfloat diffuseL2[] = { 1.0, 1.0, 1.0 };
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL1, nullptr, 0, 1, 1, Material::EMITTER);
 	sceneManager.addMaterial("light_material2", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL2, nullptr, 0, 1, 1, Material::EMITTER);
-	sceneManager.addMaterial("sky_front", "defaultShader.vs", "defaultShader.frag", "posx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_back", "defaultShader.vs", "defaultShader.frag", "negx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_left", "defaultShader.vs", "defaultShader.frag", "posz.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_right", "defaultShader.vs", "defaultShader.frag", "negz.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_top", "defaultShader.vs", "defaultShader.frag", "posy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
-	sceneManager.addMaterial("sky_bottom", "defaultShader.vs", "defaultShader.frag", "negy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::LIGHTING_TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_front", "simpleShader.vs", "simpleShader.frag", "posx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_back", "simpleShader.vs", "simpleShader.frag", "negx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_left", "simpleShader.vs", "simpleShader.frag", "posz.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_right", "simpleShader.vs", "simpleShader.frag", "negz.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_top", "simpleShader.vs", "simpleShader.frag", "posy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
+	sceneManager.addMaterial("sky_bottom", "simpleShader.vs", "simpleShader.frag", "negy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "186.png", nullptr, "186_norm.png", ambient, nullptr, specular, 1, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("grass", "defaultShader.vs", "defaultShader.frag", "156.png", nullptr, "156_norm.png", ambient, nullptr, nullptr, 5, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("house4", "defaultShader.vs", "defaultShader.frag", "Medieval_House_Diff.png", "Medieval_House_Spec.png", "Medieval_House_Nor.png", ambient, nullptr, nullptr, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
@@ -77,7 +77,7 @@ int main()
 
 	sceneManager.addModel("planeGround", nullptr);
 	auto planeG = sceneManager.getModel("planeGround");
-	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 10, 10, 5));
+	planeG->addMesh(new RectangleMesh("ground", &sceneManager, 1, 10, 5));
 
 	sceneManager.addModel("planeWall", nullptr);
 	auto planeW = sceneManager.getModel("planeWall");
@@ -95,21 +95,6 @@ int main()
 	auto cube = sceneManager.getModel("cube");
 	cube->addMesh(new Cube("cubinho", &sceneManager));
 
-	//sceneManager.addModel("nanosuit", "cs_havana/cs_havana.obj");
-	//sceneManager.addModel("nanosuit", "colony sector/colony sector.obj");
-	//sceneManager.addModel("nanosuit", "CODMapShipment/Files/CODMapShipment.obj");
-	//sceneManager.addModel("nanosuit", "castle/castle.obj");
-	//sceneManager.addModel("nanosuit", "Small Tropical Island/Small Tropical Island.obj");
-	//sceneManager.addModel("nanosuit", "Roman_soldier/Roman_soldier.obj");
-	//sceneManager.addModel("nanosuit", "city/Center City Sci-Fi.obj");
-	//sceneManager.addModel("nanosuit", "Damaged Downtown/Downtown_Damage_0.obj");
-	//sceneManager.addModel("nanosuit", "Brick_Wall_Geo_Piskas/brick_wall_without_proxy.obj");
-	//sceneManager.addModel("house1", "house/house_obj.obj");
-	//sceneManager.addModel("house2", "cottage_3ds/cottage.3ds");
-	//sceneManager.addModel("house3", "house3/fw43_lowpoly_n1.3ds");
-	//sceneManager.addModel("house4", "Medieval_House/Medieval_House.obj");
-	//sceneManager.addModel("nanosuit", "valley/valley.obj");
-	//sceneManager.addModel("mountain", "shasta_obj_high/vue_ready_shasta.obj");
 	sceneManager.addModel("building", "building1/building.3ds");
 	sceneManager.addModel("lamp", "Street Lamp/StreetLamp.obj");
 	sceneManager.addModel("dumpster", "trash/Dumpster.obj");
@@ -120,10 +105,10 @@ int main()
 	sceneManager.addModel("clearbag", "WheeliBin/WheeliBin/clearPlasticBag.obj");
 	sceneManager.addModel("blackbag", "WheeliBin/WheeliBin/blackPlasticBag.obj");
 
-	GLfloat amb_dir[3] = { 0.01f, 0.01f, 0.005f };
-	GLfloat dif_dir[3] = { 0.2f, 0.2f, 0.15f };
-	GLfloat spec_dir[3] = { 0.2f, 0.2f, 0.1f };
-	GLfloat dir[3] = { -1.0f, -0.5f, -1.0f };
+	GLfloat amb_dir[3] = { 0.001f, 0.001f, 0.001f };
+	GLfloat dif_dir[3] = { 0.01f, 0.01f, 0.01f };
+	GLfloat spec_dir[3] = { 0.01f, 0.01f, 0.01f };
+	GLfloat dir[3] = { 0.5f, -0.7f, 1.0f };
 
 	sceneManager.createDirectionalLight("directional", amb_dir, dif_dir, spec_dir, dir);
 
@@ -190,7 +175,7 @@ int main()
 	wall->changeScale(glm::vec3(10, 5, 1));
     wall->yaw(180);
 
-	auto buildingEnt = sceneManager.createEntity("buildingEnt", "building");
+	auto buildingEnt = sceneManager.createEntity("buildingEnt", "building", false);
 	auto building = sceneManager.getRoot()->createNewChildNode("buildingNode", "bricks", glm::vec3(-40.0f, 8.0f, -10.0f));
 	building->attach(buildingEnt);
 	building->changeScale(glm::vec3(0.003, 0.003, 0.003));
@@ -208,11 +193,11 @@ int main()
 	wall3->changeScale(glm::vec3(10, 5, 1));
 	wall3->yaw(0);
 
-	auto wallEnt3Shadow = sceneManager.createEntity("wallEnt3Shadow", "planeWall");
+	/*auto wallEnt3Shadow = sceneManager.createEntity("wallEnt3Shadow", "planeWall");
 	auto wall3Shadow = sceneManager.getRoot()->createNewChildNode("wallNode3Shadow", "bricks", glm::vec3(5.0f, 5.0f, 6.0f));
 	wall3Shadow->attach(wallEnt3Shadow);
 	wall3Shadow->changeScale(glm::vec3(12, 10, 1));
-	wall3Shadow->yaw(0);
+	wall3Shadow->yaw(0);*/
 
 	auto wallEnt3Shadow2 = sceneManager.createEntity("wallEnt3Shadow2", "planeWall");
 	auto wall3Shadow2 = sceneManager.getRoot()->createNewChildNode("wallNode3Shadow2", "bricks", glm::vec3(13.0f, 3.5f, 1.0f));
@@ -233,11 +218,11 @@ int main()
 	wall5->changeScale(glm::vec3(10, 5, 1));
 	wall5->yaw(0);
 
-	auto wallEnt5Shadow = sceneManager.createEntity("wallEnt5Shadow", "planeWall");
+	/*auto wallEnt5Shadow = sceneManager.createEntity("wallEnt5Shadow", "planeWall");
 	auto wall5Shadow = sceneManager.getRoot()->createNewChildNode("wallNode5Shadow", "wall3", glm::vec3(-7.0f, 2.5f, 2.0f));
 	wall5Shadow->attach(wallEnt5Shadow);
 	wall5Shadow->changeScale(glm::vec3(10, 5, 1));
-	wall5Shadow->yaw(0);
+	wall5Shadow->yaw(0);*/
 
 	auto wallEnt6 = sceneManager.createEntity("wallEnt6", "planeWall");
 	auto wall6 = sceneManager.getRoot()->createNewChildNode("wallNode6", "wall4", glm::vec3(3.0f, 2.5f, -9.0f));
@@ -251,7 +236,7 @@ int main()
 	wall7->changeScale(glm::vec3(10, 10, 1));
 	wall7->yaw(180);
 
-	auto wallEnt8 = sceneManager.createEntity("wallEnt8", "planeWallSmall");
+	/*auto wallEnt8 = sceneManager.createEntity("wallEnt8", "planeWallSmall");
 	auto wall8 = sceneManager.getRoot()->createNewChildNode("wallNode8", "wall5", glm::vec3(5.5f, 3.5f, -4.7f));
 	wall8->attach(wallEnt8);
 	wall8->changeScale(glm::vec3(1, 5, 1));
@@ -279,7 +264,7 @@ int main()
 	wall11->changeScale(glm::vec3(1, 5, 1));
 	wall11->yaw(180);
 	wall11->pitch(-90);
-	wall11->roll(90);
+	wall11->roll(90);*/
 
 	auto wallEnt12 = sceneManager.createEntity("wallEnt12", "planeWallSmall");
 	auto wall12 = sceneManager.getRoot()->createNewChildNode("wallNode12", "wall5", glm::vec3(5.5f, 5.0f, -4.7f));
@@ -351,7 +336,7 @@ int main()
 	wall21->changeScale(glm::vec3(10, 5, 1));
 	wall21->yaw(0);
 
-	auto wallEnt22 = sceneManager.createEntity("wallEnt22", "planeWallSmall", false);
+	auto wallEnt22 = sceneManager.createEntity("wallEnt22", "planeWallSmall");
 	auto wall22 = sceneManager.getRoot()->createNewChildNode("wallNode22", "wall6", glm::vec3(0.1f, 5.5f, 2.5f));
 	wall22->attach(wallEnt22);
 	wall22->changeScale(glm::vec3(1, 5, 1));
@@ -364,7 +349,7 @@ int main()
 	wall23->changeScale(glm::vec3(1, 5, 1));
 	wall23->pitch(-90);
 
-	auto wallEnt24 = sceneManager.createEntity("wallEnt24", "planeWallSmall");
+	/*auto wallEnt24 = sceneManager.createEntity("wallEnt24", "planeWallSmall");
 	auto wall24 = sceneManager.getRoot()->createNewChildNode("wallNode24", "wall6", glm::vec3(0.1f, 5.5f, 7.5f));
 	wall24->attach(wallEnt24);
 	wall24->changeScale(glm::vec3(1, 5, 1));
@@ -375,7 +360,7 @@ int main()
 	auto wall25 = sceneManager.getRoot()->createNewChildNode("wallNode25", "wall6", glm::vec3(-0.4f, 5.0f, 7.5f));
 	wall25->attach(wallEnt25);
 	wall25->changeScale(glm::vec3(1, 5, 1));
-	wall25->pitch(-90);
+	wall25->pitch(-90);*/
 
 	auto wallEnt26 = sceneManager.createEntity("wallEnt26", "planeWallSmall");
 	auto wall26 = sceneManager.getRoot()->createNewChildNode("wallNode26", "wall6", glm::vec3(-2.4f, 5.5f, 0.0f));
@@ -413,7 +398,7 @@ int main()
 	trashbin2->changeScale(glm::vec3(0.01, 0.01, 0.01));
 	//trashbin->yaw(-12);
 
-	auto clearbagEnt = sceneManager.createEntity("clearbagEnt", "clearbag");
+	/*auto clearbagEnt = sceneManager.createEntity("clearbagEnt", "clearbag");
 	auto clearbag = sceneManager.getRoot()->createNewChildNode("clearbag", "bricks", glm::vec3(6.5f, 0.0f, -3.0f));
 	clearbag->attach(clearbagEnt);
 	clearbag->changeScale(glm::vec3(0.01, 0.01, 0.02));
@@ -421,7 +406,7 @@ int main()
 	auto blackbagEnt = sceneManager.createEntity("blackbagEnt", "blackbag");
 	auto blackbag = sceneManager.getRoot()->createNewChildNode("blackbag", "bricks", glm::vec3(6.5f, 0.0f, -2.0f));
 	blackbag->attach(blackbagEnt);
-	blackbag->changeScale(glm::vec3(0.01, 0.01, 0.01));
+	blackbag->changeScale(glm::vec3(0.01, 0.01, 0.01));*/
 
 	auto fenceEnt = sceneManager.createEntity("fenceEnt", "fence", false);
 	auto fence = sceneManager.getRoot()->createNewChildNode("fenceNode", "bricks", glm::vec3(-5.0f, 1.0f, -2.0f));
@@ -438,26 +423,135 @@ int main()
 	points_Y_heli.push_back(std::pair<long, float>(36000, 15));
 	points_Y_heli.push_back(std::pair<long, float>(37500, 18));
 	points_Y_heli.push_back(std::pair<long, float>(39000, 20));
+	points_Y_heli.push_back(std::pair<long, float>(53000, 20));
+	points_Y_heli.push_back(std::pair<long, float>(53500, 19));
+	points_Y_heli.push_back(std::pair<long, float>(62000, 10));
+	points_Y_heli.push_back(std::pair<long, float>(67000, 11));
+	points_Y_heli.push_back(std::pair<long, float>(67500, 12));
+	points_Y_heli.push_back(std::pair<long, float>(68000, 14));
+	points_Y_heli.push_back(std::pair<long, float>(69000, 18));
 	BetterAnimation *anim_heli = new BetterAnimation(false);
 	anim_heli->addControlPoints(points_Y_heli, BetterAnimation::Attribute::POS_Y);
 
-	/*vector<std::pair<long, float>> points_X_heli;
-	points_X_heli.push_back(std::pair<long, float>(39000, 20.0));
-	points_X_heli.push_back(std::pair<long, float>(45000, 20.0));
-	/*points_X_heli.push_back(std::pair<long, float>(48000, 12));
-	points_X_heli.push_back(std::pair<long, float>(51000, 15));
-	points_X_heli.push_back(std::pair<long, float>(54000, 18));
-	points_X_heli.push_back(std::pair<long, float>(57000, 20));
-	anim_heli->addControlPoints(points_X_heli, BetterAnimation::Attribute::POS_X);*/
+	vector<std::pair<long, float>> points_X_heli;
+	points_X_heli.push_back(std::pair<long, float>(39000, 0.0));
+	points_X_heli.push_back(std::pair<long, float>(39500, -0.5));
+	points_X_heli.push_back(std::pair<long, float>(40000, -1.25));
+	points_X_heli.push_back(std::pair<long, float>(40500, -2.5));
+	points_X_heli.push_back(std::pair<long, float>(41000, -4.0));
+	points_X_heli.push_back(std::pair<long, float>(41500, -6.0));
+	points_X_heli.push_back(std::pair<long, float>(42000, -9.0));
+	points_X_heli.push_back(std::pair<long, float>(42500, -13.0));
+	points_X_heli.push_back(std::pair<long, float>(43000, -18.0));
+	points_X_heli.push_back(std::pair<long, float>(43500, -23.0));
+	points_X_heli.push_back(std::pair<long, float>(44000, -27.0));
+	points_X_heli.push_back(std::pair<long, float>(44500, -30.0));
+	points_X_heli.push_back(std::pair<long, float>(45000, -32.0));
+	points_X_heli.push_back(std::pair<long, float>(45500, -33.5));
+	points_X_heli.push_back(std::pair<long, float>(46000, -34.75));
+	points_X_heli.push_back(std::pair<long, float>(46500, -35.5));
+	points_X_heli.push_back(std::pair<long, float>(47000, -36.0));
+	//Finished swooping around
+	points_X_heli.push_back(std::pair<long, float>(48000, -36.0));
+	points_X_heli.push_back(std::pair<long, float>(48250, -35.0));
+	points_X_heli.push_back(std::pair<long, float>(49000, -33.0));
+	points_X_heli.push_back(std::pair<long, float>(49500, -29.0));
+	points_X_heli.push_back(std::pair<long, float>(50000, -24.0));
+	points_X_heli.push_back(std::pair<long, float>(51500, -9.0));
+	points_X_heli.push_back(std::pair<long, float>(52000, -5.0));
+	points_X_heli.push_back(std::pair<long, float>(53500, -2.0));
+	points_X_heli.push_back(std::pair<long, float>(54000, 0.0));
+	points_X_heli.push_back(std::pair<long, float>(54500, -0.5));
+	points_X_heli.push_back(std::pair<long, float>(55000, -1.25));
+	points_X_heli.push_back(std::pair<long, float>(55500, -2.5));
+	points_X_heli.push_back(std::pair<long, float>(62000, -8.0));
+	points_X_heli.push_back(std::pair<long, float>(67000, -9.0));
+	points_X_heli.push_back(std::pair<long, float>(67500, -8.0));
+	points_X_heli.push_back(std::pair<long, float>(68000, -6.0));
+	points_X_heli.push_back(std::pair<long, float>(69500, 3.0));
+	points_X_heli.push_back(std::pair<long, float>(70000, 3.5));
+	points_X_heli.push_back(std::pair<long, float>(70500, 3.0));
+	points_X_heli.push_back(std::pair<long, float>(71000, 2.0));
+	points_X_heli.push_back(std::pair<long, float>(71500, 0.0));
+	points_X_heli.push_back(std::pair<long, float>(72000, -4.0));
+	points_X_heli.push_back(std::pair<long, float>(80000, -64.0));
 
-	/*vector<std::pair<long, float>> points_Z_heli;
+
+	anim_heli->addControlPoints(points_X_heli, BetterAnimation::Attribute::POS_X);
+
+	vector<std::pair<long, float>> points_Z_heli;
 	points_Z_heli.push_back(std::pair<long, float>(39000, 0.0));
-	points_Z_heli.push_back(std::pair<long, float>(45000, -10.0));
-	/*points_Z_heli.push_back(std::pair<long, float>(48000, 12));
-	points_Z_heli.push_back(std::pair<long, float>(51000, 15));
-	points_Z_heli.push_back(std::pair<long, float>(54000, 18));
-	points_Z_heli.push_back(std::pair<long, float>(57000, 20));
-	anim_heli->addControlPoints(points_Z_heli, BetterAnimation::Attribute::POS_Z);*/
+	points_Z_heli.push_back(std::pair<long, float>(39500, -1.0));
+	points_Z_heli.push_back(std::pair<long, float>(40000, -2.0));
+	points_Z_heli.push_back(std::pair<long, float>(40500, -4.0));
+	points_Z_heli.push_back(std::pair<long, float>(41000, -8.0));
+	points_Z_heli.push_back(std::pair<long, float>(41500, -12.0));
+	points_Z_heli.push_back(std::pair<long, float>(42000, -15.0));
+	points_Z_heli.push_back(std::pair<long, float>(42500, -17.0));
+	points_Z_heli.push_back(std::pair<long, float>(43000, -18.0));
+	points_Z_heli.push_back(std::pair<long, float>(43500, -17.0));
+	points_Z_heli.push_back(std::pair<long, float>(44000, -15.0));
+	points_Z_heli.push_back(std::pair<long, float>(44500, -12.0));
+	points_Z_heli.push_back(std::pair<long, float>(45000, -8.0));
+	points_Z_heli.push_back(std::pair<long, float>(45500, -4.0));
+	points_Z_heli.push_back(std::pair<long, float>(46000, -2.0));
+	points_Z_heli.push_back(std::pair<long, float>(46500, -1.0));
+	points_Z_heli.push_back(std::pair<long, float>(47000, 0.0));
+	points_Z_heli.push_back(std::pair<long, float>(47500, -0.5));
+	points_Z_heli.push_back(std::pair<long, float>(48000, 0.0));
+	points_Z_heli.push_back(std::pair<long, float>(70000, 0.0));
+	points_Z_heli.push_back(std::pair<long, float>(80000, 15.0));
+	anim_heli->addControlPoints(points_Z_heli, BetterAnimation::Attribute::POS_Z);
+
+	vector<std::pair<long, float>> points_Yaw_heli;
+	points_Yaw_heli.push_back(std::pair<long, float>(39000, 0.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(40000, 15.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(41000, 50.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(42000, 90.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(45000, 130.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(46000, 165.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(47000, 180.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(51000, 180.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(54000, 360.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(69500, 360.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(70000, 365.0));
+	points_Yaw_heli.push_back(std::pair<long, float>(71000, 370.0));
+	anim_heli->addControlPoints(points_Yaw_heli, BetterAnimation::Attribute::YAW);
+
+	vector<std::pair<long, float>> points_Pitch_heli;
+	points_Pitch_heli.push_back(std::pair<long, float>(48000, 0.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(48500, 5.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(49000, 7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(49500, 7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(50000, 5.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(50500, 0.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(51000, -5.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(51500, -7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(52500, -7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(53000, -5.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(53500, 0.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(54000, 2.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(54500, 7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(66000, 7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(66500, 5.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(67000, 0.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(69000, -7.5));
+	points_Pitch_heli.push_back(std::pair<long, float>(69500, -5.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(70000, 0.0));
+	points_Pitch_heli.push_back(std::pair<long, float>(70500, 7.5));
+	anim_heli->addControlPoints(points_Pitch_heli, BetterAnimation::Attribute::PITCH);
+
+	vector<std::pair<long, float>> points_Roll_heli;
+	points_Roll_heli.push_back(std::pair<long, float>(39000, 0.0));
+	points_Roll_heli.push_back(std::pair<long, float>(40000, 5.0));
+	points_Roll_heli.push_back(std::pair<long, float>(41000, 15.0));
+	points_Roll_heli.push_back(std::pair<long, float>(45000, 15.0));
+	points_Roll_heli.push_back(std::pair<long, float>(46000, 10.0));
+	points_Roll_heli.push_back(std::pair<long, float>(48000, 0.0));
+	points_Roll_heli.push_back(std::pair<long, float>(69500, 0.0));
+	points_Roll_heli.push_back(std::pair<long, float>(70500, 2.5));
+	points_Roll_heli.push_back(std::pair<long, float>(71500, 10.0));
+	anim_heli->addControlPoints(points_Roll_heli, BetterAnimation::Attribute::ROLL);
 
 
 	auto helicopterEnt = sceneManager.createEntity("helicopterEnt", "helicopter", true);
@@ -467,12 +561,12 @@ int main()
 	helicopter->yaw(-90);
 	helicopter->pitch(20);
 
-	GLfloat amb_heli[3] = { 0.0f, 0.0f, 0.0f };
-	GLfloat dif_heli[3] = { 1.0f, 0.0f, 0.0f };
-	GLfloat spec_heli[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat amb_heli[3] = { 0.01f, 0.0f, 0.0f };
+	GLfloat dif_heli[3] = { 9.0f, 0.0f, 0.0f };
+	GLfloat spec_heli[3] = { 1.0f, 0.0f, 0.0f };
 
-	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.0f, 0.0f, 0.01f, "cube");
-	auto heliLightNode = helicopter->createNewChildNode("heliLightNode", "light_material", glm::vec3(0, -70, 140));
+	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.0f, 0.0f, 0.1f, "cube");
+	auto heliLightNode = helicopter->createNewChildNode("heliLightNode", "light_material", glm::vec3(0, -50, 140));
 	heliLightNode->changeScale(glm::vec3(5, 5, 5));
 	heliLightNode->attach(light3);
 	helicopter->setAnimation(anim_heli);
@@ -480,128 +574,162 @@ int main()
 
 
 	vector<std::pair<long, float>> points_yaw;
-	points_yaw.push_back(std::pair<long, float>(2000, 0));
-	points_yaw.push_back(std::pair<long, float>(7000, 45));
-	points_yaw.push_back(std::pair<long, float>(12000, -45));
-	points_yaw.push_back(std::pair<long, float>(17000, -45));
-	points_yaw.push_back(std::pair<long, float>(22000, -45));
-	points_yaw.push_back(std::pair<long, float>(27000, 0));
-	points_yaw.push_back(std::pair<long, float>(32000, 180));
-	points_yaw.push_back(std::pair<long, float>(33000, 180));
-	points_yaw.push_back(std::pair<long, float>(34000, 0));
+	points_yaw.push_back(std::pair<long, float>(4500, 90));
+	points_yaw.push_back(std::pair<long, float>(9000, 80));
+	points_yaw.push_back(std::pair<long, float>(13000, 200));
+	points_yaw.push_back(std::pair<long, float>(17000, 320));
+	points_yaw.push_back(std::pair<long, float>(18000, 270));
+	points_yaw.push_back(std::pair<long, float>(25000, 360));
+	points_yaw.push_back(std::pair<long, float>(29000, 540));
+	points_yaw.push_back(std::pair<long, float>(33000, 540));
+	points_yaw.push_back(std::pair<long, float>(34000, 360));
+	points_yaw.push_back(std::pair<long, float>(40000, 420));
+	points_yaw.push_back(std::pair<long, float>(46000, 520));
+	points_yaw.push_back(std::pair<long, float>(49000, 520));
+	points_yaw.push_back(std::pair<long, float>(53000, 380));
+	points_yaw.push_back(std::pair<long, float>(60000, 360));
+	points_yaw.push_back(std::pair<long, float>(72000, 360));
+	points_yaw.push_back(std::pair<long, float>(80000, 410));
 	BetterAnimation *anim_player = new BetterAnimation(false);
 	anim_player->addControlPoints(points_yaw, BetterAnimation::Attribute::YAW);
 
+
 	vector<std::pair<long, float>> points_pitch;
-	points_pitch.push_back(std::pair<long, float>(12000, 0));
-	points_pitch.push_back(std::pair<long, float>(17000, -50));
-	points_pitch.push_back(std::pair<long, float>(22000, 0));
+	points_pitch.push_back(std::pair<long, float>(5000, 30));
+	points_pitch.push_back(std::pair<long, float>(9000, -30));
+	points_pitch.push_back(std::pair<long, float>(11000, 0));
+	points_pitch.push_back(std::pair<long, float>(18000, 45));
+	points_pitch.push_back(std::pair<long, float>(25000, -30));
+	points_pitch.push_back(std::pair<long, float>(33000, 0));
 	points_pitch.push_back(std::pair<long, float>(34000, 0));
-	points_pitch.push_back(std::pair<long, float>(39000, -50));
+	points_pitch.push_back(std::pair<long, float>(38000, -60));
+	points_pitch.push_back(std::pair<long, float>(42000, -60));
+	points_pitch.push_back(std::pair<long, float>(46000, -30));
+	points_pitch.push_back(std::pair<long, float>(49000, -30));
+	points_pitch.push_back(std::pair<long, float>(50500, -50));
+	points_pitch.push_back(std::pair<long, float>(51000, -60));
+	points_pitch.push_back(std::pair<long, float>(52000, -60));
+	points_pitch.push_back(std::pair<long, float>(60000, -45));
+	points_pitch.push_back(std::pair<long, float>(72000, -45));
+	points_pitch.push_back(std::pair<long, float>(80000, 5));
 	anim_player->addControlPoints(points_pitch, BetterAnimation::Attribute::PITCH);
 
-	auto cameraNode = sceneManager.getRoot()->createNewChildNode("cameraNode", "box_material", glm::vec3(0.0f, 1.0f, -2.0f));
+	vector<std::pair<long, float>> points_X;
+	points_X.push_back(std::pair<long, float>(4000, 5.0));
+	points_X.push_back(std::pair<long, float>(4500, 5.5));
+	points_X.push_back(std::pair<long, float>(5000, 5.75));
+	points_X.push_back(std::pair<long, float>(7500, 6.75));
+	points_X.push_back(std::pair<long, float>(9000, 7.75));
+	points_X.push_back(std::pair<long, float>(9500, 7.5));
+	points_X.push_back(std::pair<long, float>(10000, 7.15));
+	points_X.push_back(std::pair<long, float>(13000, 4.15));
+	points_X.push_back(std::pair<long, float>(18000, 2.15));
+	points_X.push_back(std::pair<long, float>(18500, 2.0));
+	points_X.push_back(std::pair<long, float>(19000, 1.75));
+	points_X.push_back(std::pair<long, float>(33000, -4.0));
+	points_X.push_back(std::pair<long, float>(35000, -4.0));
+	points_X.push_back(std::pair<long, float>(38000, 1.0));
+	points_X.push_back(std::pair<long, float>(42000, 5.0));
+	points_X.push_back(std::pair<long, float>(52000, 5.0));
+	points_X.push_back(std::pair<long, float>(52500, 4.75));
+	points_X.push_back(std::pair<long, float>(53000, 4.25));
+	points_X.push_back(std::pair<long, float>(53500, 3.5));
+	points_X.push_back(std::pair<long, float>(60000, 0.0));
+	anim_player->addControlPoints(points_X, BetterAnimation::Attribute::POS_X);
+
+	vector<std::pair<long, float>> points_Z;
+	points_Z.push_back(std::pair<long, float>(500, 1.0));
+	points_Z.push_back(std::pair<long, float>(1000, 1.75));
+	points_Z.push_back(std::pair<long, float>(1500, 2.25));
+	points_Z.push_back(std::pair<long, float>(2000, 2.5));
+	points_Z.push_back(std::pair<long, float>(4000, 4.0));
+	points_Z.push_back(std::pair<long, float>(4500, 3.85));
+	points_Z.push_back(std::pair<long, float>(5000, 3.65));
+	points_Z.push_back(std::pair<long, float>(5500, 3.5));
+	points_Z.push_back(std::pair<long, float>(10000, -1.0));
+	points_Z.push_back(std::pair<long, float>(13000, -4.0));
+	points_Z.push_back(std::pair<long, float>(18000, -4.0));
+	points_Z.push_back(std::pair<long, float>(33000, -1.0));
+	points_Z.push_back(std::pair<long, float>(35000, -1.0));
+	points_Z.push_back(std::pair<long, float>(37000, 0.0));
+	points_Z.push_back(std::pair<long, float>(37500, 0.35));
+	points_Z.push_back(std::pair<long, float>(38000, 0.90));
+	points_Z.push_back(std::pair<long, float>(38500, 1.5));
+	points_Z.push_back(std::pair<long, float>(40000, 3.5));
+	points_Z.push_back(std::pair<long, float>(42000, 4.0));
+	points_Z.push_back(std::pair<long, float>(52000, 4.0));
+	points_Z.push_back(std::pair<long, float>(52500, 3.9));
+	points_Z.push_back(std::pair<long, float>(53000, 3.75));
+	points_Z.push_back(std::pair<long, float>(53500, 3.5));
+	points_Z.push_back(std::pair<long, float>(60000, 0.0));
+	points_Z.push_back(std::pair<long, float>(70000, 0.0));
+	points_Z.push_back(std::pair<long, float>(80000, 4.0));
+	anim_player->addControlPoints(points_Z, BetterAnimation::Attribute::POS_Z);
+
+	vector<std::pair<long, float>> points_Y;
+	points_Y.push_back(std::pair<long, float>(3500, 0.0));
+	points_Y.push_back(std::pair<long, float>(5000, -0.5));
+	points_Y.push_back(std::pair<long, float>(8500, -0.5));
+	points_Y.push_back(std::pair<long, float>(9000, -0.35));
+	points_Y.push_back(std::pair<long, float>(9500, -0.1));
+	points_Y.push_back(std::pair<long, float>(10500, 1.0));
+	points_Y.push_back(std::pair<long, float>(18000, -1.0));
+	points_Y.push_back(std::pair<long, float>(20000, -1.75));
+	points_Y.push_back(std::pair<long, float>(33000, -2.25));
+	points_Y.push_back(std::pair<long, float>(35000, -2.25));
+	points_Y.push_back(std::pair<long, float>(40000, 0.0));
+	points_Y.push_back(std::pair<long, float>(42000, 1.0));
+	points_Y.push_back(std::pair<long, float>(45000, 1.0));
+	points_Y.push_back(std::pair<long, float>(45500, 0.9));
+	points_Y.push_back(std::pair<long, float>(46000, 0.75));
+	points_Y.push_back(std::pair<long, float>(48000, 0.5));
+	points_Y.push_back(std::pair<long, float>(52000, -0.5));
+	points_Y.push_back(std::pair<long, float>(60000, -1.5));
+	anim_player->addControlPoints(points_Y, BetterAnimation::Attribute::POS_Y);
+
+	auto cameraNode = sceneManager.getRoot()->createNewChildNode("cameraNode", "box_material", glm::vec3(1.5f, 2.5f, 0.0f));
 	cameraNode->attach(camera);
 	cameraNode->yaw(90);
 	cameraNode->setAnimation(anim_player);
 	anim_player->start();
 
-	
-
-	/*auto wallEnt2 = sceneManager.createEntity("wallEnt2", "planeWall");
-	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "bricks", glm::vec3(0.0f, 2.5f, 0.0f));
-	wall2->attach(wallEnt2);
-	wall2->changeScale(glm::vec3(10, 5, 1));
-	//wall2->translate(glm::vec3(-1, -0.5, 0));
-	wall2->yaw(-90);
 
 	auto cubeEntity = sceneManager.createEntity("entidade", "cube");
-	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
+	auto cubeNode = sceneManager.getRoot()->createNewChildNode("cubeNode", "box_material", glm::vec3(3.6f, 0.35f, -4.0f));
+	cubeNode->changeScale(glm::vec3(0.7));
+	cubeNode->yaw(-10);
 	cubeNode->attach(cubeEntity);
 
-	auto cubeEntity2 = sceneManager.createEntity("entidade2", "nanosuit");
-	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(1.0f, 0.5f, 2.0f));
-	cubeNode2->changeScale(glm::vec3(0.5, 0.5, 0.5));
-	cubeNode2->translate(glm::vec3(1.2, 0, 0));
+	auto cubeEntity2 = sceneManager.createEntity("entidade2", "cube");
+	auto cubeNode2 = sceneManager.getRoot()->createNewChildNode("cubeNode2", "box_material", glm::vec3(4.7f, 0.35f, -3.8f));
 	cubeNode2->yaw(30);
+	cubeNode2->changeScale(glm::vec3(0.7));
 	cubeNode2->attach(cubeEntity2);
 
-	auto mountainEntity = sceneManager.createEntity("mountain", "mountain");
-	auto mountainNode = sceneManager.getRoot()->createNewChildNode("mountainNode", "box_material", glm::vec3(0.0f, -60.0f, 0.0f));
-	mountainNode->yaw(90);
-	mountainNode->changeScale(glm::vec3(0.3, 0.2, 0.3));
-	mountainNode->attach(mountainEntity);
 
-	auto house1Entity = sceneManager.createEntity("house1", "house1");
-	auto house1Node = sceneManager.getRoot()->createNewChildNode("house1Node", "box_material", glm::vec3(0.0f, -19.0f, 0.0f));
-	house1Node->yaw(20);
-	house1Node->changeScale(glm::vec3(0.01, 0.01, 0.01));
-	house1Node->attach(house1Entity);
-
-	auto house2Entity = sceneManager.createEntity("house2", "house2");
-	auto house2Node = sceneManager.getRoot()->createNewChildNode("house2Node", "box_material", glm::vec3(16.0f, -22.0f, 10.0f));
-	house2Node->pitch(-90);
-	house2Node->roll(240);
-	house2Node->changeScale(glm::vec3(0.9, 0.9, 0.9));
-	house2Node->attach(house2Entity);
-
-	auto house3Entity = sceneManager.createEntity("house3", "house3");
-	auto house3Node = sceneManager.getRoot()->createNewChildNode("house3Node", "box_material", glm::vec3(-6.0f, -17.5f, 8.0f));
-	house3Node->pitch(-90);
-	house3Node->roll(60);
-	house3Node->changeScale(glm::vec3(0.7, 0.7, 0.7));
-	house3Node->attach(house3Entity);
-
-	auto house4Entity = sceneManager.createEntity("house4", "house4");
-	auto house4Node = sceneManager.getRoot()->createNewChildNode("house4Node", "box_material", glm::vec3(0.0f, -21.5f, 18.0f));
-	house4Node->pitch(0);
-	house4Node->yaw(270);
-	house4Node->roll(0);
-	house4Node->changeScale(glm::vec3(0.025, 0.025, 0.025));
-	house4Node->attach(house4Entity);*/
-
-	vector<glm::vec3> points;
-	points.push_back(glm::vec3(0, 0, 4));
-	points.push_back(glm::vec3(0, 0, 0));
-	/*points.push_back(glm::vec3(-2, 0, 0));
-	points.push_back(glm::vec3(0, 0, 0));*/
-
-	vector<std::pair<long, float>> points_X;
-	points_X.push_back(std::pair<long, float>(5000, 3));
-	points_X.push_back(std::pair<long, float>(7500, 6));
-	points_X.push_back(std::pair<long, float>(8750, 9));
-	points_X.push_back(std::pair<long, float>(9375, 12));
-	points_X.push_back(std::pair<long, float>(9875, 9));
-	points_X.push_back(std::pair<long, float>(10375, 6));
-	points_X.push_back(std::pair<long, float>(10875, 3));
-	points_X.push_back(std::pair<long, float>(11375, 1));
-	BetterAnimation *anim = new BetterAnimation(true);
-	anim->addControlPoints(points_X, BetterAnimation::Attribute::POS_X);
-
-
-	GLfloat amb[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat amb[3] = { 0.0f, 0.0f, 0.01f };
 	GLfloat dif[3] = { 0.0f, 0.0f, 1.0f };
 	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
 
-	GLfloat amb2[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat amb2[3] = { 0.1f, 0.1f, 0.1f };
 	GLfloat dif2[3] = { 1.0f, 1.0f, 1.0f };
-	GLfloat spec2[3] = { 0.3f, 0.3f, 0.3f };
+	GLfloat spec2[3] = { 1.0f, 1.0f, 1.0f };
 
 
-	auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
+	/*auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
 	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
 	lightNode->changeScale(glm::vec3(0, 0, 0));
 	lightNode->attach(light1);
 	lightNode->setAnimation(anim);
-	anim->start();
+	anim->start();*/
 
-	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.1f, 0.2f, nullptr);
-	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
-	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.5f, 5.5f, 1.8f));
+	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.0f, 0.5f, nullptr);
+	//auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
+	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.65f, 5.4f, 1.8f));
 	auto lightNodeCube = sceneManager.getRoot()->createNewChildNode("lightNodeCube", "light_material2", glm::vec3(2.7f, 5.5f, 1.8f));
 	lightNodeCube->changeScale(glm::vec3(0.4, 0.15, 0.3));
 	lightNode2->attach(light2);
-	lightNodeCube->attach(lightCube);
+	//lightNodeCube->attach(lightCube);
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);

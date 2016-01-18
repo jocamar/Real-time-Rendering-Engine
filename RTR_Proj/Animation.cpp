@@ -169,7 +169,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 	if(this->started && (!this->finished || this->looping))
 	{
 		auto timeToMove = milis;
-		float newPos = 0;
+		float newPos = currX;
 		auto timeToNext = 0;
 		while(this->pos_x_Ind < this->pos_xs.size() && timeToMove > 0)
 		{
@@ -200,7 +200,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 		this->currX = newPos;
 
 		timeToMove = milis;
-		newPos = 0;
+		newPos = currY;
 		timeToNext = 0;
 		while (this->pos_y_Ind < this->pos_ys.size() && timeToMove > 0)
 		{
@@ -231,7 +231,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 		this->currY = newPos;
 		
 		timeToMove = milis;
-		newPos = 0;
+		newPos = currZ;
 		timeToNext = 0;
 		while (this->pos_z_Ind < this->pos_zs.size() && timeToMove > 0)
 		{
@@ -262,7 +262,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 		this->currZ = newPos;
 
 		timeToMove = milis;
-		newPos = 0;
+		newPos = currYaw;
 		timeToNext = 0;
 		while (this->yaws_Ind < this->yaws.size() && timeToMove > 0)
 		{
@@ -293,7 +293,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 		this->currYaw = newPos;
 
 		timeToMove = milis;
-		newPos = 0;
+		newPos = currPitch;
 		timeToNext = 0;
 		while (this->pitches_Ind < this->pitches.size() && timeToMove > 0)
 		{
@@ -324,7 +324,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 		this->currPitch = newPos;
 
 		timeToMove = milis;
-		newPos = 0;
+		newPos = currRoll;
 		timeToNext = 0;
 		while (this->rolls_Ind < this->rolls.size() && timeToMove > 0)
 		{
@@ -357,7 +357,7 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 		totalTime += milis;
 	}
 
-	if(this->pos_x_Ind >= this->pos_xs.size() &&
+	if(!finished && this->pos_x_Ind >= this->pos_xs.size() &&
 		this->pos_y_Ind >= this->pos_ys.size() &&
 		this->pos_z_Ind >= this->pos_zs.size() &&
 		this->yaws_Ind >= this->yaws.size() &&
@@ -370,6 +370,8 @@ void BetterAnimation::update(unsigned long milis, bool animationsPaused)
 
 void BetterAnimation::applyTranslations(SceneNode* node)
 {
+	if (this->finished)
+		return;
 	node->translate(glm::vec3(currX,currY,currZ) - prevPos);
 	prevPos = glm::vec3(currX, currY, currZ);
 }
@@ -378,6 +380,8 @@ void BetterAnimation::applyTranslations(SceneNode* node)
 
 void BetterAnimation::applyRotations(SceneNode* node)
 {
+	if (this->finished)
+		return;
 	node->yaw(this->currYaw - prevYaw);
 	node->pitch(this->currPitch - prevPitch);
 	node->roll(this->currRoll - prevRoll);

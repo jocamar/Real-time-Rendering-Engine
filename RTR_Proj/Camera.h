@@ -120,7 +120,7 @@ public:
 	{
 		if(Ortho)
 		{
-			return glm::ortho(-50.f, 50.f, -50.f, 50.f, Near, Far);
+			return glm::ortho(-30.f, 30.f, -30.f, 30.f, Near, Far);
 		}
 		else
 		{

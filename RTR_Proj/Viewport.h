@@ -33,7 +33,9 @@ protected:
 	Shader *blurShader;
 
 	GLboolean bloom;
+
 public:
+	float totalMillis;
 	GLfloat exposure;
 	Camera *camera;
 	Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b, RenderWindow *window);

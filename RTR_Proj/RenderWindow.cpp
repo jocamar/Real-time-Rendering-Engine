@@ -69,6 +69,41 @@ RenderWindow::~RenderWindow()
 
 void RenderWindow::update(SceneManager& scene, float millis)
 {
+	for (int i = 0; i < viewports.size(); i++)
+	{
+		Viewport* viewport = &(viewports[i]);
+		if (viewport->totalMillis >= 6000 && viewport->totalMillis < 8000)
+		{
+			auto time = 8000 - viewport->totalMillis;
+			auto dif = 5.0 - viewport->exposure;
+			auto speed = dif / (float)time;
+			viewport->exposure += (float)speed * millis;
+		}
+		else if (viewport->totalMillis >= 10000 && viewport->totalMillis < 13000)
+		{
+			auto time = 13000 - viewport->totalMillis;
+			auto dif = 1.0 - viewport->exposure;
+			auto speed = dif / (float)time;
+			viewport->exposure += speed * millis;
+		}
+		else if (viewport->totalMillis >= 65000 && viewport->totalMillis < 70000)
+		{
+			auto time = 70000 - viewport->totalMillis;
+			auto dif = 0.5 - viewport->exposure;
+			auto speed = dif / (float)time;
+			viewport->exposure += speed * millis;
+		}
+		else if (viewport->totalMillis >= 70000 && viewport->totalMillis < 73000)
+		{
+			auto time = 73000 - viewport->totalMillis;
+			auto dif = 1.0 - viewport->exposure;
+			auto speed = dif / (float)time;
+			viewport->exposure += speed * millis;
+		}
+
+		viewport->totalMillis += millis;
+	}
+
 	scene.update(millis);
 }
 

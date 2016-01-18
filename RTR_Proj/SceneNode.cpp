@@ -15,6 +15,10 @@ SceneNode::SceneNode(const char *id, SceneManager *manager, SceneNode *parent, A
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
 	this->right = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	this->curr_yaw = 0;
+	this->curr_pitch = 0;
+	this->curr_roll = 0;
 }
 
 
@@ -145,33 +149,36 @@ void SceneNode::changeOrientation(glm::quat quaternion)
 
 void SceneNode::yaw(GLfloat degrees)
 {
-	auto rot = glm::angleAxis(glm::radians(degrees), up);
+	this->curr_yaw += degrees;
+	/*auto rot = glm::angleAxis(glm::radians(degrees), up);
 
 	this->right = rot * right;
 	this->front = rot * front;
-	this->orientation = rot * orientation;
+	this->orientation = rot * orientation;*/
 }
 
 
 
 void SceneNode::pitch(GLfloat degrees)
 {
-	auto rot = glm::angleAxis(glm::radians(degrees), right);
+	this->curr_pitch += degrees;
+	/*auto rot = glm::angleAxis(glm::radians(degrees), right);
 
 	this->up = rot * up;
 	this->front = rot * front;
-	this->orientation = rot * orientation;
+	this->orientation = rot * orientation;*/
 }
 
 
 
 void SceneNode::roll(GLfloat degrees)
 {
-	auto rot = glm::angleAxis(glm::radians(degrees), front);
+	this->curr_roll += degrees;
+	/*auto rot = glm::angleAxis(glm::radians(degrees), front);
 
 	this->up = rot * up;
 	this->right = rot * right;
-	this->orientation = rot * orientation;
+	this->orientation = rot * orientation;*/
 }
 
 
@@ -208,9 +215,17 @@ void SceneNode::update(float millis) {
 		animation->applyRotations(this);
 	}
 
+	glm::quat rot;
+	rot = glm::angleAxis(glm::radians(curr_yaw), up) * rot;
+	auto new_right = rot * right;
+	rot = glm::angleAxis(glm::radians(curr_pitch), new_right) * rot;
+	auto new_front = rot * front;
+	rot = glm::angleAxis(glm::radians(curr_roll), new_front) * rot;
+
 	auto m_pos = glm::translate(glm::mat4(), position);
 	auto m_scale = glm::scale(glm::mat4(), scale);
-	auto m_rot = glm::mat4_cast(orientation);
+	auto m_rot = glm::mat4_cast(rot);
+	orientation = rot;
 
 	auto m_scale_orig = glm::translate(glm::mat4(), -scaleOrig);
 	auto m_rot_orig = glm::translate(glm::mat4(), -rotOrig);
