@@ -29,9 +29,12 @@ protected:
 	int shadingModel;
 	bool transparent;
 
+
 	SceneManager *manager;
 public:
+
 	int shaderType;
+
 	enum shaderTypes {LIGHTING_TEXTURED, LIGHTING, EMITTER, REFLECTIVE, PARTICLE, TEXTURED};
 
 	Material(const char *id, SceneManager *manager, const char *shaderId , shaderTypes shaderType, GLfloat *ambientI, GLfloat *diffuseI, GLfloat *specularI, GLfloat shininess, 

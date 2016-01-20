@@ -36,19 +36,7 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Cylinder.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Rectangle.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Sphere.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
@@ -81,12 +69,6 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Emitter.cpp">
-      <Filter>Source Files\Scene Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Source Files\Scene Graph</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -94,18 +76,6 @@
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cylinder.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>Header Files\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
       <Filter>Header Files\Primitives</Filter>
@@ -143,158 +113,34 @@
     <ClInclude Include="RectangleMesh.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="SceneRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Emitter.h">
-      <Filter>Header Files\Scene Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lightFragShader.frag" />
-    <None Include="lightVertShader.vs" />
-    <None Include="defaultShader.frag" />
     <None Include="defaultShader.vs" />
-    <None Include="screen.vs" />
-    <None Include="screen.frag" />
-    <None Include="blur.vs" />
-    <None Include="blur.frag" />
-    <None Include="shadowShader.vs" />
-    <None Include="shadowShader.frag" />
-    <None Include="omniShadowShader.gs" />
-    <None Include="omniShadowShader.vs" />
-    <None Include="omniShadowShader.frag" />
     <None Include="SimpleShader.vs" />
+    <None Include="reflection.vs" />
+    <None Include="shadowShader.vs" />
+    <None Include="screen.vs" />
+    <None Include="omniShadowShader.vs" />
+    <None Include="lightVertShader.vs" />
+    <None Include="blur.vs" />
+    <None Include="screen.frag" />
+    <None Include="defaultShader.frag" />
     <None Include="SimpleShader.frag" />
+    <None Include="reflection.frag" />
+    <None Include="shadowShader.frag" />
+    <None Include="omniShadowShader.frag" />
+    <None Include="lightFragShader.frag" />
+    <None Include="blur.frag" />
+    <None Include="omniShadowShader.gs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="container2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="container2_specular.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="crying.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="box_behind.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="box_ceiling.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="box_floor.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="box_front.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="box_left.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="box_right.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="road.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="bricks.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="black.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="154_norm.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="154.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="156.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="156.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="156_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Medieval_House_Diff.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Medieval_House_Nor.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Medieval_House_Spec.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="186.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="186_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="152.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="152_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="196.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="196_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="178.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="178_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="180.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="180_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="181.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="181_norm.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="negx.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="negy.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="negz.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="posx.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="posy.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="posz.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

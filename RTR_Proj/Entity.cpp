@@ -93,7 +93,7 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 		Material *mat = manager->getMaterial(materialToUse);
 		if (mat->isTransparent())
 			continue;
-		/*Shader *shader = mat->getShader();*/
+
 		auto omniCam = false;
 		if (shadowMap && shadowType == Globals::POINT)
 			omniCam = true;
@@ -103,6 +103,17 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 	}
 
 	return order;
+}
+
+void Entity::setMaterialToUse(const char* material)
+{
+	auto mat = manager->getMaterialNum(material);
+	for (int i = 0; i < subEntities.size(); i++)
+	{
+		auto se = &(subEntities[i]);
+		se->material = mat;
+		se->materialToUse = mat;
+	}
 }
 
 
@@ -133,14 +144,12 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 
 		if(!camera->Ortho)
 		{
-			//auto d = radius / glm::cos(glm::radians(camera->Zoom));
 			auto d = radius * camera->yFactor;
 			pointZ *= glm::tan(glm::radians(camera->Zoom/2.0));
 
 			if (pointY > pointZ + d || pointY < -pointZ - d)
 				return false;
-				
-			//auto d2 = radius / glm::cos(glm::atan(glm::tan(glm::radians(camera->Zoom))*camera->Ratio));
+		
 			auto d2 = radius * camera->xFactor;
 			pointZ *= camera->Ratio;
 
@@ -209,14 +218,12 @@ bool SubEntity::isInFrustum(Camera* camera, bool omniCam)
 
 			if (!camera->Ortho)
 			{
-				//auto d = radius / glm::cos(glm::radians(camera->Zoom));
 				auto d = radius * camera->yFactor;
 				pointZ *= glm::tan(glm::radians(camera->Zoom/2.0));
 
 				if (pointY > pointZ + d || pointY < -pointZ - d)
 					continue;
 
-				//auto d2 = radius / glm::cos(glm::atan(glm::tan(glm::radians(camera->Zoom))*camera->Ratio));
 				auto d2 = radius * camera->xFactor;
 				pointZ *= camera->Ratio;
 

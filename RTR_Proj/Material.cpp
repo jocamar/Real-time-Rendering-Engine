@@ -168,7 +168,6 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 {
 	if(!shadowMap)
 	{
-		//shader->Use();
 
 		if(shaderType == TEXTURED)
 		{
@@ -181,7 +180,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 			for (GLuint i = 0; i < this->textures.size(); i++)
 			{
 				glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
-												  // Retrieve texture number (the N in diffuse_textureN)
+			
 				stringstream ss;
 				string number;
 				string name = this->textures[i]->type;
@@ -233,7 +232,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 			for (GLuint i = 0; i < this->textures.size(); i++)
 			{
 				glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
-												  // Retrieve texture number (the N in diffuse_textureN)
+
 				stringstream ss;
 				string number;
 				string name = this->textures[i]->type;
@@ -303,7 +302,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 			for (; i < MAX_LIGHTS && i < lights.size(); i++)
 			{
 				auto l = lights[i];
-				auto pos = l->getParent()->getWorldPosition();// glm::vec3(l->getParent()->getTransfMatrix()[3]);
+				auto pos = l->getParent()->getWorldPosition();
 				dif = l->getDiffuse();
 				amb = l->getAmbient();
 				spec = l->getSpecular();
@@ -360,10 +359,8 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 			// Bind our texture in Texture Unit 0
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, textures[0]->texture);
-			// Set our "myTextureSampler" sampler to user Texture Unit 0
 			glUniform1i(glGetUniformLocation(shader->Program,"texture"),0);
 
-			// Same as the billboards tutorial
 			glUniform3f(glGetUniformLocation(shader->Program, "camera_right"), camera->getRight().x, camera->getRight().y, camera->getRight().z);
 			glUniform3f(glGetUniformLocation(shader->Program, "camera_up"), camera->getUp().x, camera->getUp().y, camera->getUp().z);
 
@@ -371,13 +368,6 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 
 			glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view_proj_matrix"), 1, GL_FALSE, glm::value_ptr(viewProjection));
 		}
-	}
-	else
-	{
-		/*if (shadowType == Globals::DIRECTIONAL)
-			this->manager->getShadowShader()->Use();
-		else if (shadowType == Globals::POINT)
-			this->manager->getOmniShadowShader()->Use();*/
 	}
 	
 }
@@ -392,7 +382,7 @@ void Material::unUse(Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowT
 		for (GLuint i = 0; i < this->textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
-											  // Retrieve texture number (the N in diffuse_textureN)
+						
 			stringstream ss;
 			string number;
 			string name = this->textures[i]->type;
@@ -414,10 +404,6 @@ void Material::unUse(Camera* camera, bool shadowMap, Globals::LIGHT_TYPE shadowT
 		glActiveTexture(GL_TEXTURE0);
 	}
 
-	//glActiveTexture(GL_TEXTURE7);
-	//glUniform1i(glGetUniformLocation(shader->Program, "shadowMap"), 0);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, NULL);
-	//glActiveTexture(GL_TEXTURE0);
 }
 
 GLuint Material::loadCubemap(vector<const GLchar*> faces)

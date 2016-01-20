@@ -40,7 +40,6 @@ int main()
 	SceneManager sceneManager;
 	camera = new Camera(&sceneManager, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 0, 1), false, 0.1f, 2000.0f, (float)1280 / (float)720, 45.0f);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
-	//window_.addViewPort(&camera2, 450, 0, 450, 300, 1, 1);
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
 
 	GLfloat ambient[] = { 0.1, 0.1, 0.1 };
@@ -51,7 +50,6 @@ int main()
 	GLfloat diffuseL1[] = { 1.0, 0.0, 0.0 };
 	GLfloat diffuseL2[] = { 1.0, 1.0, 1.0 };
 	sceneManager.addMaterial("box_material", "defaultShader.vs", "defaultShader.frag", "container2.png", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("box_material2", "defaultShader.vs", "defaultShader.frag", "container.jpg", "container2_specular.png", nullptr, ambient, nullptr, nullptr, 32, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("light_material", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL1, nullptr, 0, 1, 1, Material::EMITTER);
 	sceneManager.addMaterial("light_material2", "lightVertShader.vs", "lightFragShader.frag", nullptr, nullptr, nullptr, nullptr, diffuseL2, nullptr, 0, 1, 1, Material::EMITTER);
 	sceneManager.addMaterial("sky_front", "simpleShader.vs", "simpleShader.frag", "posx.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
@@ -67,8 +65,6 @@ int main()
 	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("grass", "defaultShader.vs", "defaultShader.frag", "156.png", nullptr, "156_norm.png", ambient, nullptr, nullptr, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("house4", "defaultShader.vs", "defaultShader.frag", "Medieval_House_Diff.png", "Medieval_House_Spec.png", "Medieval_House_Nor.png", ambient, nullptr, nullptr, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);
@@ -100,10 +96,8 @@ int main()
 	sceneManager.addModel("dumpster", "trash/Dumpster.obj");
 	sceneManager.addModel("fence", "fence/fence.fbx");
 	sceneManager.addModel("helicopter", "Combine Helicopter/Combine_Helicopter.obj");
-	sceneManager.addModel("trash_bags", "trashbags/Rubbish 1.3DS");
 	sceneManager.addModel("trash_bin", "Trash_Bin/trashbin.3ds");
-	sceneManager.addModel("clearbag", "WheeliBin/WheeliBin/clearPlasticBag.obj");
-	sceneManager.addModel("blackbag", "WheeliBin/WheeliBin/blackPlasticBag.obj");
+	sceneManager.addModel("statue", "droid/attack_droid.obj");
 
 	GLfloat amb_dir[3] = { 0.001f, 0.001f, 0.001f };
 	GLfloat dif_dir[3] = { 0.01f, 0.01f, 0.01f };
@@ -138,14 +132,6 @@ int main()
 	skyNodeBack->yaw(180);
 	skyNodeBack->roll(180);
 
-	/*auto skyEntBottom = sceneManager.createEntity("bottom", "plane", false);
-	auto skyNodeBottom = sceneManager.getRoot()->createNewChildNode("skyNodeBottom", "sky_bottom", glm::vec3(0.0f, 0.0f, 0.0f));
-	skyNodeBottom->attach(skyEntBottom);
-	skyNodeBottom->changeScale(glm::vec3(300, 300, 1));
-	skyNodeBottom->translate(glm::vec3(0, -150, 0));
-	skyNodeBottom->pitch(90);
-	skyNodeBottom->roll(180);*/
-
 	auto skyEntLeft = sceneManager.createEntity("left", "plane", false);
 	auto skyNodeLeft = skyBox->createNewChildNode("skyNodeLeft", "sky_left", glm::vec3(0.0f, 0.0f, 0.0f));
 	skyNodeLeft->attach(skyEntLeft);
@@ -166,7 +152,6 @@ int main()
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
 	ground->attach(groundEnt);
 	ground->changeScale(glm::vec3(20, 10, 1));
-	//ground->translate(glm::vec3(0, -0.5, 0));
 	ground->pitch(90);
 
 	auto wallEnt = sceneManager.createEntity("wallEnt", "planeWall");
@@ -192,12 +177,6 @@ int main()
 	wall3->attach(wallEnt3);
 	wall3->changeScale(glm::vec3(10, 5, 1));
 	wall3->yaw(0);
-
-	/*auto wallEnt3Shadow = sceneManager.createEntity("wallEnt3Shadow", "planeWall");
-	auto wall3Shadow = sceneManager.getRoot()->createNewChildNode("wallNode3Shadow", "bricks", glm::vec3(5.0f, 5.0f, 6.0f));
-	wall3Shadow->attach(wallEnt3Shadow);
-	wall3Shadow->changeScale(glm::vec3(12, 10, 1));
-	wall3Shadow->yaw(0);*/
 
 	auto wallEnt3Shadow2 = sceneManager.createEntity("wallEnt3Shadow2", "planeWall");
 	auto wall3Shadow2 = sceneManager.getRoot()->createNewChildNode("wallNode3Shadow2", "bricks", glm::vec3(13.0f, 3.5f, 1.0f));
@@ -349,19 +328,6 @@ int main()
 	wall23->changeScale(glm::vec3(1, 5, 1));
 	wall23->pitch(-90);
 
-	/*auto wallEnt24 = sceneManager.createEntity("wallEnt24", "planeWallSmall");
-	auto wall24 = sceneManager.getRoot()->createNewChildNode("wallNode24", "wall6", glm::vec3(0.1f, 5.5f, 7.5f));
-	wall24->attach(wallEnt24);
-	wall24->changeScale(glm::vec3(1, 5, 1));
-	wall24->yaw(-90);
-	wall24->roll(90);
-
-	auto wallEnt25 = sceneManager.createEntity("wallEnt25", "planeWallSmall");
-	auto wall25 = sceneManager.getRoot()->createNewChildNode("wallNode25", "wall6", glm::vec3(-0.4f, 5.0f, 7.5f));
-	wall25->attach(wallEnt25);
-	wall25->changeScale(glm::vec3(1, 5, 1));
-	wall25->pitch(-90);*/
-
 	auto wallEnt26 = sceneManager.createEntity("wallEnt26", "planeWallSmall");
 	auto wall26 = sceneManager.getRoot()->createNewChildNode("wallNode26", "wall6", glm::vec3(-2.4f, 5.5f, 0.0f));
 	wall26->attach(wallEnt26);
@@ -396,17 +362,13 @@ int main()
 	auto trashbin2 = sceneManager.getRoot()->createNewChildNode("trash_bin2", "bricks", glm::vec3(-4.5f, 0.0f, -0.6f));
 	trashbin2->attach(trashbin2Ent);
 	trashbin2->changeScale(glm::vec3(0.01, 0.01, 0.01));
-	//trashbin->yaw(-12);
 
-	/*auto clearbagEnt = sceneManager.createEntity("clearbagEnt", "clearbag");
-	auto clearbag = sceneManager.getRoot()->createNewChildNode("clearbag", "bricks", glm::vec3(6.5f, 0.0f, -3.0f));
-	clearbag->attach(clearbagEnt);
-	clearbag->changeScale(glm::vec3(0.01, 0.01, 0.02));
-
-	auto blackbagEnt = sceneManager.createEntity("blackbagEnt", "blackbag");
-	auto blackbag = sceneManager.getRoot()->createNewChildNode("blackbag", "bricks", glm::vec3(6.5f, 0.0f, -2.0f));
-	blackbag->attach(blackbagEnt);
-	blackbag->changeScale(glm::vec3(0.01, 0.01, 0.01));*/
+	auto statueEnt = sceneManager.createEntity("statueEnt", "statue");
+	//statueEnt->setMaterialToUse("statue");
+	auto statue = sceneManager.getRoot()->createNewChildNode("statue", "bricks", glm::vec3(2.5f, 0.0f, -0.8f));
+	statue->attach(statueEnt);
+	statue->changeScale(glm::vec3(0.06, 0.06, 0.06));
+	statue->yaw(135);
 
 	auto fenceEnt = sceneManager.createEntity("fenceEnt", "fence", false);
 	auto fence = sceneManager.getRoot()->createNewChildNode("fenceNode", "bricks", glm::vec3(-5.0f, 1.0f, -2.0f));
@@ -589,7 +551,7 @@ int main()
 	points_yaw.push_back(std::pair<long, float>(53000, 380));
 	points_yaw.push_back(std::pair<long, float>(60000, 360));
 	points_yaw.push_back(std::pair<long, float>(72000, 360));
-	points_yaw.push_back(std::pair<long, float>(80000, 410));
+	points_yaw.push_back(std::pair<long, float>(77000, 410));
 	BetterAnimation *anim_player = new BetterAnimation(false);
 	anim_player->addControlPoints(points_yaw, BetterAnimation::Attribute::YAW);
 
@@ -611,7 +573,7 @@ int main()
 	points_pitch.push_back(std::pair<long, float>(52000, -60));
 	points_pitch.push_back(std::pair<long, float>(60000, -45));
 	points_pitch.push_back(std::pair<long, float>(65000, 5));
-	points_pitch.push_back(std::pair<long, float>(72000, -45));
+	points_pitch.push_back(std::pair<long, float>(74000, -45));
 	points_pitch.push_back(std::pair<long, float>(80000, 5));
 	anim_player->addControlPoints(points_pitch, BetterAnimation::Attribute::PITCH);
 
@@ -635,7 +597,8 @@ int main()
 	points_X.push_back(std::pair<long, float>(52500, 4.75));
 	points_X.push_back(std::pair<long, float>(53000, 4.25));
 	points_X.push_back(std::pair<long, float>(53500, 3.5));
-	points_X.push_back(std::pair<long, float>(60000, 0.0));
+	points_X.push_back(std::pair<long, float>(60000, -1.0));
+	points_X.push_back(std::pair<long, float>(80000, 1.0));
 	anim_player->addControlPoints(points_X, BetterAnimation::Attribute::POS_X);
 
 	vector<std::pair<long, float>> points_Z;
@@ -662,8 +625,8 @@ int main()
 	points_Z.push_back(std::pair<long, float>(52500, 3.9));
 	points_Z.push_back(std::pair<long, float>(53000, 3.75));
 	points_Z.push_back(std::pair<long, float>(53500, 3.5));
-	points_Z.push_back(std::pair<long, float>(60000, 0.0));
-	points_Z.push_back(std::pair<long, float>(70000, 0.0));
+	points_Z.push_back(std::pair<long, float>(60000, -1.5));
+	points_Z.push_back(std::pair<long, float>(70000, -1.5));
 	points_Z.push_back(std::pair<long, float>(80000, 4.0));
 	anim_player->addControlPoints(points_Z, BetterAnimation::Attribute::POS_Z);
 
@@ -685,7 +648,8 @@ int main()
 	points_Y.push_back(std::pair<long, float>(46000, 0.75));
 	points_Y.push_back(std::pair<long, float>(48000, 0.5));
 	points_Y.push_back(std::pair<long, float>(52000, -0.5));
-	points_Y.push_back(std::pair<long, float>(60000, -1.5));
+	points_Y.push_back(std::pair<long, float>(56000, -2.3));
+	points_Y.push_back(std::pair<long, float>(60000, -2.0));
 	anim_player->addControlPoints(points_Y, BetterAnimation::Attribute::POS_Y);
 
 	auto cameraNode = sceneManager.getRoot()->createNewChildNode("cameraNode", "box_material", glm::vec3(1.5f, 2.5f, 0.0f));
@@ -717,13 +681,6 @@ int main()
 	GLfloat spec2[3] = { 1.0f, 1.0f, 1.0f };
 
 
-	/*auto light1 = sceneManager.createLight("light1", amb, dif, spec, 0.5f, 0.3f, 0.1f, "cube");
-	auto lightNode = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material", glm::vec3(2.5f, 2.5f, 2.5f));
-	lightNode->changeScale(glm::vec3(0, 0, 0));
-	lightNode->attach(light1);
-	lightNode->setAnimation(anim);
-	anim->start();*/
-
 	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.0f, 0.5f, nullptr);
 	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
 	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.65f, 5.5f, 1.8f));
@@ -740,6 +697,8 @@ int main()
 	lastFrame = glfwGetTime();
 	int nbFrames = 0;
 
+	double counter = 0;
+
 	// Game loop
 	while (!window_.close())
 	{
@@ -750,18 +709,23 @@ int main()
 
 		nbFrames++;
 
-		if (currentFrame - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
+		counter += deltaTime;
+
+		if (counter*1000.0 >= 81000.0)
+			return 0;
+
+		/*if (currentFrame - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
 
 											 // printf and reset timer
 			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
 			nbFrames = 0;
 			lastTime += 1.0;
 
-		}
+		}*/
 
 		// Check and call events
 		glfwPollEvents();
-		Do_Movement(vp);
+		//Do_Movement(vp);
 
 		window_.update(sceneManager, deltaTime*1000);
 
@@ -833,13 +797,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	camera->ProcessMouseMovement(xoffset, yoffset);
+	//camera->ProcessMouseMovement(xoffset, yoffset);
 //	camera2.ProcessMouseMovement(xoffset, yoffset);
 }
 
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera->ProcessMouseScroll(yoffset);
+	//camera->ProcessMouseScroll(yoffset);
 //	camera2.ProcessMouseScroll(yoffset);
 }

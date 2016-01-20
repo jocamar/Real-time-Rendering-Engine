@@ -16,8 +16,7 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 	this->exposure = 1.0f;
 	this->totalMillis = 0;
 
-	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-								 // Positions   // TexCoords
+	GLfloat quadVertices[] = {
 		-1.0f,  1.0f,  0.0f, 1.0f,
 		-1.0f, -1.0f,  0.0f, 0.0f,
 		1.0f, -1.0f,  1.0f, 0.0f,
@@ -45,15 +44,15 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 	textureColorbuffers[1] = generateAttachmentTexture(false, false, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffers[0], 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, textureColorbuffers[1], 0);
-	// Create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+
+	// Create a renderbuffer object
 
 	glGenRenderbuffers(1, &DepthRbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, DepthRbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, this->width, this->height); // Use a single renderbuffer object for both a depth AND stencil buffer.
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, this->width, this->height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DepthRbo); // Now actually attach it
-																								  // Now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
-	
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DepthRbo); 
+																								  
 	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, attachments);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -67,7 +66,7 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFbo[i]);
 		pingpongColorbuffers[i] = generateAttachmentTexture(false, false, GL_CLAMP_TO_EDGE);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorbuffers[i], 0);
-		// Also check if framebuffers are complete (no need for depth buffer)
+
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "Framebuffer not complete!" << std::endl;
 	}
@@ -82,7 +81,7 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 
 GLuint Viewport::generateAttachmentTexture(GLboolean depth, GLboolean stencil, GLint interpMethod)
 {
-	// What enum to use?
+
 	GLenum attachment_type, attachment_type2;
 	if (!depth && !stencil)
 	{
@@ -105,7 +104,7 @@ GLuint Viewport::generateAttachmentTexture(GLboolean depth, GLboolean stencil, G
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	if (!depth || !stencil)
 		glTexImage2D(GL_TEXTURE_2D, 0, attachment_type, this->width, this->height, 0, attachment_type2, GL_UNSIGNED_BYTE, NULL);
-	else // Using both a stencil and depth test, needs special format arguments
+	else
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, this->width, this->height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -141,7 +140,7 @@ void Viewport::Render(SceneManager& scene)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// 2. Blur bright fragments w/ two-pass Gaussian Blur 
+	//Blur bright fragments w/ two-pass Gaussian Blur 
 	GLboolean horizontal = true, first_iteration = true;
 	GLuint amount = 10;
 	blurShader->Use();
@@ -152,7 +151,7 @@ void Viewport::Render(SceneManager& scene)
 		
 		glBindVertexArray(quadVAO);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, first_iteration ? textureColorbuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+		glBindTexture(GL_TEXTURE_2D, first_iteration ? textureColorbuffers[1] : pingpongColorbuffers[!horizontal]);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 
@@ -165,13 +164,13 @@ void Viewport::Render(SceneManager& scene)
 	// Clear all relevant buffers
 
 	glCullFace(GL_BACK);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
-	//glEnable(GL_FRAMEBUFFER_SRGB);
+	glDisable(GL_DEPTH_TEST); 
+
 	screenShader->Use();
 	glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, scene.getDirectionalLight()->getShadowMap());
+
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffers[0]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
