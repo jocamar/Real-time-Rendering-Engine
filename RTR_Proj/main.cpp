@@ -725,12 +725,13 @@ int main()
 	anim->start();*/
 
 	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.0f, 0.5f, nullptr);
-	//auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
-	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.65f, 5.4f, 1.8f));
-	auto lightNodeCube = sceneManager.getRoot()->createNewChildNode("lightNodeCube", "light_material2", glm::vec3(2.7f, 5.5f, 1.8f));
+	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
+	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.65f, 5.5f, 1.8f));
+	auto lightNodeCube = sceneManager.getRoot()->createNewChildNode("lightNodeCube", "light_material2", glm::vec3(2.7f, 5.6f, 1.8f));
 	lightNodeCube->changeScale(glm::vec3(0.4, 0.15, 0.3));
 	lightNode2->attach(light2);
-	//lightNodeCube->attach(lightCube);
+	lightNodeCube->attach(lightCube);
+	lightNodeCube->roll(-20);
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);

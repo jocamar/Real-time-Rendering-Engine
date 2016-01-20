@@ -54,6 +54,16 @@ void Entity::update(float seconds)
 {
 }
 
+void Entity::setMaterialToUse(const char* material)
+{
+	auto mat = manager->getMaterialNum(material);
+	for (int i = 0; i < subEntities.size(); i++)
+	{
+		auto se = &(subEntities[i]);
+		se->material = mat;
+		se->materialToUse = mat;
+	}
+}
 
 
 RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowType)
@@ -67,6 +77,7 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 	{
 		SubEntity *entity = &(subEntities[j]);
 		int materialToUse;
+		
 		if (entity->material >= 0)
 			materialToUse = entity->material;
 		else if (entity->mesh->getMaterialId() >= 0)
@@ -75,6 +86,7 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 			materialToUse = this->material;
 		else
 			materialToUse = material;
+			
 
 		entity->materialToUse = materialToUse;
 
@@ -271,37 +283,3 @@ bool SubEntity::less(SubEntity *se1, SubEntity *se2)
 		return true;
 	else return (se1->materialToUse < se2->materialToUse);
 }
-
-
-
-/*bool sorter::operator()(SubEntity const* se1, SubEntity const* se2) const
-{
-	auto manager = se1->entity->getManager();
-	auto mat1 = manager->getMaterial(se1->materialToUse);
-	auto mat2 = manager->getMaterial(se2->materialToUse);
-	bool trans1 = false;
-	bool trans2 = false;
-
-	if (mat1)
-	{
-		trans1 = mat1->isTransparent();
-	}
-	if (mat2)
-	{
-		trans2 = mat2->isTransparent();
-	}
-
-	if (trans1 && !trans2)
-		return false;
-	else if (trans2 && !trans1)
-		return true;
-	else {
-		if (se1->distanceToCamera(cam) > se2->distanceToCamera(cam))
-			return false;
-		else return true;
-		if (se1->materialToUse < se2->materialToUse)
-			return true;
-		else if (se1->materialToUse >= se2->materialToUse)
-			return false;
-	}
-}*/

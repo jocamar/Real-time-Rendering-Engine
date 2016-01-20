@@ -268,26 +268,6 @@ RenderOrder SceneNode::getRenderEntities(int material, Camera *camera, bool shad
 			final.Particles.insert(std::end(final.Particles), std::begin(order.Particles), std::end(order.Particles));
 	}
 
-	/*for(auto ro : intermediate)
-	{
-		for (auto it = ro.Entities.begin(); it != ro.Entities.end(); ++it)
-		{
-			auto mats = it->second;
-			auto shader = it->first;
-
-			for (auto it2 = ro.Entities[shader].begin(); it2 != ro.Entities[shader].end(); ++it2)
-			{
-				auto ents = it2->second;
-				auto mat = it2->first;
-
-				for(auto ent : ents)
-				{
-					final.Entities[shader][mat].push_back(ent);
-				}
-			}
-		}
-	}*/
-
 	return final;
 }
 
