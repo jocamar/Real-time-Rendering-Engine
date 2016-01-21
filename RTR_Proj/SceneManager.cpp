@@ -574,9 +574,9 @@ int SceneManager::getModelNum(Model* model)
 
 
 
-Entity* SceneManager::createEntity(const char *id, const char *modelId, bool shadowCaster)
+Entity* SceneManager::createEntity(const char *id, const char *modelId, bool shadowCaster, bool transparent)
 {
-	return new Entity(id, this, modelId, nullptr, shadowCaster);
+	return new Entity(id, this, modelId, nullptr, shadowCaster, transparent);
 }
 
 

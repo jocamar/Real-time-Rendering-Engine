@@ -29,12 +29,14 @@ protected:
 	int model;
 	vector<SubEntity> subEntities;
 	bool shadowCaster;
+	bool transparent;
 public:
-	Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent = nullptr, bool shadowCaster = true);
+	Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent = nullptr, bool shadowCaster = true, bool transparent = false);
 	void display(int material, Camera *camera = nullptr, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
 	bool isLeaf() override;
 	void update(float seconds) override;
 	void setMaterialToUse(const char* material);
 	RenderOrder getRenderEntities(int material, Camera *camera, bool shadowMap = false, Globals::LIGHT_TYPE shadowType = Globals::DIRECTIONAL) override;
+	bool isTransparent();
 };
 

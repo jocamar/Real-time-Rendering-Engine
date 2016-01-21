@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Camera.h"
 
-Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent, bool shadowCaster) : AttacheableObject(idEntity, manager, parent) 
+Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId, SceneNode *parent, bool shadowCaster, bool transparent) : AttacheableObject(idEntity, manager, parent)
 {
 	if(modelId)
 	{
@@ -25,6 +25,7 @@ Entity::Entity(const char *idEntity, SceneManager *manager, const char *modelId,
 	}
 
 	this->shadowCaster = shadowCaster;
+	this->transparent = transparent;
 }
 
 
@@ -105,15 +106,11 @@ RenderOrder Entity::getRenderEntities(int material, Camera *camera, bool shadowM
 	return order;
 }
 
-void Entity::setMaterialToUse(const char* material)
+
+
+bool Entity::isTransparent()
 {
-	auto mat = manager->getMaterialNum(material);
-	for (int i = 0; i < subEntities.size(); i++)
-	{
-		auto se = &(subEntities[i]);
-		se->material = mat;
-		se->materialToUse = mat;
-	}
+	return transparent;
 }
 
 
@@ -261,10 +258,26 @@ float SubEntity::distanceToCamera(Camera* camera) const
 
 bool SubEntity::operator<(const SubEntity& se) const
 {
-	if (this->materialToUse < se.materialToUse)
-		return true;
+	auto manager = this->entity->getManager();
+	auto mat1 = manager->getMaterial(this->materialToUse);
+	auto mat2 = manager->getMaterial(se.materialToUse);
+	bool trans1 = false;
+	bool trans2 = false;
 
-	return false;
+	if (mat1)
+	{
+		trans1 = (mat1->isTransparent() || this->entity->isTransparent());
+	}
+	if (mat2)
+	{
+		trans2 = (mat2->isTransparent() || se.entity->isTransparent());
+	}
+
+	if (trans1 && !trans2)
+		return false;
+	else if (trans2 && !trans1)
+		return true;
+	else return (this->materialToUse < se.materialToUse);
 }
 
 bool SubEntity::less(SubEntity *se1, SubEntity *se2)
@@ -272,16 +285,16 @@ bool SubEntity::less(SubEntity *se1, SubEntity *se2)
 	auto manager = se1->entity->getManager();
 	auto mat1 = manager->getMaterial(se1->materialToUse);
 	auto mat2 = manager->getMaterial(se2->materialToUse);
-	bool trans1 = false;
+	bool trans1 = true;
 	bool trans2 = false;
 
 	if (mat1)
 	{
-		trans1 = mat1->isTransparent();
+		trans1 = (mat1->isTransparent() || se1->entity->isTransparent());
 	}
 	if (mat2) 
 	{
-		trans2 = mat2->isTransparent();
+		trans2 = (mat2->isTransparent() || se2->entity->isTransparent());
 	}
 
 	if (trans1 && !trans2)

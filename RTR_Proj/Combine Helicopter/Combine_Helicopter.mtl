@@ -10,7 +10,6 @@ d  1.0
 Ns  0.0
 illum 2
 map_Kd combine_helicopter01.png
-bump combine_helicopter01_normal.png
 #
 newmtl Material__11
 Ka  0.6 0.6 0.6

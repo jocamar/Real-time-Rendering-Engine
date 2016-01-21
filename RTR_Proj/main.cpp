@@ -11,6 +11,9 @@
 #include "Animation.h"
 #include "RectangleMesh.h"
 
+#include <irrKlang.h>
+using namespace irrklang;
+
 // Properties
 GLuint screenWidth = 1280, screenHeight = 720;
 
@@ -41,6 +44,8 @@ int main()
 	camera = new Camera(&sceneManager, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 0, 1), false, 0.1f, 2000.0f, (float)1280 / (float)720, 45.0f);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
 	window_.setInputHandlers(key_callback, mouse_callback, scroll_callback);
+
+	ISoundEngine *SoundEngine = createIrrKlangDevice();
 
 	GLfloat ambient[] = { 0.1, 0.1, 0.1 };
 	GLfloat diffuse[] = { 0.0, 0.0, 0.0 };
@@ -364,13 +369,12 @@ int main()
 	trashbin2->changeScale(glm::vec3(0.01, 0.01, 0.01));
 
 	auto statueEnt = sceneManager.createEntity("statueEnt", "statue");
-	//statueEnt->setMaterialToUse("statue");
 	auto statue = sceneManager.getRoot()->createNewChildNode("statue", "bricks", glm::vec3(2.5f, 0.0f, -0.8f));
 	statue->attach(statueEnt);
 	statue->changeScale(glm::vec3(0.06, 0.06, 0.06));
 	statue->yaw(135);
 
-	auto fenceEnt = sceneManager.createEntity("fenceEnt", "fence", false);
+	auto fenceEnt = sceneManager.createEntity("fenceEnt", "fence", false, true);
 	auto fence = sceneManager.getRoot()->createNewChildNode("fenceNode", "bricks", glm::vec3(-5.0f, 1.0f, -2.0f));
 	fence->attach(fenceEnt);
 	fence->changeScale(glm::vec3(0.02, 0.03, 0.02));
@@ -700,6 +704,9 @@ int main()
 	double counter = 0;
 
 	// Game loop
+	ISound* unreal = SoundEngine->play2D("unreal.mp3", GL_TRUE, false, true);
+	ISound* chopper = SoundEngine->play2D("helicopter.mp3", GL_FALSE, true, true);
+
 	while (!window_.close())
 	{
 		// Set frame time
@@ -713,6 +720,45 @@ int main()
 
 		if (counter*1000.0 >= 81000.0)
 			return 0;
+		if(counter*1000.0 >= 75000.0)
+		{
+			float dif = 81000.0 - (counter*1000.0);
+			float vol = unreal->getVolume();
+
+			float speed = vol / dif;
+			unreal->setVolume(vol - (deltaTime*1000*speed));
+		}
+		if(counter*1000.0 >= 32000.0 && counter*1000.0 <= 35000.0)
+		{
+			if(chopper->getIsPaused())
+			{
+				chopper->setIsPaused(false);
+				chopper->setVolume(0.0f);
+			}
+				
+			float dif = 35000.0 - (counter*1000.0);
+			float vol = chopper->getVolume();
+
+			float speed = (0.5f - vol) / dif;
+
+			chopper->setVolume(vol + (deltaTime * 1000 * speed));
+		}
+		if (counter*1000.0 >= 53000.0 && counter*1000.0 < 67000.0)
+		{
+			float dif = 67000.0 - (counter*1000.0);
+			float vol = chopper->getVolume();
+
+			float speed = (1.0-vol) / dif;
+			chopper->setVolume(vol + (deltaTime * 1000 * speed));
+		}
+		if(counter*1000.0 >= 67000.0)
+		{
+			float dif = 81000.0 - (counter*1000.0);
+			float vol = chopper->getVolume();
+
+			float speed = vol / dif;
+			chopper->setVolume(vol - (deltaTime * 1000 * speed));
+		}
 
 		/*if (currentFrame - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
 
@@ -725,7 +771,7 @@ int main()
 
 		// Check and call events
 		glfwPollEvents();
-		//Do_Movement(vp);
+		Do_Movement(vp);
 
 		window_.update(sceneManager, deltaTime*1000);
 
@@ -739,14 +785,14 @@ int main()
 void Do_Movement(Viewport *vp)
 {
 	// Camera controls
-	if (keys[GLFW_KEY_W])
+	/*if (keys[GLFW_KEY_W])
 		camera->ProcessKeyboard(FORWARD, deltaTime);
 	if (keys[GLFW_KEY_S])
 		camera->ProcessKeyboard(BACKWARD, deltaTime);
 	if (keys[GLFW_KEY_A])
 		camera->ProcessKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
-		camera->ProcessKeyboard(RIGHT, deltaTime);
+		camera->ProcessKeyboard(RIGHT, deltaTime);*/
 	if (keys[GLFW_KEY_Q])
 	{
 		pressingToggleBloom = true;
