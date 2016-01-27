@@ -286,7 +286,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glUniform3f(glGetUniformLocation(shader->Program, "dirLight.direction"), dir[0], dir[1], dir[2]);
 				glUniform3f(glGetUniformLocation(shader->Program, "dirLight.ambient"), amb[0], amb[1], amb[2]);
 				glUniform3f(glGetUniformLocation(shader->Program, "dirLight.diffuse"), dif[0], dif[1], dif[2]);
-				glUniform3f(glGetUniformLocation(shader->Program, "dirLight.specular"), spec[0], spec[0], spec[0]);
+				glUniform3f(glGetUniformLocation(shader->Program, "dirLight.specular"), spec[0], spec[1], spec[2]);
 				glUniformMatrix4fv(glGetUniformLocation(shader->Program, "dirLight.lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(*directionalLight->getLightSpaceMatrix()));
 
 				glActiveTexture(GL_TEXTURE6);
@@ -313,7 +313,7 @@ void Material::use(Camera *camera, bool shadowMap, Globals::LIGHT_TYPE shadowTyp
 				glUniform3f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].position").c_str()), pos.x, pos.y, pos.z);
 				glUniform3f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].ambient").c_str()), amb[0], amb[1], amb[2]);
 				glUniform3f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].diffuse").c_str()), dif[0], dif[1], dif[2]);
-				glUniform3f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].specular").c_str()), spec[0], spec[0], spec[0]);
+				glUniform3f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].specular").c_str()), spec[0], spec[1], spec[2]);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].constant").c_str()), constant);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].linear").c_str()), linear);
 				glUniform1f(glGetUniformLocation(shader->Program, ("pointLights[" + to_string(i) + "].quadratic").c_str()), quadratic);

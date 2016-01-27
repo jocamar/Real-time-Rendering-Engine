@@ -431,15 +431,15 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		tmp_c[tmp.size()] = '\0';
 		materialId = tmp_c;
 
-		aiColor3D amb_color(0.f, 0.f, 0.f);
+		aiColor3D amb_color(1.f, 1.f, 1.f);
 		material->Get(AI_MATKEY_COLOR_AMBIENT, amb_color);
 		GLfloat amb[3] = { amb_color.r, amb_color.g, amb_color.b };
 
-		aiColor3D dif_color(0.f, 0.f, 0.f);
+		aiColor3D dif_color(1.f, 1.f, 1.f);
 		material->Get(AI_MATKEY_COLOR_DIFFUSE, dif_color);
 		GLfloat dif[3] = { dif_color.r, dif_color.g, dif_color.b };
 
-		aiColor3D spec_color(0.f, 0.f, 0.f);
+		aiColor3D spec_color(1.f, 1.f, 1.f);
 		material->Get(AI_MATKEY_COLOR_SPECULAR, spec_color);
 		GLfloat spec[3] = { spec_color.r, spec_color.g, spec_color.b };
 

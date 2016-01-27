@@ -21,6 +21,7 @@ RenderWindow::RenderWindow(GLint width, GLint height, const char *name, bool res
 		window = glfwCreateWindow(width, height, name, glfwGetPrimaryMonitor(), nullptr); // Fullscreen
 
 	glfwMakeContextCurrent(window);
+	//glfwSwapInterval(1);
 
 	// Options
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

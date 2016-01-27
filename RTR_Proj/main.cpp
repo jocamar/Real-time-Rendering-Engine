@@ -30,6 +30,8 @@ bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
 bool pressingToggleBloom = false;
+bool pressingGammaUp = false;
+bool pressingGammaDown = false;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
@@ -39,7 +41,7 @@ vector<SceneNode*> nodes;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, true);
+	RenderWindow window_ = RenderWindow(screenWidth, screenHeight, "RTR - Window", false, false);
 	SceneManager sceneManager;
 	camera = new Camera(&sceneManager, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 0, 1), false, 0.1f, 2000.0f, (float)1280 / (float)720, 45.0f);
 	auto vp = window_.addViewPort(camera, 0, 0, screenWidth, screenHeight, 0, 0.125, 0.125, 0.25);
@@ -65,11 +67,11 @@ int main()
 	sceneManager.addMaterial("sky_bottom", "simpleShader.vs", "simpleShader.frag", "negy.jpg", "black.png", nullptr, nullptr, diffuse, specular, 0, 1, 0, Material::TEXTURED, GL_CLAMP_TO_EDGE);
 	sceneManager.addMaterial("road", "defaultShader.vs", "defaultShader.frag", "186.png", nullptr, "186_norm.png", ambient, nullptr, specular, 1, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.addMaterial("bricks", "defaultShader.vs", "defaultShader.frag", "154.jpg", nullptr, "154_norm.jpg", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
-	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 1, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall2", "defaultShader.vs", "defaultShader.frag", "152.png", nullptr, "152_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall3", "defaultShader.vs", "defaultShader.frag", "196.png", nullptr, "196_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall4", "defaultShader.vs", "defaultShader.frag", "178.png", nullptr, "178_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall5", "defaultShader.vs", "defaultShader.frag", "180.png", nullptr, "180_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
+	sceneManager.addMaterial("wall6", "defaultShader.vs", "defaultShader.frag", "181.png", nullptr, "181_norm.png", ambient, nullptr, specular_brick, 5, 1, 2, Material::LIGHTING_TEXTURED);
 	sceneManager.setDefaultMaterial(0);
 
 	sceneManager.addModel("plane", nullptr);
@@ -96,7 +98,7 @@ int main()
 	auto cube = sceneManager.getModel("cube");
 	cube->addMesh(new Cube("cubinho", &sceneManager));
 
-	sceneManager.addModel("building", "building1/building.3ds");
+	sceneManager.addModel("building", "building1/building.obj");
 	sceneManager.addModel("lamp", "Street Lamp/StreetLamp.obj");
 	sceneManager.addModel("dumpster", "trash/Dumpster.obj");
 	sceneManager.addModel("fence", "fence/fence.fbx");
@@ -153,7 +155,7 @@ int main()
 	skyNodeRight->yaw(-90);
 	skyNodeRight->roll(180);
 
-	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround", false);
+	auto groundEnt = sceneManager.createEntity("groundEnt", "planeGround");
 	auto ground = sceneManager.getRoot()->createNewChildNode("groundNode" , "road", glm::vec3(0.0f, 0.0f, 0.0f));
 	ground->attach(groundEnt);
 	ground->changeScale(glm::vec3(20, 10, 1));
@@ -166,10 +168,11 @@ int main()
     wall->yaw(180);
 
 	auto buildingEnt = sceneManager.createEntity("buildingEnt", "building", false);
-	auto building = sceneManager.getRoot()->createNewChildNode("buildingNode", "bricks", glm::vec3(-40.0f, 8.0f, -10.0f));
+	auto building = sceneManager.getRoot()->createNewChildNode("buildingNode", "bricks", glm::vec3(-40.0f, 0.0f, 25.0f));
 	building->attach(buildingEnt);
-	building->changeScale(glm::vec3(0.003, 0.003, 0.003));
-	building->yaw(0);
+	building->changeScale(glm::vec3(0.009, 0.01, 0.009));
+	building->yaw(90);
+	building->pitch(-90);
 
 	auto wallEnt2 = sceneManager.createEntity("wallEnt2", "planeWall");
 	auto wall2 = sceneManager.getRoot()->createNewChildNode("wallNode2", "wall2", glm::vec3(10.0f, 2.5f, 0.0f));
@@ -308,11 +311,18 @@ int main()
 	wall19->changeScale(glm::vec3(10, 5, 1));
 	wall19->yaw(-90);
 
-	auto wallEnt20 = sceneManager.createEntity("wallEnt20", "planeWall");
-	auto wall20 = sceneManager.getRoot()->createNewChildNode("wallNode20", "wall4", glm::vec3(-2.0f, 7.5f, -4.0f));
-	wall20->attach(wallEnt20);
-	wall20->changeScale(glm::vec3(10, 5, 1));
-	wall20->yaw(180);
+	/*auto wallEnt20Shadow = sceneManager.createEntity("wallEnt20Shadow", "planeWall");
+	auto wall20Shadow = sceneManager.getRoot()->createNewChildNode("wallNode20", "wall4", glm::vec3(-2.0f, 5.0f, -5.0f));
+	wall20Shadow->attach(wallEnt20Shadow);
+	wall20Shadow->changeScale(glm::vec3(10, 10, 1));
+	wall20Shadow->yaw(180);*/
+
+	auto wallEnt21Shadow = sceneManager.createEntity("wallEnt21Shadow", "planeWall");
+	auto wall21Shadow = sceneManager.getRoot()->createNewChildNode("wallNode21Shadow", "wall4", glm::vec3(-2.0f, 10.0f, -9.0f));
+	wall21Shadow->attach(wallEnt21Shadow);
+	wall21Shadow->changeScale(glm::vec3(10, 10, 1));
+	wall21Shadow->yaw(180);
+	wall21Shadow->pitch(-90);
 
 	auto wallEnt21 = sceneManager.createEntity("wallEnt21", "planeWall");
 	auto wall21 = sceneManager.getRoot()->createNewChildNode("wallNode21", "bricks", glm::vec3(5.0f, 7.5f, 5.0f));
@@ -382,7 +392,6 @@ int main()
 	fence->yaw(0);
 
 	vector<std::pair<long, float>> points_Y_heli;
-	points_Y_heli.push_back(std::pair<long, float>(30000, 3));
 	points_Y_heli.push_back(std::pair<long, float>(31500, 6));
 	points_Y_heli.push_back(std::pair<long, float>(33000, 9));
 	points_Y_heli.push_back(std::pair<long, float>(34500, 12));
@@ -400,6 +409,7 @@ int main()
 	anim_heli->addControlPoints(points_Y_heli, BetterAnimation::Attribute::POS_Y);
 
 	vector<std::pair<long, float>> points_X_heli;
+	points_X_heli.push_back(std::pair<long, float>(2000, 20.0));
 	points_X_heli.push_back(std::pair<long, float>(39000, 0.0));
 	points_X_heli.push_back(std::pair<long, float>(39500, -0.5));
 	points_X_heli.push_back(std::pair<long, float>(40000, -1.25));
@@ -440,7 +450,7 @@ int main()
 	points_X_heli.push_back(std::pair<long, float>(71000, 2.0));
 	points_X_heli.push_back(std::pair<long, float>(71500, 0.0));
 	points_X_heli.push_back(std::pair<long, float>(72000, -4.0));
-	points_X_heli.push_back(std::pair<long, float>(80000, -64.0));
+	points_X_heli.push_back(std::pair<long, float>(80000, -44.0));
 
 
 	anim_heli->addControlPoints(points_X_heli, BetterAnimation::Attribute::POS_X);
@@ -520,18 +530,18 @@ int main()
 	anim_heli->addControlPoints(points_Roll_heli, BetterAnimation::Attribute::ROLL);
 
 
-	auto helicopterEnt = sceneManager.createEntity("helicopterEnt", "helicopter", true);
+	auto helicopterEnt = sceneManager.createEntity("helicopterEnt", "helicopter");
 	auto helicopter = sceneManager.getRoot()->createNewChildNode("helicopterNode", "bricks", glm::vec3(20.0f, 3.0f, 0.0f));
 	helicopter->attach(helicopterEnt);
 	helicopter->changeScale(glm::vec3(0.02, 0.02, 0.02));
 	helicopter->yaw(-90);
 	helicopter->pitch(20);
 
-	GLfloat amb_heli[3] = { 0.1f, 0.0f, 0.0f };
-	GLfloat dif_heli[3] = { 9.0f, 0.0f, 0.0f };
-	GLfloat spec_heli[3] = { 1.0f, 0.0f, 0.0f };
+	GLfloat amb_heli[3] = { 0.5f, 0.0f, 0.0f };
+	GLfloat dif_heli[3] = { 18.0f, 0.0f, 0.0f };
+	GLfloat spec_heli[3] = { 2.0f, 0.0f, 0.0f };
 
-	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.0f, 0.0f, 0.2f, nullptr);
+	auto light3 = sceneManager.createLight("light3", amb_heli, dif_heli, spec_heli, 0.1f, 0.0f, 0.4f, "cube");
 	auto heliLightNode = helicopter->createNewChildNode("heliLightNode", "light_material", glm::vec3(0, -100, 130));
 	heliLightNode->changeScale(glm::vec3(5, 5, 5));
 	heliLightNode->attach(light3);
@@ -680,12 +690,12 @@ int main()
 	GLfloat dif[3] = { 0.0f, 0.0f, 1.0f };
 	GLfloat spec[3] = { 0.0f, 0.0f, 0.3f };
 
-	GLfloat amb2[3] = { 0.1f, 0.1f, 0.1f };
-	GLfloat dif2[3] = { 1.0f, 1.0f, 1.0f };
-	GLfloat spec2[3] = { 1.0f, 1.0f, 1.0f };
+	GLfloat amb2[3] = { 0.2f, 0.2f, 0.2f };
+	GLfloat dif2[3] = { 5.0f, 5.0f, 5.0f };
+	GLfloat spec2[3] = { 5.0f, 5.0f, 5.0f };
 
 
-	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.0f, 0.5f, nullptr);
+	auto light2 = sceneManager.createLight("light2", amb2, dif2, spec2, 0.0f, 0.0f, 1.0f, nullptr);
 	auto lightCube = sceneManager.createEntity("lightCube", "cube", false);
 	auto lightNode2 = sceneManager.getRoot()->createNewChildNode("lightNode", "light_material2", glm::vec3(2.65f, 5.5f, 1.8f));
 	auto lightNodeCube = sceneManager.getRoot()->createNewChildNode("lightNodeCube", "light_material2", glm::vec3(2.7f, 5.6f, 1.8f));
@@ -718,6 +728,7 @@ int main()
 
 		counter += deltaTime;
 
+		//WARNING, CRAPPY CODE HERE, BUT IT'S TEMPORARY
 		if (counter*1000.0 >= 81000.0)
 			return 0;
 		if(counter*1000.0 >= 75000.0)
@@ -801,6 +812,24 @@ void Do_Movement(Viewport *vp)
 	{
 		vp->toggleBloom();
 		pressingToggleBloom = false;
+	}
+	if (keys[GLFW_KEY_W])
+	{
+		pressingGammaUp = true;
+	}
+	else if (pressingGammaUp)
+	{
+		vp->gamma += 0.1;
+		pressingGammaUp = false;
+	}
+	if (keys[GLFW_KEY_S])
+	{
+		pressingGammaDown = true;
+	}
+	else if (pressingGammaDown)
+	{
+		vp->gamma -= 0.1;
+		pressingGammaDown = false;
 	}
 
 	/*if (keys[GLFW_KEY_W])

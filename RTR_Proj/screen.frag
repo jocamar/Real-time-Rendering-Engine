@@ -6,6 +6,7 @@ uniform sampler2D scene;
 uniform sampler2D bloomBlur;
 uniform bool bloom;
 uniform float exposure;
+uniform float gamma;
 
 float A = 0.15;
 float B = 0.50;
@@ -31,7 +32,6 @@ vec3 AlternativeTonemap(vec3 x)
 
 void main()
 {
-	const float gamma = 2.2;
 	vec3 hdrColor = texture(scene, TexCoords).rgb;
 	vec3 bloomColor = texture(bloomBlur, TexCoords).rgb;
 	hdrColor += bloomColor; // additive blending

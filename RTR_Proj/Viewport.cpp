@@ -15,6 +15,7 @@ Viewport::Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloa
 	this->bloom = true;
 	this->exposure = 1.0f;
 	this->totalMillis = 0;
+	this->gamma = 2.2f;
 
 	GLfloat quadVertices[] = {
 		-1.0f,  1.0f,  0.0f, 1.0f,
@@ -135,8 +136,9 @@ void Viewport::Render(SceneManager& scene)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_SCISSOR_TEST);
-
+	glDisable(GL_CULL_FACE);
 	scene.render(camera);
+	glEnable(GL_CULL_FACE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -176,6 +178,7 @@ void Viewport::Render(SceneManager& scene)
 	glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
 	glUniform1i(glGetUniformLocation(screenShader->Program, "bloom"), bloom);
 	glUniform1f(glGetUniformLocation(screenShader->Program, "exposure"), exposure);
+	glUniform1f(glGetUniformLocation(screenShader->Program, "gamma"), gamma);
 	glUniform1i(glGetUniformLocation(screenShader->Program, "scene"), 0);
 	glUniform1i(glGetUniformLocation(screenShader->Program, "bloomBlur"), 1);
 	

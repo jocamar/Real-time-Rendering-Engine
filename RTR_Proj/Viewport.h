@@ -38,6 +38,7 @@ public:
 	float totalMillis;
 	GLfloat exposure;
 	Camera *camera;
+	GLfloat gamma;
 	Viewport(Camera *cam, GLfloat left, GLfloat top, GLfloat width, GLfloat height, GLfloat zOrder, GLfloat r, GLfloat g, GLfloat b, RenderWindow *window);
 	void Render(SceneManager& scene);
 	bool operator < (const Viewport& v) const;

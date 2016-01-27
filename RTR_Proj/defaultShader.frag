@@ -143,7 +143,7 @@ void main()
 			result += CalcPointLight(pointLights[i], norm, FragPos, viewDir, tex_color, spec_color, i);
 
 		color = vec4(result, opacity);
-		//color = vec4(TexCoords, 0.0, 1.0);
+		//color = vec4(norm, opacity);
 
 		float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
 		if (brightness > 1.0)
@@ -246,7 +246,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
 	vec3 Ks;
 	if (material.specular_texture1_active == 1)
-		Ks = (1 - spec_color.a)* material.specularI + spec_color.a*vec3(spec_color);
+		Ks = (1 - spec_color.a)*material.specularI + spec_color.a*vec3(spec_color);
 	else
 		Ks = material.specularI;
 
@@ -258,7 +258,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     diffuse *= attenuation;
     specular *= attenuation;
 
-	if (material.shading_model == 2)
+	if (material.shading_model > 1)
 		return ambient + (1.0 - shadow) * (diffuse + specular);
 	else
 		return ambient + (1.0 - shadow) * diffuse;
@@ -321,15 +321,15 @@ float OmniShadowCalculation(vec3 fragPos, vec3 lightPos, float far_plane, sample
 
 	float shadow = 0.0;
 	//float bias = max(0.001 * (1.0 - dot(Normal, fragToLight)), 0.0005);
-	float bias = 0.05;
+	float bias = 0.02;
 	int samples = 20;
 	float viewDistance = length(viewPos - fragPos);
-	float diskRadius = (1.0 + (viewDistance / far_plane)) / 50.0;
+	float diskRadius = (1.0 + (viewDistance / far_plane)) / 100.0;
 	for (int i = 0; i < samples; ++i)
 	{
 		float closestDepth = texture(shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
 		closestDepth *= far_plane;   // Undo mapping [0;1]
-		if (currentDepth + bias > closestDepth)
+		if (currentDepth - bias > closestDepth)
 			shadow += 1.0;
 	}
 	shadow /= float(samples);
