@@ -23,3 +23,5 @@ and a directional light as well as several models.
 
 The user can change increase or decrease the gamma values for the scene by pressing the 'W' and 'S' keys. The user may also toggle 
 the HDR rendering on/off by pressing the 'Q' key.
+
+A video of the demo running can be seen on the following link: https://www.youtube.com/watch?v=nUKrgGvGLTk
